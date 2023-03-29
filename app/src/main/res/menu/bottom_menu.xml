@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mainMenuFragment"
+        android:icon="@drawable/round_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/exercise"
+        android:icon="@drawable/round_home"
+        android:title="Profilee" />
+    <item
+        android:id="@+id/secondFragment"
+        android:icon="@drawable/round_home"
+        android:title="Settings" />
+
+</menu>
