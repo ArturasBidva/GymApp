@@ -27,7 +27,7 @@ import com.example.gymapp.ui.montserrati
 fun ExerciseScreen(viewModel: ExerciseViewModel) {
     val exercises by viewModel.exercises.observeAsState(listOf())
     Surface(modifier = Modifier.fillMaxSize(),color = Color.LightGray) {
-        Column (modifier = Modifier.verticalScroll(rememberScrollState())){
+        Column (modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxSize()){
             Header(name = "Arturas")
             exercises.forEach {
                 Text(
@@ -62,7 +62,7 @@ fun ExerciseScreen(viewModel: ExerciseViewModel) {
 @Composable
 fun ExerciseList(exercises: List<Exercise>) {
     Surface(modifier = Modifier.fillMaxSize(),color = Color.LightGray) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxSize()) {
             Header(name = "Arturas")
             exercises.forEach {
                 Text(
@@ -123,7 +123,7 @@ fun Header(name: String) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = name,
-                fontFamily = montserrati, // Replace with Montserrat if you have it configured
+                fontFamily = montserrati,
                 fontSize = 18.sp,
                 modifier = Modifier
                     .wrapContentSize()
@@ -136,7 +136,6 @@ fun Header(name: String) {
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(end = 18.dp)
-                // Add any additional modifiers or styling as needed
             )
         }
     }
