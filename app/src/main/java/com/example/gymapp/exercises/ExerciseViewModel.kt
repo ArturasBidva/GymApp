@@ -1,5 +1,6 @@
 package com.example.gymapp.exercises
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,6 +22,12 @@ class ExerciseViewModel @Inject constructor(
     fun getAllExercises() {
         viewModelScope.launch {
             _exercises.postValue(repository.getAllExercises())
+        }
+    }
+
+    fun editExercise(long: Long,exercise: Exercise){
+        viewModelScope.launch {
+            repository.updateExercise(long,exercise)
         }
     }
 }

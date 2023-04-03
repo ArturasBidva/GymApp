@@ -1,17 +1,17 @@
 package com.example.gymapp.exercises
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.annotation.SuppressLint
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,12 +26,18 @@ import com.example.gymapp.ui.montserrati
 @Composable
 fun ExerciseScreen(viewModel: ExerciseViewModel) {
     val exercises by viewModel.exercises.observeAsState(listOf())
-    Surface(modifier = Modifier.fillMaxSize(),color = Color.LightGray) {
-        Column (modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxSize()){
+    val selectedExercise = remember { mutableStateOf<Exercise?>(null) }
+
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
             Header(name = "Arturas")
-            exercises.forEach {
+            exercises.forEach { exercise ->
                 Text(
-                    text = it.title,
+                    text = exercise.title,
                     fontFamily = montserrati,
                     fontSize = 24.sp,
                     modifier = Modifier.padding(top = 20.dp, start = 30.dp)
@@ -46,11 +52,14 @@ fun ExerciseScreen(viewModel: ExerciseViewModel) {
                         )
                         .height(200.dp)
                         .fillMaxWidth()
+                        .clickable {
+                            selectedExercise.value = exercise
+                        }
                 ) {
                 }
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Text(
-                    text = it.description,
+                    text = exercise.description,
                     fontFamily = montserrati,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(top = 14.dp, start = 31.dp, end = 31.dp)
@@ -58,11 +67,24 @@ fun ExerciseScreen(viewModel: ExerciseViewModel) {
             }
         }
     }
+
+    selectedExercise.value?.let { exercise ->
+        ExerciseEditScreen(
+            exercise = exercise,
+            onSaveClick = { selectedExercise.value!!.id?.let { viewModel.editExercise(it,exercise) } },
+            onNavigateBack = { selectedExercise.value = null }
+        )
+    }
 }
+
+
+
 @Composable
-fun ExerciseList(exercises: List<Exercise>) {
-    Surface(modifier = Modifier.fillMaxSize(),color = Color.LightGray) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState()).fillMaxSize()) {
+fun ExerciseList(exercises: List<Exercise>,onIconClick : () -> Unit) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxSize()) {
             Header(name = "Arturas")
             exercises.forEach {
                 Text(
@@ -81,6 +103,9 @@ fun ExerciseList(exercises: List<Exercise>) {
                         )
                         .height(200.dp)
                         .fillMaxWidth()
+                        .clickable {
+                          onIconClick()
+                        }
                 )
                 {
                 }
@@ -95,6 +120,7 @@ fun ExerciseList(exercises: List<Exercise>) {
         }
     }
 }
+
 @Preview
 @Composable
 fun exercisesPreview() {
@@ -103,7 +129,7 @@ fun exercisesPreview() {
         Exercise(1, "Description 2",200,"hhtp","haghagaga"),
         Exercise(2, "Description 3",200,"hhtp","haghagaga")
     )
-    ExerciseList(exercises = mockExercises)
+    ExerciseList(exercises = mockExercises,{})
 }
 
 @Composable

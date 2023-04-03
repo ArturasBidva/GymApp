@@ -1,4 +1,4 @@
-package com.example.gymapplication.models
+package com.example.gymapp.models
 
 data class User(
     val id: Long,

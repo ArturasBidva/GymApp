@@ -1,7 +1,7 @@
 package com.example.gymapp.api
 
 import com.example.gymapp.models.Exercise
-import com.example.gymapplication.models.User
+import com.example.gymapp.models.User
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
@@ -18,7 +18,7 @@ interface ApiService {
     fun createExercise(@Body exercise: Exercise): Call<Exercise>
 
     @POST("exercise/update/{id}")
-    fun updateExercise(@Path("id") id: Long, @Body exercise: Exercise): Call<Void>
+    suspend fun updateExercise(@Path("id") id: Long, @Body exercise: Exercise)
 
     @DELETE("exercise/{id}")
     fun deleteExercise(@Path("id") id: Long): Call<Void>

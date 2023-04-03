@@ -7,7 +7,7 @@
     <item
         android:id="@+id/exercise"
         android:icon="@drawable/round_home"
-        android:title="Profilee" />
+        android:title="Profile" />
     <item
         android:id="@+id/secondFragment"
         android:icon="@drawable/round_home"

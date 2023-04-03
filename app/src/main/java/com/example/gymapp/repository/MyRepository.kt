@@ -7,6 +7,7 @@ import com.example.gymapp.models.Exercise
 
 interface MyRepository {
     suspend fun getAllExercises(): List<Exercise>
+    suspend fun updateExercise(long: Long,exercise: Exercise)
 }
 
 class MyRepositoryImpl(
@@ -21,4 +22,9 @@ class MyRepositoryImpl(
     override suspend fun getAllExercises(): List<Exercise> {
        return api.getAllExercises()
     }
+
+    override suspend fun updateExercise(long: Long,exercise: Exercise) {
+       return api.updateExercise(id = long, exercise = exercise)
+    }
+
 }
