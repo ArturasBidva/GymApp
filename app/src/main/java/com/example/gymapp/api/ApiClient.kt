@@ -3,6 +3,7 @@ package com.example.gymapp.api
 import com.example.gymapp.repository.MyRepository
 import com.example.gymapp.repository.MyRepositoryImpl
 import android.app.Application
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiClient {
-    private const val BASE_URL = "http://45.9.191.191:8080/"
+    private const val BASE_URL = "http://192.168.79.156:8080/"
 
     @Provides
     @Singleton
@@ -22,6 +23,7 @@ object ApiClient {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
             .create(ApiService::class.java)
     }

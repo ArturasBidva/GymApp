@@ -1,4 +1,4 @@
-package com.example.gymapp.exercises
+package com.example.gymapp.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,13 +7,10 @@ import android.view.ViewGroup
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ExerciseFragment : Fragment() {
-    private val exerciseDetailsViewModel: ExerciseDetailsViewModel by activityViewModels()
+class ProfileFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,15 +20,9 @@ class ExerciseFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 MaterialTheme {
-                    ExerciseScreen(viewModel = exerciseDetailsViewModel, onExerciseClick = {
-                        val action =
-                            ExerciseFragmentDirections.actionExerciseFragmentToExerciseDetailsFragment(it)
-
-                        findNavController().navigate(action)
-                    })
+                    ProfileScreen()
                 }
             }
         }
     }
 }
-

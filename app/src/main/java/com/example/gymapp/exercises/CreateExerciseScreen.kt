@@ -1,7 +1,6 @@
 package com.example.gymapp.exercises
 
 import MockRepository
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,16 +21,16 @@ import com.example.gymapp.models.Exercise
 import com.example.gymapp.profile.CustomButton
 import com.example.gymapp.ui.montserrati
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseEditScreen(
+fun CreateExerciseScreen(
     viewModel: ExerciseDetailsViewModel,
-    exercise: Exercise,
-    onGoBack: () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf(TextFieldValue(exercise.title)) }
-    var exerciseImage by remember { mutableStateOf(TextFieldValue(exercise.imgUrl)) }
-    var exerciseDescription by remember { mutableStateOf(TextFieldValue(exercise.description)) }
+    var title by remember { mutableStateOf("") }
+    var exerciseImage by remember { mutableStateOf("") }
+    var exerciseDescription by remember { mutableStateOf("") }
 
     MaterialTheme(colorScheme = lightColorScheme()) {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
@@ -54,7 +52,7 @@ fun ExerciseEditScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Edit your Exercise",
+                        text = "Create your Exercise",
                         fontFamily = montserrati,
                         fontSize = 30.sp,
                     )
@@ -96,7 +94,6 @@ fun ExerciseEditScreen(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(10.dp))
                                     .fillMaxWidth(),
-                                singleLine = true,
                                 colors = TextFieldDefaults.textFieldColors(
                                     textColor = Color.Gray,
                                     disabledTextColor = Color.Transparent,
@@ -133,19 +130,19 @@ fun ExerciseEditScreen(
                                 CustomButton(
                                     "Confirm",
                                     onClick = {
-                                        val updatedExercise = Exercise(
-                                            id = exercise.id,
-                                            title = title.text,
-                                            weight = 0,
-                                            imgUrl = exerciseImage.text,
-                                            description = exerciseDescription.text
+                                        viewModel.createExercise(
+                                            Exercise(
+                                                title = title,
+                                                weight = 0,
+                                                imgUrl = exerciseImage,
+                                                description = exerciseDescription
+                                            )
                                         )
-                                        viewModel.updateExercise(exercise.id, updatedExercise)
                                     }, modifier = Modifier.width(130.dp)
                                 )
                                 CustomButton(
                                     "Go Back",
-                                    onClick = { onGoBack() },
+                                    onClick = onNavigateBack,
                                     modifier = Modifier.width(130.dp)
                                 )
                             }
@@ -157,23 +154,14 @@ fun ExerciseEditScreen(
     }
 }
 
-
-@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
-fun ExerciseEditScreenPreview() {
-    val exercise = Exercise(
-        id = 1,
-        title = "Bench Press",
-        weight = 100,
-        imgUrl = "https://example.com/image.png",
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    )
+fun CreateExerciseScreenPreview() {
     val repository = MockRepository()
     val viewModel =
         ExerciseDetailsViewModel(repository)
-    ExerciseEditScreen(
+    CreateExerciseScreen(
         viewModel = viewModel,
-        exercise = exercise, {}
+        onNavigateBack = {}
     )
 }

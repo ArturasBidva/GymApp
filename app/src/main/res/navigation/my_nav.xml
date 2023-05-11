@@ -2,13 +2,64 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/my_nav"
-    app:startDestination="@id/exercisesFragment">
-
+    app:startDestination="@id/exerciseFragment">
 
     <fragment
-        android:id="@+id/exercisesFragment"
+        android:id="@+id/exerciseFragment"
         android:name="com.example.gymapp.exercises.ExerciseFragment"
-        android:label="Exercise" />
+        android:label="Exercise">
+        <action
+            android:id="@+id/action_exerciseFragment_to_exerciseDetailsFragment"
+            app:destination="@id/exerciseDetailsFragment">
+            <argument
+                android:name="exerciseId"
+                app:argType="long" />
+        </action>
+    </fragment>
 
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.gymapp.profile.ProfileFragment"
+        android:label="Profile" />
+
+    <fragment
+        android:id="@+id/exerciseEditFragment"
+        android:name="com.example.gymapp.exercises.ExerciseEditFragment"
+        android:label="ExerciseEdit">
+        <argument
+            android:name="exercise"
+            app:argType="com.example.gymapp.models.Exercise" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/exerciseDetailsFragment"
+        android:name="com.example.gymapp.exercises.ExerciseDetailsFragment"
+        android:label="ExerciseDetails">
+        <argument
+            android:name="exerciseId"
+            app:argType="long" />
+
+        <action
+            android:id="@+id/action_exerciseDetailsFragment_to_exerciseEditFragment"
+            app:destination="@id/exerciseEditFragment">
+            <argument
+                android:name="exercise"
+                app:argType="com.example.gymapp.models.Exercise" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.gymapp.menu.MenuFragment"
+        android:label="Menu">
+        <action
+            android:id="@+id/action_menuFragment_to_createExerciseFragment"
+            app:destination="@id/createExerciseFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createExerciseFragment"
+        android:name="com.example.gymapp.exercises.CreateExerciseFragment"
+        android:label="Create Exercise" />
 
 </navigation>

@@ -7,15 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.repository.MyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.internal.operators.single.SingleDoOnSuccess
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class ExerciseViewModel @Inject constructor(
+class ExerciseDetailsViewModel @Inject constructor(
     private val repository: MyRepository
-
 ) : ViewModel() {
-
+    private val _exercise = MutableLiveData<Exercise>(null)
+    open val exercise: LiveData<Exercise> = _exercise
     private val _exercises = MutableLiveData<List<Exercise>>(emptyList())
     open val exercises: LiveData<List<Exercise>> = _exercises
 
@@ -37,5 +38,31 @@ open class ExerciseViewModel @Inject constructor(
             }
         }
     }
+
+    fun getExerciseById(id: Long) {
+        viewModelScope.launch {
+            repository.getExerciseById(id)
+            val exercise = repository.getExerciseById(id)
+            _exercise.value = exercise
+        }
     }
 
+    fun createExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            val isSuccessful = repository.createExercise(exercise)
+            if (isSuccessful) {
+                getAllExercises()
+            }
+        }
+    }
+
+    fun deleteExerciseById(id: Long,onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val isSuccessful = repository.deleteExerciseById(id)
+            if (isSuccessful) {
+                getAllExercises()
+            }
+            onSuccess()
+        }
+    }
+}

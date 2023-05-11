@@ -12,16 +12,16 @@ interface ApiService {
     suspend fun getAllExercises(): List<Exercise>
 
     @GET("exercise/get/{id}")
-    fun getExerciseById(@Path("id") id: Long): Call<Exercise>
+   suspend fun getExerciseById(@Path("id") id: Long): Exercise
 
     @POST("exercise")
-    fun createExercise(@Body exercise: Exercise): Call<Exercise>
+    suspend fun createExercise(@Body exercise: Exercise): Response<Void>
 
     @POST("exercise/update/{id}")
-    suspend fun updateExercise(@Path("id") id: Long, @Body exercise: Exercise)
+    suspend fun updateExercise(@Path("id") id: Long, @Body exercise: Exercise): Response<Void>
 
     @DELETE("exercise/{id}")
-    fun deleteExercise(@Path("id") id: Long): Call<Void>
+    suspend fun deleteExercise(@Path("id") id: Long): Response<Void>
 
     @POST("register")
     suspend fun postUser(@Body User: User): Response<Unit>

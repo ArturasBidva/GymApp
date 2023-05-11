@@ -1,38 +1,52 @@
 package com.example.gymapp.exercises
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import com.example.gymapp.R
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.ui.montserrati
 
 
 @Composable
-fun ExerciseScreen(viewModel: ExerciseViewModel) {
+fun ExerciseScreen(viewModel: ExerciseDetailsViewModel, onExerciseClick: (Long) -> Unit) {
     val exercises by viewModel.exercises.observeAsState(listOf())
-    val selectedExercise = remember { mutableStateOf<Exercise?>(null) }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
+                .padding(bottom = 16.dp + 56.dp)
         ) {
             Header(name = "Arturas")
             exercises.forEach { exercise ->
@@ -53,9 +67,18 @@ fun ExerciseScreen(viewModel: ExerciseViewModel) {
                         .height(200.dp)
                         .fillMaxWidth()
                         .clickable {
-                            selectedExercise.value = exercise
+                            onExerciseClick(exercise.id)
                         }
                 ) {
+                    val painter = rememberImagePainter(exercise.imgUrl)
+                    Image(
+                        painter = painter,
+                        contentDescription = "Exercise Image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp)),
+                        contentScale = ContentScale.Crop
+                    )
                 }
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Text(
@@ -67,24 +90,17 @@ fun ExerciseScreen(viewModel: ExerciseViewModel) {
             }
         }
     }
-
-    selectedExercise.value?.let { exercise ->
-        ExerciseEditScreen(
-            exercise = exercise,
-            onSaveClick = { selectedExercise.value!!.id?.let { viewModel.editExercise(it,exercise) } },
-            onNavigateBack = { selectedExercise.value = null }
-        )
-    }
 }
 
 
-
 @Composable
-fun ExerciseList(exercises: List<Exercise>,onIconClick : () -> Unit) {
+fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
             Header(name = "Arturas")
             exercises.forEach {
                 Text(
@@ -104,7 +120,7 @@ fun ExerciseList(exercises: List<Exercise>,onIconClick : () -> Unit) {
                         .height(200.dp)
                         .fillMaxWidth()
                         .clickable {
-                          onIconClick()
+                            onIconClick()
                         }
                 )
                 {
@@ -123,18 +139,24 @@ fun ExerciseList(exercises: List<Exercise>,onIconClick : () -> Unit) {
 
 @Preview
 @Composable
-fun exercisesPreview() {
+fun ExercisesPreview() {
     val mockExercises = listOf(
-        Exercise(0, "Description 1",200,"hhtp","haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagaga"),
-        Exercise(1, "Description 2",200,"hhtp","haghagaga"),
-        Exercise(2, "Description 3",200,"hhtp","haghagaga")
+        Exercise(
+            0,
+            "Description 1",
+            200,
+            "http",
+            "haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagaga"
+        ),
+        Exercise(1, "Description 2", 200, "http", "haghagaga"),
+        Exercise(2, "Description 3", 200, "http", "haghagaga")
     )
-    ExerciseList(exercises = mockExercises,{})
+    ExerciseList(exercises = mockExercises) {}
 }
 
 @Composable
 fun Header(name: String) {
-    val avatar = painterResource(com.example.gymapp.R.drawable.avatar__1_)
+    val avatar = painterResource(R.drawable.avatar__1_)
 
     Box(
         modifier = Modifier
@@ -164,6 +186,7 @@ fun Header(name: String) {
                     .padding(end = 18.dp)
             )
         }
+
     }
     Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(horizontal = 20.dp))
 }
