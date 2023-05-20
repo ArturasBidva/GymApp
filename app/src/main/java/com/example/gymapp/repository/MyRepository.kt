@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.example.gymapp.R
 import com.example.gymapp.api.ApiService
 import com.example.gymapp.models.Exercise
+import com.example.gymapp.models.ExerciseCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +18,8 @@ interface MyRepository {
     suspend fun createExercise(exercise: Exercise): Boolean
     suspend fun getExerciseById(id: Long): Exercise
     suspend fun deleteExerciseById(id: Long) : Boolean
+
+    suspend fun getAllCategories(): List<ExerciseCategory>
 }
 
 class MyRepositoryImpl @Inject constructor(
@@ -98,5 +101,9 @@ class MyRepositoryImpl @Inject constructor(
             }
         }
         return false
+    }
+
+    override suspend fun getAllCategories(): List<ExerciseCategory> {
+        return api.getExerciseCategories();
     }
 }

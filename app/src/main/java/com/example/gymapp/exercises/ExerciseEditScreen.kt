@@ -138,7 +138,8 @@ fun ExerciseEditScreen(
                                             title = title.text,
                                             weight = 0,
                                             imgUrl = exerciseImage.text,
-                                            description = exerciseDescription.text
+                                            description = exerciseDescription.text,
+                                            listOf()
                                         )
                                         viewModel.updateExercise(exercise.id, updatedExercise)
                                     }, modifier = Modifier.width(130.dp)
@@ -167,7 +168,8 @@ fun ExerciseEditScreenPreview() {
         title = "Bench Press",
         weight = 100,
         imgUrl = "https://example.com/image.png",
-        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        listOf()
     )
     val repository = MockRepository()
     val viewModel =

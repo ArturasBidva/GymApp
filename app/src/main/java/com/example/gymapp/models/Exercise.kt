@@ -9,12 +9,14 @@ data class Exercise(
     val title: String,
     val weight: Int = 0,
     val imgUrl: String,
-    val description: String
+    val description: String,
+    val category: List<ExerciseCategory>
 ) : Parcelable {
     constructor(
         title: String,
         weight: Int = 0,
         imgUrl: String,
-        description: String
-    ) : this(0L, title, weight, imgUrl, description)
+        description: String,
+        category: List<ExerciseCategory>
+    ) : this(0L, title, weight, imgUrl, description,category)
 }

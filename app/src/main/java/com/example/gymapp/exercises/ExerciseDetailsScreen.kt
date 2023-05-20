@@ -193,7 +193,8 @@ fun ExercisesDetailsPreview() {
             "Description 1",
             200,
             "http",
-            "haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagaga"
+            "haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagaga",
+            listOf()
         )
 
     ExercisePreview(exercise = mockExercise) {}

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.gymapp.R
 import com.example.gymapp.models.Exercise
+import com.example.gymapp.models.ExerciseCategory
 import com.example.gymapp.ui.montserrati
 
 
@@ -80,12 +81,18 @@ fun ExerciseScreen(viewModel: ExerciseDetailsViewModel, onExerciseClick: (Long) 
                         contentScale = ContentScale.Crop
                     )
                 }
+                Text(
+                    text = exercise.category.joinToString { it.category } ,
+                    fontFamily = montserrati,
+                    fontSize = 17.sp,
+                    modifier = Modifier.padding(top = 6.dp, start = 30.dp)
+                )
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Text(
                     text = exercise.description,
                     fontFamily = montserrati,
                     fontSize = 13.sp,
-                    modifier = Modifier.padding(top = 14.dp, start = 31.dp, end = 31.dp)
+                    modifier = Modifier.padding(start = 31.dp, end = 31.dp)
                 )
             }
         }
@@ -125,12 +132,18 @@ fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
                 )
                 {
                 }
+                Text(
+                    text = it.category.joinToString { it.category },
+                    fontFamily = montserrati,
+                    fontSize = 17.sp,
+                    modifier = Modifier.padding(top = 6.dp, start = 30.dp)
+                )
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Text(
                     text = it.description,
                     fontFamily = montserrati,
                     fontSize = 13.sp,
-                    modifier = Modifier.padding(top = 14.dp, start = 31.dp, end = 31.dp)
+                    modifier = Modifier.padding(start = 31.dp, end = 31.dp)
                 )
             }
         }
@@ -142,14 +155,28 @@ fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
 fun ExercisesPreview() {
     val mockExercises = listOf(
         Exercise(
+            "Exercise title",
             0,
-            "Description 1",
+            "hahaha",
+            "Cia kazkoks aprasymas apie pratima",
+            listOf(ExerciseCategory("Bicepsas"))
+        ),
+        Exercise(
+            1,
+            "Exercise title",
             200,
             "http",
-            "haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagaga"
+            "Cia kazkoks aprasymas apie pratima",
+            listOf(ExerciseCategory("Tricepsas"))
         ),
-        Exercise(1, "Description 2", 200, "http", "haghagaga"),
-        Exercise(2, "Description 3", 200, "http", "haghagaga")
+        Exercise(
+            2,
+            "Exercise title",
+            200,
+            "http",
+            "Cia kazkoks aprasymas apie pratima",
+            listOf(ExerciseCategory("Nugara"))
+        )
     )
     ExerciseList(exercises = mockExercises) {}
 }
