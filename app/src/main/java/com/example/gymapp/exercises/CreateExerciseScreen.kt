@@ -126,7 +126,9 @@ fun ExerciseExpandContent(
                                             .fillMaxWidth()
                                             .clickable {
                                                 selectedExerciseCategories = if (isSelected) {
-                                                    selectedExerciseCategories.filter { it != exerciseCategory }
+                                                    selectedExerciseCategories.filter { selectedExerciseCategory ->
+                                                        selectedExerciseCategory != exerciseCategory
+                                                    }
                                                 } else {
                                                     selectedExerciseCategories + exerciseCategory
                                                 }

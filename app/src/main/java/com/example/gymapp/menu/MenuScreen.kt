@@ -1,7 +1,15 @@
 package com.example.gymapp.menu
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -13,13 +21,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.gymapp.exercises.Header
 import com.example.gymapp.profile.CustomButton
 import com.example.gymapp.ui.montserrati
 
 @Composable
-fun MenuScreen(onCreateExerciseClick: () -> Unit) {
+fun MenuScreen(
+    onCreateExerciseClick: () -> Unit,
+    onYourWorkoutsClick: () -> Unit,
+    onCreateWorkoutClick: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -59,13 +70,13 @@ fun MenuScreen(onCreateExerciseClick: () -> Unit) {
                         Spacer(modifier = Modifier.height(buttonSpacing))
                         CustomButton(
                             text = "Create exercise",
-                            onClick = { onCreateExerciseClick()},
+                            onClick = { onCreateExerciseClick() },
                             modifier = Modifier.width(buttonWidth)
                         )
                         Spacer(modifier = Modifier.height(buttonSpacing))
                         CustomButton(
                             text = "Your workouts",
-                            onClick = { /*TODO*/ },
+                            onClick = { onYourWorkoutsClick() },
                             modifier = Modifier.width(buttonWidth)
                         )
                         Spacer(modifier = Modifier.height(buttonSpacing))
@@ -76,8 +87,8 @@ fun MenuScreen(onCreateExerciseClick: () -> Unit) {
                         )
                         Spacer(modifier = Modifier.height(buttonSpacing))
                         CustomButton(
-                            text = "Change password",
-                            onClick = { /*TODO*/ },
+                            text = "Create Workout",
+                            onClick = {onCreateWorkoutClick()},
                             modifier = Modifier.width(buttonWidth)
                         )
                     }
@@ -90,5 +101,5 @@ fun MenuScreen(onCreateExerciseClick: () -> Unit) {
 @Preview
 @Composable
 fun MenuScreenPreview() {
-    MenuScreen({})
+    MenuScreen({}, {},{})
 }

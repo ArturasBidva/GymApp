@@ -3,6 +3,7 @@ package com.example.gymapp.api
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseCategory
 import com.example.gymapp.models.User
+import com.example.gymapp.models.Workout
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -28,5 +29,14 @@ interface ApiService {
 
     @POST("register")
     suspend fun postUser(@Body User: User): Response<Unit>
+
+    @GET("/workouts")
+    suspend fun getAllWorkouts(): List<Workout>
+
+    @GET("/get/workout/{id}")
+    suspend fun getWorkoutById(@Path("id") id: Long): Workout
+
+    @POST("/workout")
+    suspend fun createWorkout(@Body workout: Workout): Response<Void>
 
 }

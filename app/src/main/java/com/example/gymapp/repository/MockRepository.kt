@@ -1,5 +1,6 @@
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseCategory
+import com.example.gymapp.models.Workout
 import com.example.gymapp.repository.MyRepository // Replace with the correct import path for your repository
 
 class MockRepository : MyRepository {
@@ -33,6 +34,18 @@ class MockRepository : MyRepository {
     }
 
     override suspend fun getAllCategories(): List<ExerciseCategory> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAllWorkouts(): List<Workout> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getWorkoutById(id: Long): Workout {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createWorkout(workout: Workout): Boolean {
         TODO("Not yet implemented")
     }
 }

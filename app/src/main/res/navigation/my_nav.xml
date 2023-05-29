@@ -21,6 +21,33 @@
         android:id="@+id/profileFragment"
         android:name="com.example.gymapp.profile.ProfileFragment"
         android:label="Profile" />
+    <fragment
+        android:id="@+id/CreateWorkoutFragment"
+        android:name="com.example.gymapp.workout.CreateWorkoutFragment"
+        android:label="CreateWorkout" />
+
+    <fragment
+        android:id="@+id/WorkoutDetailsFragment"
+        android:name="com.example.gymapp.workout.WorkoutDetailsFragment"
+        android:label="WorkoutDetail">
+        <argument
+            android:name="workoutId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/WorkoutsDetailsFragment"
+        android:name="com.example.gymapp.workout.WorkoutsDetailsFragment"
+        android:label="WorkoutDetails">
+        <action
+            android:id="@+id/action_WorkoutsDetailsFragment_to_WorkoutDetailFragment"
+            app:destination="@id/WorkoutDetailsFragment">
+            <argument
+                android:name="workoutId"
+                app:argType="long" />
+        </action>
+    </fragment>
+
 
     <fragment
         android:id="@+id/exerciseEditFragment"
@@ -55,6 +82,12 @@
         <action
             android:id="@+id/action_menuFragment_to_createExerciseFragment"
             app:destination="@id/createExerciseFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_WorkoutsDetailsFragment"
+            app:destination="@id/WorkoutsDetailsFragment" />
+        <action
+            android:id="@+id/action_menuFragment_to_CreateWorkoutFragment"
+            app:destination="@id/CreateWorkoutFragment" />
     </fragment>
 
     <fragment

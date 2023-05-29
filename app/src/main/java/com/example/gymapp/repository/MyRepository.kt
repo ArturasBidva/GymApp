@@ -6,9 +6,8 @@ import com.example.gymapp.R
 import com.example.gymapp.api.ApiService
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseCategory
-import kotlinx.coroutines.CoroutineScope
+import com.example.gymapp.models.Workout
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -17,9 +16,12 @@ interface MyRepository {
     suspend fun updateExercise(id: Long, exercise: Exercise): Boolean
     suspend fun createExercise(exercise: Exercise): Boolean
     suspend fun getExerciseById(id: Long): Exercise
-    suspend fun deleteExerciseById(id: Long) : Boolean
-
+    suspend fun deleteExerciseById(id: Long): Boolean
     suspend fun getAllCategories(): List<ExerciseCategory>
+    suspend fun getAllWorkouts(): List<Workout>
+    suspend fun getWorkoutById(id: Long): Workout
+
+    suspend fun createWorkout(workout: Workout): Boolean
 }
 
 class MyRepositoryImpl @Inject constructor(
@@ -105,5 +107,35 @@ class MyRepositoryImpl @Inject constructor(
 
     override suspend fun getAllCategories(): List<ExerciseCategory> {
         return api.getExerciseCategories();
+    }
+
+    override suspend fun getAllWorkouts(): List<Workout> {
+        return api.getAllWorkouts();
+    }
+
+    override suspend fun getWorkoutById(id: Long): Workout {
+        return api.getWorkoutById(id)
+    }
+
+    override suspend fun createWorkout(workout: Workout): Boolean {
+        try {
+            val response = api.createWorkout(workout)
+            if (response.isSuccessful) {
+                Toast.makeText(
+                    appContext,
+                    "Workout saved successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return true
+            } else {
+                Toast.makeText(appContext, "Failed to create workout", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return false
     }
 }
