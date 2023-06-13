@@ -36,7 +36,6 @@ import com.example.gymapp.ui.montserrati
 
 @Composable
 fun ExerciseDetailsScreen(
-    viewModel: ExerciseViewModel,
     exerciseDetailsViewModel : ExerciseDetailsViewModel,
     onUpdateExerciseClick: (Exercise) -> Unit,
     onDeleteExerciseClick: (Exercise) -> Unit

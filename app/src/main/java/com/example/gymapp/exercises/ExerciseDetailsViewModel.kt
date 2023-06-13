@@ -1,6 +1,7 @@
 package com.example.gymapp.exercises
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,37 +23,21 @@ class ExerciseDetailsViewModel @Inject constructor(
     open val exercises: LiveData<List<Exercise>> = _exercises
     private val _exerciseCategories = MutableLiveData<List<ExerciseCategory>>(emptyList())
     open val exerciseCategories: LiveData<List<ExerciseCategory>> = _exerciseCategories
-    private val myItems = mutableStateListOf<ExerciseCategory>()
-        .apply {
-            repeat(15) {
-                add(ExerciseCategory(category = "Item$it"))
-            }
-        }
+    private val _createdExerciseId = MutableLiveData<Int>()
+    val createdExerciseId: LiveData<Int> get() = _createdExerciseId
 
     init {
         getAllExercises()
         getAllExerciseCategories()
     }
-    fun getSelectedItems() = myItems.filter { it.isSelected }
-    fun toggleSelection(index: Int) {
 
-        val item = myItems[index]
-        val isSelected = item.isSelected
-
-        if (isSelected) {
-            myItems[index] = item.copy(isSelected = false)
-        } else {
-            myItems[index] = item.copy(isSelected = true)
-        }
-    }
-
-    fun getAllExercises() {
+    private fun getAllExercises() {
         viewModelScope.launch {
             _exercises.postValue(repository.getAllExercises())
         }
     }
 
-    fun getAllExerciseCategories(){
+    private fun getAllExerciseCategories(){
         viewModelScope.launch {
             _exerciseCategories.postValue(repository.getAllCategories())
         }

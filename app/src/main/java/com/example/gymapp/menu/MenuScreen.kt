@@ -1,14 +1,13 @@
 package com.example.gymapp.menu
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -17,19 +16,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymapp.exercises.Header
 import com.example.gymapp.profile.CustomButton
+import com.example.gymapp.ui.CustomGray
 import com.example.gymapp.ui.montserrati
 
 @Composable
 fun MenuScreen(
     onCreateExerciseClick: () -> Unit,
     onYourWorkoutsClick: () -> Unit,
-    onCreateWorkoutClick: () -> Unit
+    onCreateWorkoutClick: () -> Unit,
+    addExerciseToWorkoutClick: () -> Unit,
+    startWorkoutClick: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -42,64 +43,79 @@ fun MenuScreen(
                 fontFamily = montserrati,
                 modifier = Modifier.padding(top = 20.dp, start = 30.dp)
             )
-            BoxWithConstraints(
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 107.dp, end = 107.dp, bottom = 16.dp + 56.dp),
-                contentAlignment = Alignment.Center
+                    .clip(
+                        RoundedCornerShape(20.dp)
+                    )
+                    .background(CustomGray)
+                    .width(300.dp)
+                    .height(420.dp),
             ) {
-                val boxWidth = 300.dp
-                val boxHeight = 310.dp
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(width = boxWidth, height = boxHeight)
-                        .clip(
-                            RoundedCornerShape(20.dp)
-                        )
-                        .background(Color.Gray)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    val buttonWidth = boxWidth * 0.45f
-                    val buttonHeight = 42.dp
-                    val buttonSpacing = (boxHeight - buttonHeight * 4) / 5
-
-                    Column(
+                    val buttonWidth = 224.dp
+                    val buttonHeight = 47.dp
+                    CustomButton(
+                        text = "Create exercise",
+                        onClick = { onCreateExerciseClick() },
                         modifier = Modifier
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(buttonSpacing))
-                        CustomButton(
-                            text = "Create exercise",
-                            onClick = { onCreateExerciseClick() },
-                            modifier = Modifier.width(buttonWidth)
-                        )
-                        Spacer(modifier = Modifier.height(buttonSpacing))
-                        CustomButton(
-                            text = "Your workouts",
-                            onClick = { onYourWorkoutsClick() },
-                            modifier = Modifier.width(buttonWidth)
-                        )
-                        Spacer(modifier = Modifier.height(buttonSpacing))
-                        CustomButton(
-                            text = "Workout history",
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.width(buttonWidth)
-                        )
-                        Spacer(modifier = Modifier.height(buttonSpacing))
-                        CustomButton(
-                            text = "Create Workout",
-                            onClick = {onCreateWorkoutClick()},
-                            modifier = Modifier.width(buttonWidth)
-                        )
-                    }
+                            .width(buttonWidth)
+                            .height(buttonHeight)
+                    )
+                    Spacer(modifier = Modifier.height(21.dp))
+                    CustomButton(
+                        text = "Your workouts",
+                        onClick = { onYourWorkoutsClick() },
+                        modifier = Modifier
+                            .width(buttonWidth)
+                            .height(buttonHeight)
+                    )
+                    Spacer(modifier = Modifier.height(21.dp))
+                    CustomButton(
+                        text = "Workout history",
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier
+                            .width(buttonWidth)
+                            .height(buttonHeight)
+                    )
+                    Spacer(modifier = Modifier.height(21.dp))
+                    CustomButton(
+                        text = "Create workout",
+                        onClick = { onCreateWorkoutClick() },
+                        modifier = Modifier
+                            .width(buttonWidth)
+                            .height(buttonHeight)
+                    )
+                    Spacer(modifier = Modifier.height(21.dp))
+                    CustomButton(
+                        text = "Add exercise to workout",
+                        onClick = { addExerciseToWorkoutClick() },
+                        modifier = Modifier
+                            .width(buttonWidth)
+                            .height(buttonHeight)
+                    )
+                    Spacer(modifier = Modifier.height(21.dp))
+                    CustomButton(
+                        text = "Start workout",
+                        onClick = { startWorkoutClick() },
+                        modifier = Modifier
+                            .width(buttonWidth)
+                            .height(buttonHeight)
+                    )
                 }
             }
         }
     }
 }
 
+
 @Preview
 @Composable
 fun MenuScreenPreview() {
-    MenuScreen({}, {},{})
+    MenuScreen({}, {}, {}, {},{})
 }

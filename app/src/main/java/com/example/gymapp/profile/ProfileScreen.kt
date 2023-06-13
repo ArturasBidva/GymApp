@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.gymapp.R
 import com.example.gymapp.exercises.Header
 import com.example.gymapp.ui.CustomGray
+import com.example.gymapp.ui.customBlue
 import com.example.gymapp.ui.montserrati
 
 @Composable
@@ -74,7 +75,7 @@ fun CustomButton(
         modifier = modifier
             .width(195.dp)
             .height(42.dp),
-        colors = ButtonDefaults.buttonColors(CustomGray),
+        colors = ButtonDefaults.buttonColors(customBlue),
         contentPadding = PaddingValues()
     ) {
         Text(text = text, color = Color.Black, fontFamily = montserrati)

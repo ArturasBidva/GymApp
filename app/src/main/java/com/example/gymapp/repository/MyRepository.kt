@@ -4,8 +4,10 @@ import android.app.Application
 import android.widget.Toast
 import com.example.gymapp.R
 import com.example.gymapp.api.ApiService
+import com.example.gymapp.models.AddExerciseToWorkout
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseCategory
+import com.example.gymapp.models.ExerciseWorkouts
 import com.example.gymapp.models.Workout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,8 +22,11 @@ interface MyRepository {
     suspend fun getAllCategories(): List<ExerciseCategory>
     suspend fun getAllWorkouts(): List<Workout>
     suspend fun getWorkoutById(id: Long): Workout
-
     suspend fun createWorkout(workout: Workout): Boolean
+    suspend fun createExerciseWorkout(exerciseWorkouts: ExerciseWorkouts): ExerciseWorkouts
+    suspend fun getAllExerciseWorkout(): List<ExerciseWorkouts>
+    suspend fun addExerciseToWorkout(addExerciseToWorkout: AddExerciseToWorkout): Boolean
+    suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts
 }
 
 class MyRepositoryImpl @Inject constructor(
@@ -137,5 +142,39 @@ class MyRepositoryImpl @Inject constructor(
             }
         }
         return false
+    }
+
+    override suspend fun createExerciseWorkout(exerciseWorkouts: ExerciseWorkouts): ExerciseWorkouts {
+        return api.createExerciseWorkout(exerciseWorkouts)
+    }
+
+    override suspend fun getAllExerciseWorkout(): List<ExerciseWorkouts> {
+        return api.getAllExerciseWorkout()
+    }
+
+    override suspend fun addExerciseToWorkout(addExerciseToWorkout: AddExerciseToWorkout): Boolean {
+        try {
+            val response = api.addExerciseToWorkout(addExerciseToWorkout)
+            if (response.isSuccessful) {
+                Toast.makeText(
+                    appContext,
+                    "Exercise added to workout successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return true
+            } else {
+                Toast.makeText(appContext, "Failed to add exercise", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return false
+    }
+
+    override suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts {
+        return api.getExerciseWorkoutById(id)
     }
 }
