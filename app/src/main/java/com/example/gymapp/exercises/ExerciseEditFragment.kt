@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.gymapp.ui.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ExerciseEditFragment : Fragment() {
-    private val exerciseViewModel: ExerciseViewModel by activityViewModels()
     private val exerciseDetailsViewModel: ExerciseDetailsViewModel by activityViewModels()
     private val args: ExerciseEditFragmentArgs by navArgs()
     override fun onCreateView(
@@ -24,7 +24,7 @@ class ExerciseEditFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme {
+                AppTheme {
                     ExerciseEditScreen(
                         viewModel = exerciseDetailsViewModel,
                         exercise = args.exercise,

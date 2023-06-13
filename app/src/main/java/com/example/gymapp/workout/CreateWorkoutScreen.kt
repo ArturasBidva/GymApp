@@ -63,11 +63,13 @@ fun CreateWorkoutScreen(
 
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
 
-                    CustomTextField(input = workoutTitle, label = "Workout title",
-                        onValueChange = { workoutTitle = it })
+                    CustomTextField(
+                        input = workoutTitle, label = "Workout title"
+                    ) { workoutTitle = it }
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
-                    CustomTextField(input = workoutDescription, label = "Workout description",
-                        onValueChange = { workoutDescription = it })
+                    CustomTextField(
+                        input = workoutDescription, label = "Workout description"
+                    ) { workoutDescription = it }
 
                     Row(
                         modifier = Modifier

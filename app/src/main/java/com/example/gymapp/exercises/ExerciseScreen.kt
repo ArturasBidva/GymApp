@@ -35,7 +35,10 @@ import coil.compose.rememberImagePainter
 import com.example.gymapp.R
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseCategory
+import com.example.gymapp.ui.AppTheme
+import com.example.gymapp.ui.CustomGray
 import com.example.gymapp.ui.montserrati
+import com.example.gymapp.workout.WorkoutViewModel
 
 
 @Composable
@@ -62,7 +65,7 @@ fun ExerciseScreen(viewModel: ExerciseDetailsViewModel, onExerciseClick: (Long) 
                     modifier = Modifier
                         .padding(horizontal = 30.dp)
                         .background(
-                            color = Color.Gray,
+                            color = CustomGray,
                             shape = RoundedCornerShape(20.dp)
                         )
                         .height(200.dp)
@@ -121,7 +124,7 @@ fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
                     modifier = Modifier
                         .padding(horizontal = 30.dp)
                         .background(
-                            color = Color.Gray,
+                            color = CustomGray,
                             shape = RoundedCornerShape(20.dp)
                         )
                         .height(200.dp)
@@ -178,7 +181,9 @@ fun ExercisesPreview() {
             listOf(ExerciseCategory("Nugara"))
         )
     )
-    ExerciseList(exercises = mockExercises) {}
+    AppTheme() {
+        ExerciseList(exercises = mockExercises) {}
+    }
 }
 
 @Composable

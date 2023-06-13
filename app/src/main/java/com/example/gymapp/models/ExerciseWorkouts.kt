@@ -9,4 +9,10 @@ data class ExerciseWorkouts(
     val exercise: Exercise,
     val completedCount : Int = 0,
     val goal : Int
-    ) : Parcelable
+    ) : Parcelable {
+    constructor(
+        exercise: Exercise,
+        completedCount: Int,
+        goal: Int
+    ) : this(0L, exercise, completedCount,goal)
+    }

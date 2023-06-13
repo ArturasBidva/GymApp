@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.findNavController
-import com.example.gymapp.ui.AppTheme
 
-class CreateWorkoutFragment : Fragment() {
+class StartWorkoutFragment : Fragment() {
     private val workoutViewModel: WorkoutViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -19,11 +17,7 @@ class CreateWorkoutFragment : Fragment() {
     ): View? {
         return ComposeView(requireContext()).apply {
             setContent {
-                AppTheme {
-                    CreateWorkoutScreen(
-                        onNavigateBack = {findNavController().popBackStack()},
-                        onConfirmClick = { workoutViewModel.createWorkout(it) })
-                }
+                StartWorkoutScreen(workoutViewModel = workoutViewModel)
             }
         }
     }

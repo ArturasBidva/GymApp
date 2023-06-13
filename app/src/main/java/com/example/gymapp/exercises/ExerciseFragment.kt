@@ -9,12 +9,13 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import com.example.gymapp.ui.AppTheme
+import com.example.gymapp.workout.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ExerciseFragment : Fragment() {
     private val exerciseDetailsViewModel: ExerciseDetailsViewModel by activityViewModels()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,7 +23,7 @@ class ExerciseFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MaterialTheme {
+                AppTheme {
                     ExerciseScreen(viewModel = exerciseDetailsViewModel, onExerciseClick = {
                         val action =
                             ExerciseFragmentDirections.actionExerciseFragmentToExerciseDetailsFragment(it)

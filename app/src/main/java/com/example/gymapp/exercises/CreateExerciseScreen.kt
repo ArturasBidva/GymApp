@@ -27,7 +27,8 @@ fun CreateExerciseScreen(
     val exerciseCategories by viewModel.exerciseCategories.observeAsState(listOf())
     ExerciseExpandContent(categories = exerciseCategories,
         onNavigateBack = onNavigateBack,
-        onConfirmClick = { viewModel.createExercise(it) })
+        onConfirmClick = { viewModel.createExercise(it)
+        })
 }
 
 @Preview
@@ -154,14 +155,17 @@ fun ExerciseExpandContent(
 
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
 
-                    CustomTextField(input = exerciseTitle, label = "Exercise title",
-                        onValueChange = { exerciseTitle = it })
+                    CustomTextField(
+                        input = exerciseTitle, label = "Exercise title"
+                    ) { exerciseTitle = it }
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
-                    CustomTextField(input = exerciseImage, label = "Exercise image",
-                        onValueChange = { exerciseImage = it })
+                    CustomTextField(
+                        input = exerciseImage, label = "Exercise image"
+                    ) { exerciseImage = it }
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
-                    CustomTextField(input = exerciseDescription, label = "Exercise description",
-                        onValueChange = { exerciseDescription = it })
+                    CustomTextField(
+                        input = exerciseDescription, label = "Exercise description"
+                    ) { exerciseDescription = it }
 
                     Row(
                         modifier = Modifier
@@ -246,9 +250,31 @@ fun ExerciseCategorySelectionPrev() {
 @Composable
 fun CustomTextField(input: String, label: String, onValueChange: (String) -> Unit) {
     TextField(
-        value = input,
+        value = input ,
         singleLine = true,
         onValueChange = onValueChange,
+        label = { Text(text = label) },
+        placeholder = { Text(text = "Enter Title") },
+        modifier = Modifier
+            .width(224.dp)
+            .clip(RoundedCornerShape(10.dp)),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = Color.Gray,
+            disabledTextColor = Color.Transparent,
+            containerColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomTextField(input: Int, label: String, onValueChange: (Int) -> Unit) {
+    TextField(
+        value = input.toString() ,
+        singleLine = true,
+        onValueChange = { onValueChange(it.toIntOrNull() ?: 0) },
         label = { Text(text = label) },
         placeholder = { Text(text = "Enter Title") },
         modifier = Modifier
