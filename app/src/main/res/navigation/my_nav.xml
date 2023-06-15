@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/onGoingWorkoutFragment"
-        android:name="com.example.gymapp.workout.OnGoingWorkoutFragment"
+        android:name="com.example.gymapp.workout.ongoingworkout.OnGoingWorkoutFragment"
         android:label="OnGoingWorkout">
         <argument
             android:name="workoutId"

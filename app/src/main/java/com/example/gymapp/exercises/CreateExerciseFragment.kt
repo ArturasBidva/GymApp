@@ -18,7 +18,7 @@ class CreateExerciseFragment : Fragment() {
     private val exerciseDetailsViewModel: ExerciseDetailsViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {

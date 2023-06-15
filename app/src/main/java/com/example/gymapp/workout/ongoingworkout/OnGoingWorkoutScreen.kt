@@ -1,4 +1,4 @@
-package com.example.gymapp.workout
+package com.example.gymapp.workout.ongoingworkout
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,7 +23,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -30,14 +30,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +51,7 @@ import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseWorkouts
 import com.example.gymapp.models.Workout
 import com.example.gymapp.ui.montserrati
+import com.example.gymapp.workout.WorkoutViewModel
 import kotlinx.coroutines.delay
 import java.lang.Math.PI
 
@@ -67,20 +67,34 @@ fun OnGoingWorkout(workoutViewModel: WorkoutViewModel) {
 @Composable
 fun OnGoingWorkoutScreen(workout: Workout) {
     Surface(Modifier.fillMaxSize()) {
-        val currentExerciseIndex = remember { mutableStateOf(0) }
-        val ifWorkoutCompleted = remember { mutableStateOf(false) }
-        val exerciseSetCount =
-            remember {
-                mutableStateOf(
-                    workout.exerciseWorkouts
-                            [currentExerciseIndex.value].completedCount
-                )
+        var currentExerciseIndex by remember { mutableStateOf(0) }
+        val currentExercise = workout.exerciseWorkouts[currentExerciseIndex]
+        var isWorkoutCompleted by remember { mutableStateOf(false) }
+        var exerciseSetCount by remember { mutableStateOf(currentExercise.completedCount) }
+
+        val onRightClick = {
+            if (isWorkoutCompleted) {
+                exerciseSetCount = 0
+                currentExerciseIndex = 0
+                isWorkoutCompleted = false
+            } else if (exerciseSetCount >= currentExercise.goal) {
+                currentExerciseIndex =
+                    (currentExerciseIndex + 1).coerceIn(
+                        0,
+                        workout.exerciseWorkouts.size - 1
+                    )
+                exerciseSetCount =
+                    currentExercise.completedCount
+            } else {
+                exerciseSetCount++
             }
+        }
+
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
-                .padding(bottom = 16.dp + 56.dp)
+                .padding(bottom = 72.dp)
         ) {
             Header(name = "Arturas")
             Text(
@@ -89,82 +103,46 @@ fun OnGoingWorkoutScreen(workout: Workout) {
                 fontSize = 24.sp,
                 modifier = Modifier.padding(top = 24.dp, start = 18.dp)
             )
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            Text(
-                color = Color.Gray,
-                text = "Exercise",
-                fontFamily = montserrati,
-                fontSize = 18.sp,
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.padding(top = 5.dp))
-            Text(
-                text = workout.exerciseWorkouts[currentExerciseIndex.value].exercise.title,
-                fontFamily = montserrati,
-                fontSize = 32.sp,
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            Text(
-                color = Color.Gray,
-                text = "Weight and set count",
-                fontFamily = montserrati,
-                fontSize = 18.sp,
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.padding(top = 5.dp))
-            Text(
-                text = workout.exerciseWorkouts[currentExerciseIndex.value].exercise.weight.toString(),
-                fontFamily = montserrati,
-                fontSize = 32.sp,
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                repeat(workout.exerciseWorkouts[currentExerciseIndex.value].goal) { index ->
-                    if (index < exerciseSetCount.value) {
-                        Box(
-                            Modifier
-                                .size(width = 47.dp, height = 15.dp)
-                                .background(Color.Black)
-                        )
-                    } else {
-                        Box(
-                            Modifier
-                                .size(width = 47.dp, height = 15.dp)
-                                .background(Color.Gray)
-                        )
-                    }
-
-                    if (index < workout.exerciseWorkouts[currentExerciseIndex.value].goal - 1) {
-                        Spacer(modifier = Modifier.padding(horizontal = 12.dp))
-                    }
-                }
+                SectionTitle(text = "Exercise")
+                Spacer(modifier = Modifier.padding(top = 5.dp))
+                Text(
+                    text = currentExercise.exercise.title,
+                    fontFamily = montserrati,
+                    fontSize = 32.sp,
+                )
+                SectionTitle(text = "Weight and set count")
+                Spacer(modifier = Modifier.padding(top = 5.dp))
+                Text(
+                    text = currentExercise.exercise.weight.toString(),
+                    fontFamily = montserrati,
+                    fontSize = 32.sp,
+                )
+                Spacer(modifier = Modifier.padding(top = 10.dp))
             }
+            SetCountIndicatorRow(
+                targetCount = currentExercise.goal,
+                completedCount = exerciseSetCount
+            )
             Spacer(modifier = Modifier.padding(top = 20.dp))
             Row(
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.arrow_right_1_svgrepo_com_2),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
-                        .graphicsLayer(
-                            scaleX = -1f,
-                            transformOrigin = TransformOrigin(0.5f, 0.5f)
-                        )
+                        .rotate(180f)
                         .align(Alignment.CenterVertically)
                         .size(50.dp)
                 )
-                Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Box(contentAlignment = Alignment.Center) {
                     Timer(
                         totalTime = 1L * 1400L,
@@ -173,109 +151,77 @@ fun OnGoingWorkoutScreen(workout: Workout) {
                         activeBarColor = Color(0xFF37B900),
                         modifier = Modifier.size(200.dp),
                         onTimeFinish = {
-                            if (ifWorkoutCompleted.value) {
-                                ifWorkoutCompleted.value = false
-                                exerciseSetCount.value = 0
-                                currentExerciseIndex.value = 0
-                                workout.exerciseWorkouts[currentExerciseIndex.value]
-                            } else if (currentExerciseIndex.value + 1 == workout.exerciseWorkouts.size &&
-                                exerciseSetCount.value + 1 >= workout.exerciseWorkouts[currentExerciseIndex.value].goal
+                            if (isWorkoutCompleted) {
+                                isWorkoutCompleted = false
+                                exerciseSetCount = 0
+                                currentExerciseIndex = 0
+                            } else if (currentExerciseIndex + 1 == workout.exerciseWorkouts.size &&
+                                exerciseSetCount + 1 >= currentExercise.goal
                             ) {
-                                exerciseSetCount.value++
-                                ifWorkoutCompleted.value = true
-                            } else if (exerciseSetCount.value + 1 >= workout.exerciseWorkouts[currentExerciseIndex.value].goal) {
-                                currentExerciseIndex.value =
-                                    (currentExerciseIndex.value + 1).coerceIn(
+                                exerciseSetCount++
+                                isWorkoutCompleted = true
+                            } else if (exerciseSetCount + 1 >= currentExercise.goal) {
+                                currentExerciseIndex =
+                                    (currentExerciseIndex + 1).coerceIn(
                                         0,
                                         workout.exerciseWorkouts.size - 1
                                     )
-                                exerciseSetCount.value =
-                                    workout.exerciseWorkouts[currentExerciseIndex.value].completedCount
+                                exerciseSetCount =
+                                    currentExercise.completedCount
                             } else {
-                                exerciseSetCount.value++
+                                exerciseSetCount++
                             }
-                        }, ifWorkoutCompleted = ifWorkoutCompleted
+                        },
+                        ifWorkoutCompleted = isWorkoutCompleted
                     )
                 }
-                Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Image(
                     painter = painterResource(id = R.drawable.arrow_right_1_svgrepo_com_2),
                     contentDescription = "",
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .size(50.dp)
-                        .clickable {
-                            if (ifWorkoutCompleted.value) {
-                                exerciseSetCount.value = 0
-                                currentExerciseIndex.value = 0
-                                workout.exerciseWorkouts[currentExerciseIndex.value]
-                                ifWorkoutCompleted.value = false
-                            } else if (exerciseSetCount.value >= workout.exerciseWorkouts[currentExerciseIndex.value].goal) {
-                                currentExerciseIndex.value =
-                                    (currentExerciseIndex.value + 1).coerceIn(
-                                        0,
-                                        workout.exerciseWorkouts.size - 1
-                                    )
-                                exerciseSetCount.value =
-                                    workout.exerciseWorkouts[currentExerciseIndex.value].completedCount
-                            } else {
-                                exerciseSetCount.value++
-                            }
-                        }
+                        .clickable { onRightClick() }
                 )
-            }
-            Spacer(modifier = Modifier.padding(top = 88.dp))
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 46.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                ) {
-                    Column() {
-                        Text(
-                            color = Color.Black,
-                            text = "Set time",
-                            fontFamily = montserrati,
-                            fontSize = 13.sp,
-                            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-                        )
-                        Text(
-                            color = Color.Black,
-                            text = "3:45",
-                            fontFamily = montserrati,
-                            fontSize = 13.sp,
-                            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                ) {
-                    Column() {
-                        Text(
-                            color = Color.Black,
-                            text = "Break time",
-                            fontFamily = montserrati,
-                            fontSize = 13.sp,
-                            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-                        )
-                        Text(
-                            color = Color.Black,
-                            text = "5:45",
-                            fontFamily = montserrati,
-                            fontSize = 13.sp,
-                            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-                        )
-                    }
-                }
             }
         }
     }
+}
+
+@Composable
+fun SetCountIndicatorRow(targetCount: Int, completedCount: Int) {
+    val setsLeft = targetCount - completedCount
+    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)){
+        Row(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            repeat(setsLeft) { SetCountIndicator(color = Color.Black) }
+            repeat(completedCount) { SetCountIndicator(color = Color.Gray) }
+        }
+    }
+}
+
+@Composable
+fun SetCountIndicator(color: Color) {
+    Box(
+        modifier = Modifier
+            .size(width = 47.dp, height = 15.dp)
+            .background(color = color)
+    )
+}
+
+@Composable
+fun SectionTitle(text: String, modifier: Modifier = Modifier) {
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        color = Color.Gray,
+        text = text,
+        fontFamily = montserrati,
+        fontSize = 18.sp,
+        modifier = modifier
+    )
 }
 
 
@@ -323,7 +269,7 @@ fun Timer(
     initialValue: Float = 0f,
     strokeWidth: Dp = 5.dp,
     onTimeFinish: () -> Unit,
-    ifWorkoutCompleted: MutableState<Boolean>
+    ifWorkoutCompleted: Boolean
 ) {
     var size by remember {
         mutableStateOf(IntSize.Zero)
@@ -416,14 +362,11 @@ fun Timer(
                 cap = StrokeCap.Round
             )
         }
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-        ) {
+        Box(modifier = Modifier.size(120.dp)) {
             Column(
                 Modifier.align(Alignment.Center)
             ) {
-                if (ifWorkoutCompleted.value) {
+                if (ifWorkoutCompleted) {
                     Text(
                         color = Color.Black,
                         text = "Workout completed",
@@ -489,7 +432,7 @@ fun Timer(
         ) {
             Text(
                 text = when {
-                    ifWorkoutCompleted.value -> "Restart workout"
+                    ifWorkoutCompleted -> "Restart workout"
                     isTimerRunning && currentTime > 0L -> "Pause"
                     !isTimerRunning && currentTime > 0L -> "Start"
                     isBreakTimeRunning && currentTimeForBreak > 0L -> "Pause Break"
@@ -508,7 +451,7 @@ fun TimerPreview() {
         color = Color.White,
         modifier = Modifier.fillMaxSize()
     ) {
-        val workoutCompleted = remember { mutableStateOf(true) }
+        val workoutCompleted by remember { mutableStateOf(true) }
         Box(contentAlignment = Alignment.Center) {
             Timer(
                 totalTime = 100L * 1000L,
