@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 
 class StartWorkoutFragment : Fragment() {
     private val workoutViewModel: WorkoutViewModel by activityViewModels()
@@ -17,7 +18,10 @@ class StartWorkoutFragment : Fragment() {
     ): View? {
         return ComposeView(requireContext()).apply {
             setContent {
-                StartWorkoutScreen(workoutViewModel = workoutViewModel)
+                StartWorkoutScreen(workoutViewModel = workoutViewModel, onConfirmClick = {
+                    val action = StartWorkoutFragmentDirections.actionStartWorkoutFragmentToOnGoingWorkoutFragment(it)
+                    findNavController().navigate(action)
+                })
             }
         }
     }

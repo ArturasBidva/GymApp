@@ -42,14 +42,17 @@ import androidx.compose.ui.unit.dp
 import com.example.gymapp.models.Workout
 
 @Composable
-fun StartWorkoutScreen(workoutViewModel: WorkoutViewModel) {
+fun StartWorkoutScreen(workoutViewModel: WorkoutViewModel, onConfirmClick: (Long) -> Unit) {
     val workouts by workoutViewModel.workouts.observeAsState(listOf())
-    StartWorkoutScreenView(workouts = workouts)
+    StartWorkoutScreenView(workouts = workouts, onConfirmClick = { onConfirmClick(it) })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartWorkoutScreenView(workouts: List<Workout>) {
+fun StartWorkoutScreenView(
+    workouts: List<Workout>,
+    onConfirmClick: (Long) -> Unit
+) {
 
     var expanded by remember { mutableStateOf(false) }
     var selectedWorkout by remember {
@@ -156,7 +159,7 @@ fun StartWorkoutScreenView(workouts: List<Workout>) {
                             .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Button(onClick = { /*TODO*/ }) {
+                        Button(onClick = { onConfirmClick(selectedWorkout.id) }) {
                             Text(text = "Start workout")
                         }
 
@@ -170,5 +173,5 @@ fun StartWorkoutScreenView(workouts: List<Workout>) {
 @Preview
 @Composable
 fun StartWorkoutPreview() {
-    StartWorkoutScreenView(workouts = listOf())
+    StartWorkoutScreenView(workouts = listOf(), {})
 }

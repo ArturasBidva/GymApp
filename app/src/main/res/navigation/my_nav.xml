@@ -24,7 +24,23 @@
     <fragment
         android:id="@+id/startWorkoutFragment"
         android:name="com.example.gymapp.workout.StartWorkoutFragment"
-        android:label="StartWorkout" />
+        android:label="StartWorkout">
+        <action
+            android:id="@+id/action_startWorkoutFragment_To_onGoingWorkoutFragment"
+            app:destination="@id/onGoingWorkoutFragment">
+            <argument
+                android:name="workoutId"
+                app:argType="long" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/onGoingWorkoutFragment"
+        android:name="com.example.gymapp.workout.OnGoingWorkoutFragment"
+        android:label="OnGoingWorkout">
+        <argument
+            android:name="workoutId"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/CreateWorkoutFragment"
