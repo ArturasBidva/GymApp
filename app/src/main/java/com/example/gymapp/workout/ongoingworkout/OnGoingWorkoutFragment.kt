@@ -8,7 +8,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
-import com.example.gymapp.workout.OnGoingWorkoutFragmentArgs
 import com.example.gymapp.workout.WorkoutViewModel
 
 class OnGoingWorkoutFragment : Fragment() {

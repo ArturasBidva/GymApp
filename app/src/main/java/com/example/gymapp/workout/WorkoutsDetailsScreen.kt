@@ -157,9 +157,9 @@ fun ExercisesDetailsPreview() {
             listOf()
         )
     val mockExerciseWorkouts =
-        ExerciseWorkouts(0, mockExercise, 0, 4)
+        ExerciseWorkouts(0, mockExercise, 0,400, 4)
     val mockExerciseWorkoutsTwo =
-        ExerciseWorkouts(1, mockExerciseTwo, 0, 4)
+        ExerciseWorkouts(1, mockExerciseTwo, 0,500, 4)
     val mockWorkoutTwo =
         Workout(
             0,

@@ -27,6 +27,7 @@ interface MyRepository {
     suspend fun getAllExerciseWorkout(): List<ExerciseWorkouts>
     suspend fun addExerciseToWorkout(addExerciseToWorkout: AddExerciseToWorkout): Boolean
     suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts
+    suspend fun updateExerciseWorkoutById(id: Long, exerciseWorkouts: ExerciseWorkouts): Boolean
 }
 
 class MyRepositoryImpl @Inject constructor(
@@ -177,4 +178,27 @@ class MyRepositoryImpl @Inject constructor(
     override suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts {
         return api.getExerciseWorkoutById(id)
     }
-}
+
+    override suspend fun updateExerciseWorkoutById(id: Long, exerciseWorkouts: ExerciseWorkouts): Boolean {
+        try {
+            val response = api.updateExerciseWorkoutById(id,exerciseWorkouts)
+            if (response.isSuccessful) {
+                Toast.makeText(
+                    appContext,
+                    "Exercise updated successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return true
+            } else {
+                Toast.makeText(appContext, "Failed to update exercise", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return false
+    }
+    }
+

@@ -1,4 +1,4 @@
-package com.example.gymapp.workout
+package com.example.gymapp.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.example.gymapp.exercises.ExerciseDetailsViewModel
 import com.example.gymapp.ui.AppTheme
+import com.example.gymapp.workout.AddWorkoutExerciseScreen
+import com.example.gymapp.workout.WorkoutViewModel
 
 class AddExerciseToWorkoutFragment : Fragment() {
     override fun onCreateView(

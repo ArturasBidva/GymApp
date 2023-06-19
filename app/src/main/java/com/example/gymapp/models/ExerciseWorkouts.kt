@@ -7,12 +7,14 @@ import kotlinx.parcelize.Parcelize
 data class ExerciseWorkouts(
     val id: Long,
     val exercise: Exercise,
-    val completedCount : Int = 0,
-    val goal : Int
-    ) : Parcelable {
+    val completedCount: Int = 0,
+    val weight: Int,
+    val goal: Int
+) : Parcelable {
     constructor(
         exercise: Exercise,
         completedCount: Int,
+        weight: Int,
         goal: Int
-    ) : this(0L, exercise, completedCount,goal)
-    }
+    ) : this(0L, exercise, completedCount, weight, goal)
+}

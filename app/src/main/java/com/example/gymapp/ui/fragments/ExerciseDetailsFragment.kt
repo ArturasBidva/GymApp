@@ -1,15 +1,18 @@
-package com.example.gymapp.exercises
+package com.example.gymapp.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.gymapp.exercises.ExerciseDetailsFragmentArgs
+import com.example.gymapp.exercises.ExerciseDetailsFragmentDirections
+import com.example.gymapp.exercises.ExerciseDetailsScreen
+import com.example.gymapp.exercises.ExerciseDetailsViewModel
 import com.example.gymapp.ui.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 

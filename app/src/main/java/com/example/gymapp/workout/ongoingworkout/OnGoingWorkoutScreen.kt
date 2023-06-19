@@ -237,6 +237,7 @@ fun OnGoingWorkoutScreenPreview() {
                 "belekas",
                 listOf()
             ), 0,
+            400,
             2
         )
     val exerciseWorkoutTwo =
@@ -248,6 +249,7 @@ fun OnGoingWorkoutScreenPreview() {
                 "belekas",
                 listOf()
             ), 0,
+            400,
             2
         )
     OnGoingWorkoutScreen(

@@ -1,4 +1,4 @@
-package com.example.gymapp.workout
+package com.example.gymapp.ui.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import com.example.gymapp.workout.WorkoutDetailScreen
+import com.example.gymapp.workout.WorkoutDetailsFragmentArgs
+import com.example.gymapp.workout.WorkoutViewModel
 
 class WorkoutDetailsFragment : Fragment(
 ) {
@@ -19,8 +22,8 @@ class WorkoutDetailsFragment : Fragment(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        exerciseDetailsViewModel.getWorkoutById(args.workoutId)
         return ComposeView(requireContext()).apply {
-            exerciseDetailsViewModel.getWorkoutById(args.workoutId)
             setContent {
                 MaterialTheme {
                 WorkoutDetailScreen(viewModel = exerciseDetailsViewModel)

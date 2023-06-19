@@ -41,6 +41,9 @@ interface ApiService {
     @POST("/workout")
     suspend fun createWorkout(@Body workout: Workout): Response<Void>
 
+    @POST("/exerciseworkout/{id}")
+    suspend fun updateExerciseWorkoutById(@Path("id") id: Long, @Body exerciseWorkouts: ExerciseWorkouts): Response<Void>
+
     @POST("/exerciseworkout")
     suspend fun createExerciseWorkout(@Body exerciseWorkouts: ExerciseWorkouts): ExerciseWorkouts
 

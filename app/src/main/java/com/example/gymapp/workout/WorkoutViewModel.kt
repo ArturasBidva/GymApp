@@ -22,12 +22,13 @@ class WorkoutViewModel @Inject constructor(
     open val workouts: LiveData<List<Workout>> = _workouts
     private val _workout = MutableLiveData<Workout>(null)
     open val workout: LiveData<Workout> = _workout
-    private val _exerciseWorkouts = MutableLiveData<List<ExerciseWorkouts>>(null)
+    private val _exerciseWorkouts = MutableLiveData<List<ExerciseWorkouts>?>(null)
     private val _exerciseWorkout = MutableLiveData<ExerciseWorkouts>(null)
     open val exerciseWorkout: LiveData<ExerciseWorkouts> = _exerciseWorkout
-    open val exerciseWorkouts: LiveData<List<ExerciseWorkouts>> = _exerciseWorkouts
+    open val exerciseWorkouts: MutableLiveData<List<ExerciseWorkouts>?> = _exerciseWorkouts
     private val _workoutFrom = MutableLiveData<Workout>()
-    open val workoutFrom : LiveData<Workout> = _workoutFrom
+    open val workoutFrom: LiveData<Workout> = _workoutFrom
+
     init {
         getAllWorkouts()
     }
@@ -41,6 +42,18 @@ class WorkoutViewModel @Inject constructor(
     fun getWorkoutById(id: Long) {
         viewModelScope.launch {
             _workout.postValue(repository.getWorkoutById(id))
+        }
+    }
+
+    fun updateExerciseWorkout(updatedExerciseWorkout: ExerciseWorkouts, workoutId: Long) {
+        viewModelScope.launch {
+            val result = repository.updateExerciseWorkoutById(
+                updatedExerciseWorkout.id,
+                updatedExerciseWorkout
+            )
+            if (result) {
+                getWorkoutById(workoutId)
+            }
         }
     }
 

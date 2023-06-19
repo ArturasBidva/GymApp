@@ -15,7 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.gymapp.models.Exercise
 import com.example.gymapp.models.ExerciseCategory
 
@@ -270,15 +273,15 @@ fun CustomTextField(input: String, label: String, onValueChange: (String) -> Uni
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTextField(input: Int, label: String, onValueChange: (Int) -> Unit) {
+fun CustomTextField(input: Int, label: String, onValueChange: (Int) -> Unit,size: Dp) {
     TextField(
         value = input.toString() ,
         singleLine = true,
         onValueChange = { onValueChange(it.toIntOrNull() ?: 0) },
-        label = { Text(text = label) },
+        label = { Text(text = label, fontSize = 10.sp) },
         placeholder = { Text(text = "Enter Title") },
         modifier = Modifier
-            .width(224.dp)
+            .width(size)
             .clip(RoundedCornerShape(10.dp)),
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.Gray,

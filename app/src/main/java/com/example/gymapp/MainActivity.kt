@@ -20,22 +20,5 @@ class MainActivity : AppCompatActivity(),  NavigationBarView.OnItemSelectedListe
         bottomNavigationView.setOnItemSelectedListener(this)
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val navController: NavController = Navigation.findNavController(this, R.id.fragmentContainerView)
-        return when (item.itemId) {
-            R.id.exerciseFragmentNav -> {
-                navController.navigate(R.id.exerciseFragment)
-                true
-            }
-            R.id.profileFragmentNav -> {
-                navController.navigate(R.id.profileFragment)
-                true
-            }
-            R.id.menuFragmentNav -> {
-                navController.navigate(R.id.menuFragment)
-                true
-            }
-            else -> false
-        }
-    }
+   git
 }

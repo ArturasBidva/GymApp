@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/exerciseFragment"
-        android:name="com.example.gymapp.exercises.ExerciseFragment"
+        android:name="com.example.gymapp.ui.fragments.ExerciseFragment"
         android:label="Exercise">
         <action
             android:id="@+id/action_exerciseFragment_to_exerciseDetailsFragment"
@@ -23,7 +23,7 @@
         android:label="Profile" />
     <fragment
         android:id="@+id/startWorkoutFragment"
-        android:name="com.example.gymapp.workout.StartWorkoutFragment"
+        android:name="com.example.gymapp.ui.fragments.StartWorkoutFragment"
         android:label="StartWorkout">
         <action
             android:id="@+id/action_startWorkoutFragment_To_onGoingWorkoutFragment"
@@ -44,16 +44,16 @@
 
     <fragment
         android:id="@+id/CreateWorkoutFragment"
-        android:name="com.example.gymapp.workout.CreateWorkoutFragment"
+        android:name="com.example.gymapp.ui.fragments.CreateWorkoutFragment"
         android:label="CreateWorkout" />
     <fragment
         android:id="@+id/AddExerciseToWorkoutFragment"
-        android:name="com.example.gymapp.workout.AddExerciseToWorkoutFragment"
+        android:name="com.example.gymapp.ui.fragments.AddExerciseToWorkoutFragment"
         android:label="AddExerciseToWorkout" />
 
     <fragment
         android:id="@+id/WorkoutDetailsFragment"
-        android:name="com.example.gymapp.workout.WorkoutDetailsFragment"
+        android:name="com.example.gymapp.ui.fragments.WorkoutDetailsFragment"
         android:label="WorkoutDetail">
         <argument
             android:name="workoutId"
@@ -62,7 +62,7 @@
 
     <fragment
         android:id="@+id/WorkoutsDetailsFragment"
-        android:name="com.example.gymapp.workout.WorkoutsDetailsFragment"
+        android:name="com.example.gymapp.ui.fragments.WorkoutsDetailsFragment"
         android:label="WorkoutDetails">
         <action
             android:id="@+id/action_WorkoutsDetailsFragment_to_WorkoutDetailFragment"
@@ -76,7 +76,7 @@
 
     <fragment
         android:id="@+id/exerciseEditFragment"
-        android:name="com.example.gymapp.exercises.ExerciseEditFragment"
+        android:name="com.example.gymapp.ui.fragments.ExerciseEditFragment"
         android:label="ExerciseEdit">
         <argument
             android:name="exercise"
@@ -85,7 +85,7 @@
 
     <fragment
         android:id="@+id/exerciseDetailsFragment"
-        android:name="com.example.gymapp.exercises.ExerciseDetailsFragment"
+        android:name="com.example.gymapp.ui.fragments.ExerciseDetailsFragment"
         android:label="ExerciseDetails">
         <argument
             android:name="exerciseId"
@@ -123,7 +123,7 @@
 
     <fragment
         android:id="@+id/createExerciseFragment"
-        android:name="com.example.gymapp.exercises.CreateExerciseFragment"
+        android:name="com.example.gymapp.ui.fragments.CreateExerciseFragment"
         android:label="Create Exercise" />
 
 </navigation>

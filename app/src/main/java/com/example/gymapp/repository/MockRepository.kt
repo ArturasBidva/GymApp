@@ -66,4 +66,13 @@ class MockRepository : MyRepository {
     override suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts {
         TODO("Not yet implemented")
     }
+
+    override suspend fun updateExerciseWorkoutById(
+        id: Long,
+        exerciseWorkouts: ExerciseWorkouts
+    ): Boolean {
+        TODO("Not yet implemented")
+    }
+
+
 }

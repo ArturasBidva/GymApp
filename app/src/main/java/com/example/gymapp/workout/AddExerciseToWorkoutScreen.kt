@@ -263,6 +263,7 @@ fun AddExerciseToWorkoutScreen(
                                     0,
                                     exercise,
                                     0,
+                                    0,
                                     0
                                 )
                             }
