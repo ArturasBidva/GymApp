@@ -8,7 +8,9 @@ class ExerciseRepository @Inject constructor(
     private val exerciseDao: TestDao
 ) {
 
-    suspend fun amogus() = exerciseDao.upsert(Testas("Amogus"))
+    suspend fun amogus() {
+
+    }
 
 //    fun getAllExercises() = exerciseDao.getAllExercises()
 //

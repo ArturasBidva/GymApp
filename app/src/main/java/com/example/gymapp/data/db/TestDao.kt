@@ -12,6 +12,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TestDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(test: Testas): String
+    suspend fun upsert(test: Testas)
 
 }

@@ -28,14 +28,16 @@ class ExerciseFragment : Fragment() {
             setContent {
                 AppTheme {
                     ExerciseScreen(viewModel = exerciseRoomViewModel, onExerciseClick = {
-                        val action =
-                            ExerciseFragmentDirections.actionExerciseFragmentToExerciseDetailsFragment(it)
-
-                        findNavController().navigate(action)
+                        exerciseRoomViewModel.amogus()
                     })
                 }
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        exerciseRoomViewModel.amogus()
     }
 }
 

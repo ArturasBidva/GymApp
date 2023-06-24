@@ -1,4 +1,4 @@
-package com.example.gymapp.data.db
+package com.example.gymapp
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

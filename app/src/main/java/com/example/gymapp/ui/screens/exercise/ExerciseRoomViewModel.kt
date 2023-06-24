@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gymapp.data.db.TestDao
+import com.example.gymapp.data.db.entities.Testas
 import com.example.gymapp.domain.exercises.Exercise
-import com.example.gymapp.data.repositories.MyRepository
-import com.example.gymapp.domain.exercises.ExerciseService
 import com.example.gymapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,8 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseRoomViewModel @Inject constructor(
-    private val apiRepository: MyRepository,
-    private val exerciseService: ExerciseService
+//    private val exerciseService: ExerciseService,
+    private val testDao: TestDao,
 ) : ViewModel() {
     private val _exercises: MutableLiveData<Resource<List<Exercise>>> =
         MutableLiveData(Resource.Loading())
@@ -23,9 +23,13 @@ class ExerciseRoomViewModel @Inject constructor(
     private val _exercise: MutableLiveData<Resource<Exercise>> = MutableLiveData(Resource.Loading())
     val exercise: LiveData<Resource<Exercise>> = _exercise
     init {
-        viewModelScope.launch { exerciseService.amogus() }
+        viewModelScope.launch { testDao.upsert(Testas(0,"amgus")) }
 //        insertExercisesToDatabase()
 //        getSavedExercises()
+    }
+
+    fun amogus() {
+//        viewModelScope.launch { exerciseService.amogus() }
     }
 //    fun insertExercisesToDatabase() {
 //        viewModelScope.launch {
