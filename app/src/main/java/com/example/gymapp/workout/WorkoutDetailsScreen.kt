@@ -37,13 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.gymapp.R
-import com.example.gymapp.exercises.CustomTextField
-import com.example.gymapp.exercises.Header
-import com.example.gymapp.models.Exercise
-import com.example.gymapp.models.ExerciseCategory
-import com.example.gymapp.models.ExerciseWorkouts
-import com.example.gymapp.models.Workout
+import com.example.gymapp.domain.exercises.Exercise
+import com.example.gymapp.domain.exercises.ExerciseCategory
+import com.example.gymapp.domain.workouts.ExerciseWorkouts
+import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.ui.screens.exercise.Header
 import com.example.gymapp.ui.montserrati
+import com.example.gymapp.ui.screens.createexercise.CustomTextField
 
 @Composable
 fun WorkoutDetailScreen(viewModel: WorkoutViewModel) {
@@ -126,7 +126,7 @@ fun WorkoutDetailPreviews() {
         200,
         "http",
         stringResource(id = R.string.mock_description),
-        listOf(ExerciseCategory("Kojos"), ExerciseCategory("Rankos"))
+        listOf(ExerciseCategory(category = "Kojos"), ExerciseCategory(category = "Rankos"))
     )
     val mockExerciseTwo = Exercise(
         0, "Prisitraukimai", 200, "http", stringResource(id = R.string.mock_description), listOf()
@@ -241,8 +241,12 @@ fun ExerciseEditBox(
 ) {
     var exerciseWorkoutGoal by remember { mutableStateOf(exerciseWorkouts.goal) }
     var exerciseWorkoutWeight by remember { mutableStateOf(exerciseWorkouts.weight) }
-    Row(Modifier.fillMaxWidth().padding(horizontal = 30.dp),
-        horizontalArrangement = Arrangement.spacedBy(30.dp)) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
+        horizontalArrangement = Arrangement.spacedBy(30.dp)
+    ) {
         Column() {
             Text(
                 text = exerciseWorkouts.exercise.title,

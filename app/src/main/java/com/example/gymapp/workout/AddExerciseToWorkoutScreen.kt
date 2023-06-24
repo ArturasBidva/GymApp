@@ -39,18 +39,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gymapp.exercises.ExerciseDetailsViewModel
-import com.example.gymapp.models.Exercise
-import com.example.gymapp.models.ExerciseWorkouts
-import com.example.gymapp.models.Workout
+import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
+import com.example.gymapp.domain.exercises.Exercise
+import com.example.gymapp.domain.workouts.ExerciseWorkouts
+import com.example.gymapp.domain.workouts.Workout
 
 @Composable
 fun AddWorkoutExerciseScreen(
-    exerciseViewModel: ExerciseDetailsViewModel,
+    exerciseViewModel: ExerciseViewModel,
     workoutViewModel: WorkoutViewModel,
     onNavigateBack: () -> Unit
 ) {
-    val exercises by exerciseViewModel.exercises.observeAsState(listOf())
+    val exercises = exerciseViewModel.exercises.value?.data ?: emptyList()
     val workouts by workoutViewModel.workouts.observeAsState(listOf())
     AddExerciseToWorkoutScreen(
         exercises = exercises,
@@ -287,7 +287,7 @@ fun AddExerciseToWorkoutScreen(
 @Preview
 @Composable
 fun AddExerciseToWorkoutPreview() {
-    val exercise = Exercise("kazkas", 0, "belekas", "haha", listOf())
+    val exercise = Exercise(0,"kazkas", 0, "belekas", "haha", listOf())
     val workout = Workout("kazkas", "belekas")
     AddExerciseToWorkoutScreen(
         exercises = listOf(exercise),

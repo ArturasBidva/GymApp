@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.example.gymapp.workout.WorkoutDetailScreen
-import com.example.gymapp.workout.WorkoutDetailsFragmentArgs
 import com.example.gymapp.workout.WorkoutViewModel
 
 class WorkoutDetailsFragment : Fragment(

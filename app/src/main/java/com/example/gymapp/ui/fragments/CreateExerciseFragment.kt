@@ -8,14 +8,14 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
-import com.example.gymapp.exercises.CreateExerciseScreen
-import com.example.gymapp.exercises.ExerciseDetailsViewModel
+import com.example.gymapp.ui.screens.createexercise.CreateExerciseScreen
+import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import com.example.gymapp.ui.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CreateExerciseFragment : Fragment() {
-    private val exerciseDetailsViewModel: ExerciseDetailsViewModel by activityViewModels()
+    private val exerciseViewModel: ExerciseViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -23,7 +23,7 @@ class CreateExerciseFragment : Fragment() {
             setContent {
                 AppTheme {
                     CreateExerciseScreen(
-                        viewModel = exerciseDetailsViewModel
+                        viewModel = exerciseViewModel
                     ) {
                         findNavController().popBackStack()
                     }

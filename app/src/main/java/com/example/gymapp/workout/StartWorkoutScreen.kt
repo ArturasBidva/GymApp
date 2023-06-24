@@ -39,7 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gymapp.models.Workout
+import com.example.gymapp.domain.workouts.Workout
 
 @Composable
 fun StartWorkoutScreen(workoutViewModel: WorkoutViewModel, onConfirmClick: (Long) -> Unit) {

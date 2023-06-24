@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.example.gymapp.ui.AppTheme
 import com.example.gymapp.workout.WorkoutViewModel
-import com.example.gymapp.workout.WorkoutsDetailsFragmentDirections
 import com.example.gymapp.workout.WorkoutsDetailsScreen
 import dagger.hilt.android.AndroidEntryPoint
 

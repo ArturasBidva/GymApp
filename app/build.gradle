@@ -1,7 +1,7 @@
-
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
@@ -17,7 +17,17 @@ android {
         }
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion = "1.4.7"
+        defaultConfig {
+            javaCompileOptions {
+                annotationProcessorOptions {
+                    arguments += [
+                            "room.schemaLocation":"$projectDir/schemas".toString(),
+                            "room.incremental":"true",
+                            "room.expandProjection":"true"]
+                }
+            }
+        }
     }
     namespace 'com.example.gymapp'
     compileSdk 33
@@ -39,10 +49,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -54,11 +60,11 @@ kotlin {
 }
 
 dependencies {
-    def nav_version = "2.5.3"
+    def nav_version = "2.6.0"
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
-    implementation 'com.google.android.material:material:1.10.0-alpha03'
+    implementation 'com.google.android.material:material:1.10.0-alpha04'
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     testImplementation 'junit:junit:4.13.2'
@@ -91,7 +97,7 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:1.0.0"
 
     implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.fragment:fragment-ktx:1.5.7'
+    implementation 'androidx.fragment:fragment-ktx:1.6.0'
 
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 
@@ -114,7 +120,15 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'androidx.compose.runtime:runtime-livedata:1.4.3'
     implementation 'io.coil-kt:coil-compose:1.4.0'
+    kapt "android.arch.persistence.room:compiler:1.1.1"
     implementation "androidx.compose.ui:ui-tooling:1.4.3"
+
+    // Room
+    def room_version = "2.5.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version" // KAPT annotation processor
+    implementation "androidx.room:room-ktx:$room_version"
+
 }
 kapt {
     correctErrorTypes = true

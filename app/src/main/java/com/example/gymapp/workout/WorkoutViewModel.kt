@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymapp.models.AddExerciseToWorkout
-import com.example.gymapp.models.ExerciseWorkouts
-import com.example.gymapp.models.Workout
-import com.example.gymapp.repository.MyRepository
+import com.example.gymapp.domain.workouts.AddExerciseToWorkout
+import com.example.gymapp.domain.workouts.ExerciseWorkouts
+import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.data.repositories.MyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

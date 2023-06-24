@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.gymapp.profile.ProfileFragment"
+        android:name="com.example.gymapp.ui.screens.profile.ProfileFragment"
         android:label="Profile" />
     <fragment
         android:id="@+id/startWorkoutFragment"
@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/onGoingWorkoutFragment"
-        android:name="com.example.gymapp.workout.ongoingworkout.OnGoingWorkoutFragment"
+        android:name="com.example.gymapp.ui.screens.ongoingworkout.OnGoingWorkoutFragment"
         android:label="OnGoingWorkout">
         <argument
             android:name="workoutId"
@@ -76,16 +76,16 @@
 
     <fragment
         android:id="@+id/exerciseEditFragment"
-        android:name="com.example.gymapp.ui.fragments.ExerciseEditFragment"
+        android:name="com.example.gymapp.ui.screens.exerciseedit.ExerciseEditFragment"
         android:label="ExerciseEdit">
         <argument
             android:name="exercise"
-            app:argType="com.example.gymapp.models.Exercise" />
+            app:argType="com.example.gymapp.domain.exercises.Exercise" />
     </fragment>
 
     <fragment
         android:id="@+id/exerciseDetailsFragment"
-        android:name="com.example.gymapp.ui.fragments.ExerciseDetailsFragment"
+        android:name="com.example.gymapp.ui.screens.exercisedetails.ExerciseDetailsFragment"
         android:label="ExerciseDetails">
         <argument
             android:name="exerciseId"
@@ -96,13 +96,13 @@
             app:destination="@id/exerciseEditFragment">
             <argument
                 android:name="exercise"
-                app:argType="com.example.gymapp.models.Exercise" />
+                app:argType="com.example.gymapp.domain.exercises.Exercise" />
         </action>
     </fragment>
 
     <fragment
         android:id="@+id/menuFragment"
-        android:name="com.example.gymapp.menu.MenuFragment"
+        android:name="com.example.gymapp.ui.screens.menu.MenuFragment"
         android:label="Menu">
         <action
             android:id="@+id/action_menuFragment_to_createExerciseFragment"

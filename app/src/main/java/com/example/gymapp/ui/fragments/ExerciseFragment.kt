@@ -7,25 +7,27 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import com.example.gymapp.exercises.ExerciseDetailsViewModel
-import com.example.gymapp.exercises.ExerciseFragmentDirections
-import com.example.gymapp.exercises.ExerciseScreen
+import com.example.gymapp.ui.screens.exercise.ExerciseRoomViewModel
+import com.example.gymapp.ui.screens.exercise.ExerciseScreen
 import com.example.gymapp.ui.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ExerciseFragment : Fragment() {
-    private val exerciseDetailsViewModel: ExerciseDetailsViewModel by activityViewModels()
+    private val exerciseRoomViewModel: ExerciseRoomViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+//        //exerciseRoomViewModel.getSavedExercises()
+//        exerciseRoomViewModel.insertExercisesToDatabase()
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
-                    ExerciseScreen(viewModel = exerciseDetailsViewModel, onExerciseClick = {
+                    ExerciseScreen(viewModel = exerciseRoomViewModel, onExerciseClick = {
                         val action =
                             ExerciseFragmentDirections.actionExerciseFragmentToExerciseDetailsFragment(it)
 

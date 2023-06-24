@@ -28,10 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
-import com.example.gymapp.exercises.Header
-import com.example.gymapp.models.Exercise
-import com.example.gymapp.models.ExerciseWorkouts
-import com.example.gymapp.models.Workout
+import com.example.gymapp.ui.screens.exercise.Header
+import com.example.gymapp.domain.exercises.Exercise
+import com.example.gymapp.domain.workouts.ExerciseWorkouts
+import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.montserrati
 
 @Composable

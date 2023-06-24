@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.example.gymapp.ui.AppTheme
-import com.example.gymapp.workout.CreateWorkoutScreen
+import com.example.gymapp.ui.screens.createworkout.CreateWorkoutScreen
 import com.example.gymapp.workout.WorkoutViewModel
 
 class CreateWorkoutFragment : Fragment() {
