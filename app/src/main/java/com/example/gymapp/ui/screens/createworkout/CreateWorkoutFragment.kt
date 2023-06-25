@@ -1,4 +1,4 @@
-package com.example.gymapp.ui.fragments
+package com.example.gymapp.ui.screens.createworkout
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.example.gymapp.ui.AppTheme
-import com.example.gymapp.ui.screens.createworkout.CreateWorkoutScreen
 import com.example.gymapp.workout.WorkoutViewModel
 
 class CreateWorkoutFragment : Fragment() {

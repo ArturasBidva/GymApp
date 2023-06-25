@@ -2,18 +2,19 @@ package com.example.gymapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.gymapp.GymDatabase
-import com.example.gymapp.data.db.TestDao
+import com.example.gymapp.data.db.GymDatabase
+import com.example.gymapp.data.repositories.ExerciseDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RoomModule {
-
+    @Singleton
     @Provides
     fun provideGymDatabase(
         @ApplicationContext appContext: Context
@@ -25,13 +26,10 @@ object RoomModule {
         ).build()
     }
 
-    //    @Provides
-//    fun provideExerciseDao(database: GymDatabase): ExerciseDao {
-//        return database.getExerciseDao()
-//    }
-
+    @Singleton
     @Provides
-    fun provideTestDao(database: GymDatabase): TestDao {
-        return database.getTestDao()
+    fun provideExerciseDao(database: GymDatabase): ExerciseDao {
+        return database.exerciseDao()
     }
+
 }

@@ -1,19 +1,22 @@
 package com.example.gymapp.data.repositories
 
 import androidx.room.TypeConverter
-import com.example.gymapp.domain.exercises.ExerciseCategory
+import com.example.gymapp.data.db.entities.ExerciseCategoryEntity
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Converters {
     private val gson = Gson()
 
     @TypeConverter
-    fun fromExerciseCategory(exerciseCategory: ExerciseCategory): String {
-        return gson.toJson(exerciseCategory)
+    fun fromExerciseCategoryEntity(exerciseCategoryEntity: List<ExerciseCategoryEntity>): String {
+        return gson.toJson(exerciseCategoryEntity)
     }
 
     @TypeConverter
-    fun toExerciseCategory(data: String): ExerciseCategory {
-        return gson.fromJson(data, ExerciseCategory::class.java)
+    fun toExerciseCategoryEntity(data: String): List<ExerciseCategoryEntity> {
+        val listType = object : TypeToken<List<ExerciseCategoryEntity>>() {
+        }.type
+        return gson.fromJson(data, listType)
     }
-}
+    }

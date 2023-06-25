@@ -43,7 +43,7 @@ import com.example.gymapp.util.Resource
 
 
 @Composable
-fun ExerciseScreen(viewModel: ExerciseRoomViewModel, onExerciseClick: (Long) -> Unit) {
+fun ExerciseScreen(viewModel: ExerciseViewModel, onExerciseClick: (Long) -> Unit) {
     val exercises by viewModel.exercises.observeAsState()
 
     Surface(modifier = Modifier.fillMaxSize()) {

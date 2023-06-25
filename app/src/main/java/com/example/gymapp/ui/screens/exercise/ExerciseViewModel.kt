@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gymapp.data.db.entities.ExerciseAndExerciseCategoryCrossRef
+import com.example.gymapp.data.repositories.MyRepository
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
-import com.example.gymapp.data.repositories.MyRepository
+import com.example.gymapp.domain.exercises.ExerciseService
 import com.example.gymapp.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,11 +17,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
-    private val repository: MyRepository
+    private val repository: MyRepository,
+    private val exerciseService: ExerciseService
 ) : ViewModel() {
     private val _exercise = MutableLiveData<Exercise>(null)
     val exercise: LiveData<Exercise> = _exercise
-    private val _exercises: MutableLiveData<Resource<List<Exercise>>> = MutableLiveData(Resource.Loading())
+    private val _exercises: MutableLiveData<Resource<List<Exercise>>> =
+        MutableLiveData(Resource.Loading())
     val exercises: LiveData<Resource<List<Exercise>>> = _exercises
     private val _exerciseCategories = MutableLiveData<List<ExerciseCategory>>(emptyList())
     val exerciseCategories: LiveData<List<ExerciseCategory>> = _exerciseCategories
@@ -35,6 +39,7 @@ class ExerciseViewModel @Inject constructor(
         _exercises.postValue(handleGetExercisesResponse(response))
 
     }
+
 
     private fun getAllExerciseCategories() {
         viewModelScope.launch {
@@ -81,6 +86,18 @@ class ExerciseViewModel @Inject constructor(
     private fun handleGetExercisesResponse(response: Response<List<Exercise>>): Resource<List<Exercise>> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
+                viewModelScope.launch {
+                    exerciseService.insertExercises(resultResponse)
+                    exerciseService.insertExerciseCategories(resultResponse.flatMap { it.category })
+                    exerciseService.insertExerciseAndExerciseCategoriesCrossRef(resultResponse.flatMap { exercise ->
+                        exercise.category.map { category ->
+                            ExerciseAndExerciseCategoryCrossRef(
+                                exerciseId = exercise.id,
+                                exerciseCategoryId = category.id
+                            )
+                        }
+                    })
+                }
                 return Resource.Success(resultResponse)
             }
         }

@@ -1,10 +1,12 @@
 package com.example.gymapp.data.db.entities
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "category")
 data class ExerciseCategoryEntity(
-    val id: Long = 0L,
+    @PrimaryKey
+    val exerciseCategoryId: Long = 0L,
     val category: String,
     val isSelected: Boolean = false
 )

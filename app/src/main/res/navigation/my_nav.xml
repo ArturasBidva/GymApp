@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/exerciseFragment"
-        android:name="com.example.gymapp.ui.fragments.ExerciseFragment"
+        android:name="com.example.gymapp.ui.screens.exercise.ExerciseFragment"
         android:label="Exercise">
         <action
             android:id="@+id/action_exerciseFragment_to_exerciseDetailsFragment"
@@ -44,7 +44,7 @@
 
     <fragment
         android:id="@+id/CreateWorkoutFragment"
-        android:name="com.example.gymapp.ui.fragments.CreateWorkoutFragment"
+        android:name="com.example.gymapp.ui.screens.createworkout.CreateWorkoutFragment"
         android:label="CreateWorkout" />
     <fragment
         android:id="@+id/AddExerciseToWorkoutFragment"
@@ -123,7 +123,7 @@
 
     <fragment
         android:id="@+id/createExerciseFragment"
-        android:name="com.example.gymapp.ui.fragments.CreateExerciseFragment"
+        android:name="com.example.gymapp.ui.screens.createexercise.CreateExerciseFragment"
         android:label="Create Exercise" />
 
 </navigation>
