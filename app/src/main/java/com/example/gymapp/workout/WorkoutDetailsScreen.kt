@@ -38,12 +38,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.gymapp.R
 import com.example.gymapp.domain.exercises.Exercise
-import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.workouts.ExerciseWorkouts
 import com.example.gymapp.domain.workouts.Workout
-import com.example.gymapp.ui.screens.exercise.Header
 import com.example.gymapp.ui.montserrati
 import com.example.gymapp.ui.screens.createexercise.CustomTextField
+import com.example.gymapp.ui.screens.exercise.Header
+import com.example.gymapp.util.MockExerciseWorkoutData.mockExerciseWorkouts
+import com.example.gymapp.util.MockWorkoutData.mockWorkouts
 
 @Composable
 fun WorkoutDetailScreen(viewModel: WorkoutViewModel) {
@@ -120,27 +121,8 @@ fun WorkoutDetailPreview(workout: Workout, updateExerciseWorkout: (ExerciseWorko
 @Preview
 @Composable
 fun WorkoutDetailPreviews() {
-    val mockExercise = Exercise(
-        0,
-        "Mirties trauka",
-        200,
-        "http",
-        stringResource(id = R.string.mock_description),
-        listOf(ExerciseCategory(category = "Kojos"), ExerciseCategory(category = "Rankos"))
-    )
-    val mockExerciseTwo = Exercise(
-        0, "Prisitraukimai", 200, "http", stringResource(id = R.string.mock_description), listOf()
-    )
-    val mockExerciseWorkouts = ExerciseWorkouts(0, mockExercise, 0, 500, 4)
-    val mockExerciseWorkoutsTwo = ExerciseWorkouts(1, mockExerciseTwo, 0, 400, 4)
-    val mockWorkout = Workout(
-        0,
-        "kazkoks workoutas",
-        "To workoutoDescriptionas",
-        listOf(mockExerciseWorkouts, mockExerciseWorkoutsTwo, mockExerciseWorkouts)
 
-    )
-    WorkoutDetailPreview(workout = mockWorkout, {})
+    WorkoutDetailPreview(workout = mockWorkouts[1], {})
 
 }
 
@@ -229,8 +211,7 @@ fun ExerciseBoxPreview() {
     val mockExercise = Exercise(
         0, "Mirties trauka", 200, "http", stringResource(id = R.string.mock_description), listOf()
     )
-    val mockExerciseWorkouts = ExerciseWorkouts(0, mockExercise, 0, 400, 4)
-    ExerciseBox(mockExerciseWorkouts, {})
+    ExerciseBox(mockExerciseWorkouts[1], {})
 }
 
 @Composable
@@ -276,11 +257,10 @@ fun ExerciseEditBox(
                 .background(Color.Yellow)
                 .clickable {
                     val exerciseWorkout = ExerciseWorkouts(
-                        exerciseWorkouts.id,
-                        exerciseWorkouts.exercise,
-                        0,
-                        exerciseWorkoutWeight,
-                        exerciseWorkoutGoal
+                        id = exerciseWorkouts.id,
+                        weight = exerciseWorkoutWeight,
+                        goal = exerciseWorkoutGoal,
+                        exercise = exerciseWorkouts.exercise
                     )
                     onConfirmClick(exerciseWorkout)
                 }) {
@@ -301,9 +281,8 @@ fun ExerciseEditBox(
 @Preview
 @Composable
 fun ExerciseEditBoxPreview() {
-    val mockExercise = Exercise(
-        0, "Mirties trauka", 200, "http", stringResource(id = R.string.mock_description), listOf()
-    )
-    val mockExerciseWorkouts = ExerciseWorkouts(0, mockExercise, 0, 400, 4)
-    ExerciseEditBox(exerciseWorkouts = mockExerciseWorkouts, onConfirmClick = {}, onBackClick = {})
+    ExerciseEditBox(
+        exerciseWorkouts = mockExerciseWorkouts[1],
+        onConfirmClick = {},
+        onBackClick = {})
 }

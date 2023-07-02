@@ -10,7 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    lateinit var viewModel : ExerciseViewModel
+    lateinit var viewModel: ExerciseViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -20,6 +20,15 @@ class MainActivity : AppCompatActivity() {
         if (navHostFragment != null) {
             val navController = navHostFragment.findNavController()
             bottomNavigationView.setupWithNavController(navController)
+
+            bottomNavigationView.setOnItemSelectedListener { item ->
+                if (item.itemId != bottomNavigationView.selectedItemId) {
+                    navController.navigate(item.itemId)
+                } else {
+                    navController.popBackStack(item.itemId, false)
+                }
+                true
+            }
         }
     }
 }

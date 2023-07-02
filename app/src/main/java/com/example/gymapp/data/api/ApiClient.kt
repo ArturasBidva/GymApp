@@ -3,6 +3,7 @@ package com.example.gymapp.data.api
 import android.app.Application
 import com.example.gymapp.data.repositories.MyRepository
 import com.example.gymapp.data.repositories.MyRepositoryImpl
+import com.example.gymapp.domain.exercises.ExerciseService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiClient {
-    private const val BASE_URL = "https://192.168.108.132:8080/"
+    private const val BASE_URL = "http://192.168.195.207:8080/"
 
     @Provides
     @Singleton
@@ -35,9 +36,9 @@ object ApiClient {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS) // set connection timeout
-            .readTimeout(30, TimeUnit.SECONDS) // set read timeout
-            .writeTimeout(30, TimeUnit.SECONDS) // set write timeout
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 

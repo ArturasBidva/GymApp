@@ -56,7 +56,7 @@ fun StartWorkoutScreenView(
 
     var expanded by remember { mutableStateOf(false) }
     var selectedWorkout by remember {
-        mutableStateOf(Workout("", ""))
+        mutableStateOf(Workout(id = 0, title = "", description = ""))
     }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {

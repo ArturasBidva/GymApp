@@ -28,11 +28,7 @@ class ExerciseDetailsFragment : Fragment() {
                 AppTheme {
                     ExerciseDetailsScreen(
                         exerciseViewModel = exerciseViewModel,
-                        onDeleteExerciseClick = {
-                            exerciseViewModel.deleteExerciseById(it.id) {
-                                findNavController().popBackStack()
-                            }
-                        },
+                        onDeleteExerciseClick = exerciseViewModel::onEvent,
                         onUpdateExerciseClick = {
                             val action = ExerciseDetailsFragmentDirections
                                 .actionExerciseDetailsFragmentToExerciseEditFragment(it)

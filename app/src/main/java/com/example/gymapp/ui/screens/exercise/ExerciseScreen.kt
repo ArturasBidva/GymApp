@@ -16,105 +16,85 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.gymapp.R
 import com.example.gymapp.domain.exercises.Exercise
-import com.example.gymapp.domain.exercises.ExerciseCategory
+import com.example.gymapp.domain.exercises.ExerciseState
 import com.example.gymapp.ui.AppTheme
 import com.example.gymapp.ui.CustomGray
 import com.example.gymapp.ui.montserrati
+import com.example.gymapp.util.MockExerciseData.mockExercises
 import com.example.gymapp.util.Resource
 
 
 @Composable
-fun ExerciseScreen(viewModel: ExerciseViewModel, onExerciseClick: (Long) -> Unit) {
-    val exercises by viewModel.exercises.observeAsState()
+fun ExerciseScreen(
+    viewModel: ExerciseViewModel,
+    onExerciseClick: (Long) -> Unit,
+    onAddExerciseButtonClick: () -> Unit
+) {
+    val exercises by viewModel.uiState.collectAsState()
+    ExerciseScreenComp(exercises = exercises,
+        { onAddExerciseButtonClick() },
+        { onExerciseClick(it) })
 
+}
+
+@Composable
+fun ExerciseScreenComp(
+    exercises: ExerciseState,
+    onAddExerciseButtonClick: () -> Unit,
+    onExerciseClick: (Long) -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-                .padding(bottom = 16.dp + 56.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Header(name = "Arturas")
+            when (val resource = exercises.exercise) {
+                is Resource.Empty -> {
+                    EmptyExerciseListBox(onButtonClick = { onAddExerciseButtonClick() })
+                }
 
-            exercises?.let { exerciseResource ->
-                when (exerciseResource) {
-                    is Resource.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                is Resource.Error -> {
+                    Text(
+                        text = "Error: ${resource.message}",
+                        color = Color.Red,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                is Resource.Loading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator()
                     }
+                }
 
-                    is Resource.Success -> {
-                        exerciseResource.data?.forEach { exercise ->
-                            Text(
-                                text = exercise.title,
-                                fontFamily = montserrati,
-                                fontSize = 24.sp,
-                                modifier = Modifier.padding(top = 20.dp, start = 30.dp)
-                            )
-                            Spacer(modifier = Modifier.padding(top = 8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 30.dp)
-                                    .background(
-                                        color = CustomGray,
-                                        shape = RoundedCornerShape(20.dp)
-                                    )
-                                    .height(200.dp)
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onExerciseClick(exercise.id)
-                                    }
-                            ) {
-                                val painter = rememberImagePainter(exercise.imgUrl)
-                                Image(
-                                    painter = painter,
-                                    contentDescription = "Exercise Image",
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(RoundedCornerShape(20.dp)),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-                            Text(
-                                text = exercise.category.joinToString { it.category },
-                                fontFamily = montserrati,
-                                fontSize = 17.sp,
-                                modifier = Modifier.padding(top = 6.dp, start = 30.dp)
-                            )
-                            Spacer(modifier = Modifier.padding(top = 8.dp))
-                            Text(
-                                text = exercise.description,
-                                fontFamily = montserrati,
-                                fontSize = 13.sp,
-                                modifier = Modifier.padding(start = 31.dp, end = 31.dp)
-                            )
+                is Resource.Success -> {
+                    resource.data?.let { exercise ->
+                        ExerciseList(exercises = exercise) {
+                            onExerciseClick(it)
                         }
-                    }
-
-                    is Resource.Error -> {
-                        Text(
-                            text = "Error: ${exerciseResource.message}",
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
-                        )
                     }
                 }
             }
@@ -122,19 +102,23 @@ fun ExerciseScreen(viewModel: ExerciseViewModel, onExerciseClick: (Long) -> Unit
     }
 }
 
+@Preview
+@Composable
+fun ExerciseScreenPreview() {
+    ExerciseScreenComp(exercises = ExerciseState(Resource.Loading()), {}, {})
+}
 
 @Composable
-fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun ExerciseList(exercises: List<Exercise>, onIconClick: (Long) -> Unit) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
-                .fillMaxSize()
+                .align(Alignment.TopCenter)
         ) {
-            Header(name = "Arturas")
-            exercises.forEach {
+            exercises.forEach { exercise ->
                 Text(
-                    text = it.title,
+                    text = exercise.title,
                     fontFamily = montserrati,
                     fontSize = 24.sp,
                     modifier = Modifier.padding(top = 20.dp, start = 30.dp)
@@ -150,20 +134,28 @@ fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
                         .height(200.dp)
                         .fillMaxWidth()
                         .clickable {
-                            onIconClick()
+                            onIconClick(exercise.id)
                         }
-                )
-                {
+                ) {
+                    val painter = rememberImagePainter(exercise.imgUrl)
+                    Image(
+                        painter = painter,
+                        contentDescription = "Exercise Image",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp)),
+                        contentScale = ContentScale.Crop
+                    )
                 }
                 Text(
-                    text = it.category.joinToString { it.category },
+                    text = exercise.category.joinToString { it.category },
                     fontFamily = montserrati,
                     fontSize = 17.sp,
                     modifier = Modifier.padding(top = 6.dp, start = 30.dp)
                 )
                 Spacer(modifier = Modifier.padding(top = 8.dp))
                 Text(
-                    text = it.description,
+                    text = exercise.description,
                     fontFamily = montserrati,
                     fontSize = 13.sp,
                     modifier = Modifier.padding(start = 31.dp, end = 31.dp)
@@ -173,35 +165,45 @@ fun ExerciseList(exercises: List<Exercise>, onIconClick: () -> Unit) {
     }
 }
 
+
+@Composable
+fun EmptyExerciseListBox(onButtonClick: () -> Unit) {
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(id = R.string.empty_exercise_list),
+            color = Color.Black,
+            fontFamily = montserrati,
+            fontSize = 17.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(16.dp)
+        )
+        Button(onClick = { onButtonClick() }) {
+            Text(
+                text = "Create exercise",
+                fontFamily = montserrati,
+                fontSize = 17.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(10.dp)
+            )
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun EmptyExerciseListBoxPreview() {
+    EmptyExerciseListBox({})
+}
+
 @Preview
 @Composable
 fun ExercisesPreview() {
-    val mockExercises = listOf(
-        Exercise(
-            id = 0,
-            title = "Exercise title",
-            0,
-            "hahaha",
-            "Cia kazkoks aprasymas apie pratima",
-            listOf(ExerciseCategory(category = "Bicepsas"))
-        ),
-        Exercise(
-            id = 1,
-            title = "Exercise title",
-            200,
-            "http",
-            "Cia kazkoks aprasymas apie pratima",
-            listOf(ExerciseCategory(category = "Tricepsas"))
-        ),
-        Exercise(
-            2,
-            "Exercise title",
-            200,
-            "http",
-            "Cia kazkoks aprasymas apie pratima",
-            listOf(ExerciseCategory(category = "Nugara"))
-        )
-    )
     AppTheme() {
         ExerciseList(exercises = mockExercises) {}
     }
@@ -210,16 +212,15 @@ fun ExercisesPreview() {
 @Composable
 fun Header(name: String) {
     val avatar = painterResource(R.drawable.avatar__1_)
-
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(73.dp),
+            .height(80.dp)
+            .padding(10.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
@@ -239,7 +240,10 @@ fun Header(name: String) {
                     .padding(end = 18.dp)
             )
         }
-
     }
-    Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(horizontal = 20.dp))
+    Divider(
+        color = Color.Black,
+        thickness = 1.dp,
+        modifier = Modifier.padding(horizontal = 20.dp)
+    )
 }

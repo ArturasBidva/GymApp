@@ -4,11 +4,13 @@ import android.app.Application
 import android.widget.Toast
 import com.example.gymapp.R
 import com.example.gymapp.data.api.ApiService
-import com.example.gymapp.domain.workouts.AddExerciseToWorkout
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
+import com.example.gymapp.domain.workouts.AddExerciseToWorkout
 import com.example.gymapp.domain.workouts.ExerciseWorkouts
 import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.util.Resource
+import com.example.gymapp.util.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
@@ -17,7 +19,7 @@ import javax.inject.Inject
 interface MyRepository {
     suspend fun getAllExercises(): Response<List<Exercise>>
     suspend fun updateExercise(id: Long, exercise: Exercise): Boolean
-    suspend fun createExercise(exercise: Exercise): Boolean
+    suspend fun createExercise(exercise: Exercise): Resource<Unit>
     suspend fun getExerciseById(id: Long): Exercise
     suspend fun deleteExerciseById(id: Long): Boolean
     suspend fun getAllCategories(): List<ExerciseCategory>
@@ -64,28 +66,18 @@ class MyRepositoryImpl @Inject constructor(
         return false
     }
 
-    override suspend fun createExercise(exercise: Exercise): Boolean {
-        try {
+    override suspend fun createExercise(exercise: Exercise): Resource<Unit> {
+        return try {
             val response = api.createExercise(exercise)
             if (response.isSuccessful) {
-                Toast.makeText(
-                    appContext,
-                    "Exercise saved successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
+                Resource.Success(Unit)
             } else {
-                Toast.makeText(appContext, "Failed to create exercise", Toast.LENGTH_SHORT)
-                    .show()
+                Resource.Error(message = UiText.DynamicString("Not authenticated"))
             }
         } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            Resource.Error(message = UiText.DynamicString(e.message.toString()))
         }
-        return false
     }
-
     override suspend fun getExerciseById(id: Long): Exercise {
         return api.getExerciseById(id)
     }

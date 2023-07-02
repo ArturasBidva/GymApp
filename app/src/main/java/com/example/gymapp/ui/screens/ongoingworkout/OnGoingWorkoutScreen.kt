@@ -46,11 +46,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymapp.R
-import com.example.gymapp.ui.screens.exercise.Header
-import com.example.gymapp.domain.exercises.Exercise
-import com.example.gymapp.domain.workouts.ExerciseWorkouts
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.montserrati
+import com.example.gymapp.ui.screens.exercise.Header
+import com.example.gymapp.util.MockExerciseWorkoutData.mockExerciseWorkouts
 import com.example.gymapp.workout.WorkoutViewModel
 import kotlinx.coroutines.delay
 import java.lang.Math.PI
@@ -192,7 +191,11 @@ fun OnGoingWorkoutScreen(workout: Workout) {
 @Composable
 fun SetCountIndicatorRow(targetCount: Int, completedCount: Int) {
     val setsLeft = targetCount - completedCount
-    Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
         Row(
             modifier = Modifier.align(Alignment.Center),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -228,37 +231,11 @@ fun SectionTitle(text: String, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun OnGoingWorkoutScreenPreview() {
-    val exerciseWorkout =
-        ExerciseWorkouts(
-            Exercise(
-                id = 0,
-                "Bicepsas",
-                200,
-                "Kastonas",
-                "belekas",
-                listOf()
-            ), 0,
-            400,
-            2
-        )
-    val exerciseWorkoutTwo =
-        ExerciseWorkouts(
-            Exercise(
-                1,
-                "Tricepsas",
-                400,
-                "Kastonas",
-                "belekas",
-                listOf()
-            ), 0,
-            400,
-            2
-        )
     OnGoingWorkoutScreen(
         Workout(
             0, "kazkas tokio",
             "gg",
-            listOf(exerciseWorkout, exerciseWorkoutTwo)
+            exerciseWorkouts = mockExerciseWorkouts
         )
     )
 }

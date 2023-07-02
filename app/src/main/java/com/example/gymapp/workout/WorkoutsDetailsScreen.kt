@@ -33,6 +33,7 @@ import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.workouts.ExerciseWorkouts
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.montserrati
+import com.example.gymapp.util.MockWorkoutData.mockWorkouts
 
 @Composable
 fun WorkoutsDetailsScreen(viewModel: WorkoutViewModel, onIconClick: (Long) -> Unit) {
@@ -138,44 +139,7 @@ fun WorkoutPreview(workout: List<Workout>, onIconClick: (Long) -> Unit) {
 @Preview
 @Composable
 fun ExercisesDetailsPreview() {
-    val mockExercise =
-        Exercise(
-            0,
-            "Description 1",
-            200,
-            "http",
-            "haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagag",
-            listOf()
-        )
-    val mockExerciseTwo =
-        Exercise(
-            0,
-            "Description 2",
-            200,
-            "http",
-            "haghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagagahaghagag",
-            listOf()
-        )
-    val mockExerciseWorkouts =
-        ExerciseWorkouts(0, mockExercise, 0,400, 4)
-    val mockExerciseWorkoutsTwo =
-        ExerciseWorkouts(1, mockExerciseTwo, 0,500, 4)
-    val mockWorkoutTwo =
-        Workout(
-            0,
-            "kazkoks workoutas two",
-            "To workoutoDescriptionas",
-            listOf(mockExerciseWorkouts, mockExerciseWorkoutsTwo, mockExerciseWorkouts)
-        )
-    val mockWorkout =
-        Workout(
-            0,
-            "kazkoks workoutas",
-            "To workoutoDescriptionas",
-            listOf(mockExerciseWorkouts, mockExerciseWorkoutsTwo, mockExerciseWorkouts)
-
-        )
-    WorkoutPreview(workout = listOf(mockWorkout, mockWorkoutTwo)) {
+    WorkoutPreview(workout = mockWorkouts) {
 
     }
 

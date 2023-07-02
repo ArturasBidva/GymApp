@@ -1,5 +1,6 @@
 package com.example.gymapp.ui.screens.createexercise
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,45 +19,64 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
+import com.example.gymapp.domain.exercises.ExerciseEvent
+import com.example.gymapp.domain.exercises.ExerciseState
 import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
+import com.example.gymapp.util.MockExerciseData.mockExerciseState
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateExerciseScreen(
-    viewModel: ExerciseViewModel, onNavigateBack: () -> Unit
+    viewModel: ExerciseViewModel,
+    state: ExerciseState,
+    onEvent: (ExerciseEvent) -> Unit,
+    onNavigateBack: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
-    val exerciseCategories by viewModel.exerciseCategories.observeAsState(listOf())
-    ExerciseExpandContent(categories = exerciseCategories,
-        onNavigateBack = onNavigateBack,
-        onConfirmClick = {
-            viewModel.createExercise(it)
-        })
-}
 
-@Preview
-@Composable
-fun CreateExerciseScreenPreview() {
-    MaterialTheme() {
-        ExerciseExpandContent(categories = listOf(
-            ExerciseCategory(category = "Antras"), ExerciseCategory(category = "Trecias")
-        ), onNavigateBack = {}, onConfirmClick = {})
+    val exerciseCategories by viewModel.exerciseCategories.observeAsState(listOf())
+    val message by viewModel.eventFlow.collectAsState(initial = null)
+
+
+    if (message != null) {
+        val snackbarMessage = message!!.asString()
+        Log.d("amogus", snackbarMessage)
+        LaunchedEffect(key1 = message) {
+            snackbarHostState.showSnackbar(message = snackbarMessage)
+        }
+    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier.padding(bottom = 60.dp)
+    ) {
+        it
+        ExerciseExpandContent(
+            categories = exerciseCategories,
+            onNavigateBack = onNavigateBack,
+            state = state,
+            onEvent = onEvent
+        )
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseExpandContent(
+    state: ExerciseState,
     categories: List<ExerciseCategory>,
     onNavigateBack: () -> Unit,
-    onConfirmClick: (Exercise) -> Unit
+    onEvent: (ExerciseEvent) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedExerciseCategories by remember { mutableStateOf<List<ExerciseCategory>>(emptyList()) }
-    var exerciseTitle by remember { mutableStateOf("") }
-    var exerciseImage by remember { mutableStateOf("") }
-    var exerciseDescription by remember { mutableStateOf("") }
+    var selectedExerciseCategories by remember {
+        mutableStateOf<List<ExerciseCategory>>(
+            emptyList()
+        )
+    }
+
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
         Column(
@@ -125,7 +145,8 @@ fun ExerciseExpandContent(
                                 onDismissRequest = { expanded = false }
                             ) {
                                 categories.forEach { exerciseCategory ->
-                                    val isSelected = exerciseCategory in selectedExerciseCategories
+                                    val isSelected =
+                                        exerciseCategory in selectedExerciseCategories
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -137,6 +158,11 @@ fun ExerciseExpandContent(
                                                 } else {
                                                     selectedExerciseCategories + exerciseCategory
                                                 }
+                                                onEvent(
+                                                    ExerciseEvent.SetCategory(
+                                                        selectedExerciseCategories
+                                                    )
+                                                )
                                             }
                                             .padding(16.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -160,16 +186,16 @@ fun ExerciseExpandContent(
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
 
                     CustomTextField(
-                        input = exerciseTitle, label = "Exercise title"
-                    ) { exerciseTitle = it }
+                        input = state.title, label = "Exercise title"
+                    ) { onEvent(ExerciseEvent.SetTitle(it)) }
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
                     CustomTextField(
-                        input = exerciseImage, label = "Exercise image"
-                    ) { exerciseImage = it }
+                        input = state.imgUrl, label = "Exercise image"
+                    ) { onEvent(ExerciseEvent.SetImgUrl(it)) }
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
                     CustomTextField(
-                        input = exerciseDescription, label = "Exercise description"
-                    ) { exerciseDescription = it }
+                        input = state.description, label = "Exercise description"
+                    ) { onEvent(ExerciseEvent.SetDescription(it)) }
 
                     Row(
                         modifier = Modifier
@@ -178,21 +204,17 @@ fun ExerciseExpandContent(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Button(onClick = {
-                            onConfirmClick(
-                                Exercise(
-                                    title = exerciseTitle,
-                                    imgUrl = exerciseImage,
-                                    description = exerciseDescription,
-                                    category = selectedExerciseCategories
-                                )
-                            )
+                            Log.d("CreateExerciseScreen", "Save Exercise button clicked")
+                            onEvent(ExerciseEvent.SaveExercise)
+                            Log.d("CreateExerciseScreen", "Save Exercise event triggered")
+                            selectedExerciseCategories = emptyList()
                         }) {
                             Text("Confirm")
                         }
-
                         Button(onClick = { onNavigateBack() }) {
                             Text("Go Back")
                         }
+
                     }
                 }
             }
@@ -242,12 +264,12 @@ fun ExerciseCategorySelection(
 
 }
 
-
 @Preview
 @Composable
 fun ExerciseCategorySelectionPrev() {
     ExerciseCategorySelection()
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -293,4 +315,14 @@ fun CustomTextField(input: Int, label: String, onValueChange: (Int) -> Unit, siz
             disabledIndicatorColor = Color.Transparent
         )
     )
+}
+
+@Preview
+@Composable
+fun CreateExerciseScreenPreview() {
+    MaterialTheme() {
+        ExerciseExpandContent(categories = listOf(
+            ExerciseCategory(category = "Antras"), ExerciseCategory(category = "Trecias")
+        ), onNavigateBack = {}, state = mockExerciseState, onEvent = {})
+    }
 }

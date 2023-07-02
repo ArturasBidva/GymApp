@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gymapp.ui.screens.createexercise.CustomTextField
 import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.ui.screens.createexercise.CustomTextField
 
 @Composable
 fun CreateWorkoutScreen(
@@ -35,14 +35,17 @@ fun CreateWorkoutScreen(
     var workoutTitle by remember { mutableStateOf("") }
     var workoutDescription by remember { mutableStateOf("") }
 
-    Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                "Create Workout",
+                text = "Create Workout",
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(16.dp)
             )
@@ -60,17 +63,17 @@ fun CreateWorkoutScreen(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    Spacer(modifier = Modifier.padding(bottom = 17.dp))
-
-                    CustomTextField(
-                        input = workoutTitle, label = "Workout title"
-                    ) { workoutTitle = it }
                     Spacer(modifier = Modifier.padding(bottom = 17.dp))
                     CustomTextField(
-                        input = workoutDescription, label = "Workout description"
-                    ) { workoutDescription = it }
-
+                        input = workoutTitle,
+                        label = "Workout title",
+                        onValueChange = { workoutTitle = it })
+                    Spacer(modifier = Modifier.padding(bottom = 17.dp))
+                    CustomTextField(
+                        input = workoutDescription,
+                        label = "Workout description",
+                        onValueChange = {workoutDescription = it}
+                    )
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -80,15 +83,17 @@ fun CreateWorkoutScreen(
                         Button(onClick = {
                             onConfirmClick(
                                 Workout(
-                                    0, workoutTitle, workoutDescription, listOf()
+                                    id = 0,
+                                    title = workoutTitle,
+                                    description = workoutDescription,
+                                    exerciseWorkouts = listOf()
                                 )
                             )
                         }) {
-                            Text("Confirm")
+                            Text(text = "Confirm")
                         }
-
                         Button(onClick = { onNavigateBack() }) {
-                            Text("Go Back")
+                            Text(text = "Go Back")
                         }
                     }
                 }
@@ -100,6 +105,5 @@ fun CreateWorkoutScreen(
 @Preview
 @Composable
 fun CreateWorkoutPreview() {
-    CreateWorkoutScreen(onNavigateBack = { /*TODO*/ }, onConfirmClick = {})
-
+    CreateWorkoutScreen(onNavigateBack = {}, onConfirmClick = {})
 }

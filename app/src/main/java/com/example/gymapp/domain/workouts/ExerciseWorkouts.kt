@@ -6,16 +6,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ExerciseWorkouts(
-    val id: Long,
-    val exercise: Exercise,
+    val id: Long = 0,
     val completedCount: Int = 0,
     val weight: Int,
-    val goal: Int
-) : Parcelable {
-    constructor(
-        exercise: Exercise,
-        completedCount: Int,
-        weight: Int,
-        goal: Int
-    ) : this(0L, exercise, completedCount, weight, goal)
-}
+    val goal: Int,
+    val exercise: Exercise
+) : Parcelable

@@ -9,7 +9,9 @@ data class ExerciseWithExerciseCategoryPair(
     @Relation(
         parentColumn = "exerciseId",
         entityColumn = "exerciseCategoryId",
-        associateBy = Junction(ExerciseAndExerciseCategoryCrossRef::class)
+        associateBy = Junction(ExerciseAndExerciseCategoryCrossRef::class,
+            parentColumn = "exerciseId",
+            entityColumn = "exerciseCategoryId")
     )
     val exerciseCategory: List<ExerciseCategoryEntity>
 )

@@ -6,6 +6,7 @@ import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.workouts.ExerciseWorkouts
 import com.example.gymapp.domain.account.User
 import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.util.Resource
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -18,7 +19,7 @@ interface ApiService {
     suspend fun getExerciseById(@Path("id") id: Long): Exercise
 
     @POST("exercise")
-    suspend fun createExercise(@Body exercise: Exercise): Response<Void>
+    suspend fun createExercise(@Body exercise: Exercise): Response<Unit>
 
     @POST("exercise/update/{id}")
     suspend fun updateExercise(@Path("id") id: Long, @Body exercise: Exercise): Response<Void>

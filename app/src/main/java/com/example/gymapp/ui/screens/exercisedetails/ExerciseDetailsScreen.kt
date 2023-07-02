@@ -1,5 +1,6 @@
 package com.example.gymapp.ui.screens.exercisedetails
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,17 +31,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.gymapp.domain.exercises.Exercise
+import com.example.gymapp.domain.exercises.ExerciseEvent
+import com.example.gymapp.ui.montserrati
 import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import com.example.gymapp.ui.screens.exercise.Header
 import com.example.gymapp.ui.screens.profile.CustomButton
-import com.example.gymapp.ui.montserrati
 
 @Composable
 fun ExerciseDetailsScreen(
-    exerciseViewModel : ExerciseViewModel,
+    exerciseViewModel: ExerciseViewModel,
     onUpdateExerciseClick: (Exercise) -> Unit,
-    onDeleteExerciseClick: (Exercise) -> Unit
+    onDeleteExerciseClick: (ExerciseEvent) -> Unit
 ) {
+
     val exerciseState by exerciseViewModel.exercise.observeAsState(null)
     val exercise = exerciseState
     if (exercise != null) {
@@ -103,9 +106,14 @@ fun ExerciseDetailsScreen(
                             .height(42.dp)
                     )
                     Spacer(modifier = Modifier.padding(top = 17.dp))
+                    val onBackPressedDispatcher =
+                        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
                     CustomButton(
                         text = "Delete exercise",
-                        onClick = {onDeleteExerciseClick(exercise)},
+                        onClick = {
+                            onDeleteExerciseClick(ExerciseEvent.DeleteExercise(exercise))
+                            onBackPressedDispatcher?.onBackPressed()
+                        },
                         modifier = Modifier
                             .width(195.dp)
                             .height(42.dp)

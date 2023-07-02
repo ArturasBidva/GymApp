@@ -39,10 +39,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.workouts.ExerciseWorkouts
 import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
+import com.example.gymapp.util.MockExerciseData.mockExercises
+import com.example.gymapp.util.MockWorkoutData.mockWorkouts
 
 @Composable
 fun AddWorkoutExerciseScreen(
@@ -50,7 +52,7 @@ fun AddWorkoutExerciseScreen(
     workoutViewModel: WorkoutViewModel,
     onNavigateBack: () -> Unit
 ) {
-    val exercises = exerciseViewModel.exercises.value?.data ?: emptyList()
+    val exercises = exerciseViewModel.apiExercises.value.data ?: emptyList()
     val workouts by workoutViewModel.workouts.observeAsState(listOf())
     AddExerciseToWorkoutScreen(
         exercises = exercises,
@@ -75,7 +77,7 @@ fun AddExerciseToWorkoutScreen(
     var expanded by remember { mutableStateOf(false) }
     var expandedTwo by remember { mutableStateOf(false) }
     var selectedExercises by remember { mutableStateOf<List<Exercise>>(emptyList()) }
-    var selectedWorkout by remember { mutableStateOf(Workout("", "")) }
+    var selectedWorkout by remember { mutableStateOf(Workout(id = 0, title = "", description = "")) }
     var showExerciseBox by remember { mutableStateOf(false) }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
@@ -260,11 +262,11 @@ fun AddExerciseToWorkoutScreen(
                         Button(onClick = {
                             val exerciseWorkoutsList = selectedExercises.map { exercise ->
                                 ExerciseWorkouts(
-                                    0,
-                                    exercise,
-                                    0,
-                                    0,
-                                    0
+                                    id = 0,
+                                    completedCount = 0,
+                                    weight = 0,
+                                    goal = 0,
+                                   exercise =  exercise
                                 )
                             }
                             onConfirmClick(exerciseWorkoutsList, selectedWorkout.id)
@@ -287,11 +289,9 @@ fun AddExerciseToWorkoutScreen(
 @Preview
 @Composable
 fun AddExerciseToWorkoutPreview() {
-    val exercise = Exercise(0,"kazkas", 0, "belekas", "haha", listOf())
-    val workout = Workout("kazkas", "belekas")
     AddExerciseToWorkoutScreen(
-        exercises = listOf(exercise),
-        workouts = listOf(workout),
+        exercises = mockExercises,
+        workouts = mockWorkouts,
         onNavigateBack = {},
         onConfirmClick = { _, _ -> }
     )

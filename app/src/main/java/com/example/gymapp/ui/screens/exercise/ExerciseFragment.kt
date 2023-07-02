@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.example.gymapp.ui.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ExerciseFragment : Fragment() {
     private val exerciseViewModel: ExerciseViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,12 +24,21 @@ class ExerciseFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 AppTheme {
-                    ExerciseScreen(viewModel = exerciseViewModel, onExerciseClick = {
-
+                    ExerciseScreen(
+                        viewModel = exerciseViewModel,
+                        onExerciseClick = {
+                        val action =
+                            ExerciseFragmentDirections
+                                .actionExerciseFragmentToExerciseDetailsFragment(it)
+                        findNavController().navigate(action)
+                    }, onAddExerciseButtonClick = {
+                        val action =
+                            ExerciseFragmentDirections
+                                .actionExerciseFragmentToCreateExerciseFragment()
+                        findNavController().navigate(action)
                     })
                 }
             }
         }
     }
 }
-

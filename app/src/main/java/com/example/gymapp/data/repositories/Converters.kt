@@ -19,4 +19,4 @@ class Converters {
         }.type
         return gson.fromJson(data, listType)
     }
-    }
+}

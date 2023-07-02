@@ -9,6 +9,9 @@
         android:name="com.example.gymapp.ui.screens.exercise.ExerciseFragment"
         android:label="Exercise">
         <action
+            android:id="@+id/action_exerciseFragment_to_createExerciseFragment"
+            app:destination="@id/createExerciseFragment"/>
+        <action
             android:id="@+id/action_exerciseFragment_to_exerciseDetailsFragment"
             app:destination="@id/exerciseDetailsFragment">
             <argument
@@ -90,7 +93,6 @@
         <argument
             android:name="exerciseId"
             app:argType="long" />
-
         <action
             android:id="@+id/action_exerciseDetailsFragment_to_exerciseEditFragment"
             app:destination="@id/exerciseEditFragment">
