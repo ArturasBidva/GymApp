@@ -52,7 +52,7 @@ fun AddWorkoutExerciseScreen(
     workoutViewModel: WorkoutViewModel,
     onNavigateBack: () -> Unit
 ) {
-    val exercises = exerciseViewModel.apiExercises.value.data ?: emptyList()
+    val exercises = exerciseViewModel.exercises.value.data ?: emptyList()
     val workouts by workoutViewModel.workouts.observeAsState(listOf())
     AddExerciseToWorkoutScreen(
         exercises = exercises,

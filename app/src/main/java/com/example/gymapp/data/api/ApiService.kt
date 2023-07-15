@@ -1,12 +1,11 @@
 package com.example.gymapp.data.api
 
-import com.example.gymapp.domain.workouts.AddExerciseToWorkout
+import com.example.gymapp.domain.account.User
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
+import com.example.gymapp.domain.workouts.AddExerciseToWorkout
 import com.example.gymapp.domain.workouts.ExerciseWorkouts
-import com.example.gymapp.domain.account.User
 import com.example.gymapp.domain.workouts.Workout
-import com.example.gymapp.util.Resource
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -25,7 +24,7 @@ interface ApiService {
     suspend fun updateExercise(@Path("id") id: Long, @Body exercise: Exercise): Response<Void>
 
     @DELETE("exercise/{id}")
-    suspend fun deleteExercise(@Path("id") id: Long): Response<Void>
+    suspend fun deleteExercise(@Path("id") id: Long): Response<Unit>
 
     @GET("categories")
     suspend fun getExerciseCategories(): List<ExerciseCategory>

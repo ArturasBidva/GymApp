@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import com.example.gymapp.ui.AppTheme
+import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,12 +28,20 @@ class ExerciseDetailsFragment : Fragment() {
                 AppTheme {
                     ExerciseDetailsScreen(
                         exerciseViewModel = exerciseViewModel,
-                        onDeleteExerciseClick = exerciseViewModel::onEvent,
+                        onDeleteExerciseClick = {
+                            exerciseViewModel.onEvent(
+                                event = it,
+                                onFetchComplete = {
+                                    if(isAdded){
+                                    findNavController().popBackStack()}
+                                }
+                            )
+                        },
                         onUpdateExerciseClick = {
                             val action = ExerciseDetailsFragmentDirections
                                 .actionExerciseDetailsFragmentToExerciseEditFragment(it)
                             findNavController().navigate(action)
-                        }
+                        },
                     )
                 }
             }

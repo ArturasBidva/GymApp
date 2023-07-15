@@ -38,6 +38,10 @@ interface ExerciseDao {
     fun getExerciseCategoryOfExercises(title: String): Flow<List<ExerciseWithExerciseCategoryPair>>
 
     @Transaction
+    @Query("SELECT * FROM category")
+        fun getAllExerciseCategories(): Flow<List<ExerciseCategoryEntity>>
+
+    @Transaction
     @Query("SELECT * FROM  exercises")
     fun getAllExercises(): Flow<List<ExerciseWithExerciseCategoryPair>>
 

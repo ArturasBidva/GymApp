@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,21 +21,25 @@ import androidx.compose.ui.unit.sp
 import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.exercises.ExerciseEvent
 import com.example.gymapp.domain.exercises.ExerciseState
+import com.example.gymapp.ui.screens.exercise.CreateExerciseViewModel
 import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import com.example.gymapp.util.MockExerciseData.mockExerciseState
+import com.example.gymapp.util.Resource
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateExerciseScreen(
     viewModel: ExerciseViewModel,
+    createExerciseViewModel: CreateExerciseViewModel,
     state: ExerciseState,
     onEvent: (ExerciseEvent) -> Unit,
     onNavigateBack: () -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
 
-    val exerciseCategories by viewModel.exerciseCategories.observeAsState(listOf())
+    val exerciseCategories by createExerciseViewModel
+        .exerciseCategories.collectAsState(Resource.Loading())
     val message by viewModel.eventFlow.collectAsState(initial = null)
 
 
@@ -52,12 +55,15 @@ fun CreateExerciseScreen(
         modifier = Modifier.padding(bottom = 60.dp)
     ) {
         it
-        ExerciseExpandContent(
-            categories = exerciseCategories,
-            onNavigateBack = onNavigateBack,
-            state = state,
-            onEvent = onEvent
-        )
+        val categories = exerciseCategories.data
+        if (categories != null) {
+            ExerciseExpandContent(
+                categories = categories,
+                onNavigateBack = onNavigateBack,
+                state = state,
+                onEvent = onEvent
+            )
+        }
     }
 }
 
@@ -163,6 +169,7 @@ fun ExerciseExpandContent(
                                                         selectedExerciseCategories
                                                     )
                                                 )
+                                                expanded = !expanded
                                             }
                                             .padding(16.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,

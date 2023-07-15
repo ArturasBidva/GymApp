@@ -1,5 +1,6 @@
 package com.example.gymapp.ui.screens.exercise
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,9 +20,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -46,61 +52,78 @@ import com.example.gymapp.util.MockExerciseData.mockExercises
 import com.example.gymapp.util.Resource
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseScreen(
     viewModel: ExerciseViewModel,
     onExerciseClick: (Long) -> Unit,
-    onAddExerciseButtonClick: () -> Unit
+    onAddExerciseButtonClick: () -> Unit,
+    snackbarHostState: SnackbarHostState
+
 ) {
     val exercises by viewModel.uiState.collectAsState()
-    ExerciseScreenComp(exercises = exercises,
-        { onAddExerciseButtonClick() },
-        { onExerciseClick(it) })
-
+    val message by viewModel.eventFlow.collectAsState(null)
+    Log.d("DebugTagg", "Message: $message")
+    if (message != null) {
+        val snackbarMessage = message!!.asString()
+        Log.d("amogus", snackbarMessage)
+        LaunchedEffect(key1 = message) {
+            snackbarHostState.showSnackbar(message = snackbarMessage)
+        }
+    }
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier.padding(bottom = 60.dp)
+    ) {
+        it
+        ExerciseScreenComp(exercises = exercises,
+            { onAddExerciseButtonClick() },
+            { onExerciseClick(it) })
+    }
 }
 
 @Composable
 fun ExerciseScreenComp(
     exercises: ExerciseState,
     onAddExerciseButtonClick: () -> Unit,
-    onExerciseClick: (Long) -> Unit
+    onExerciseClick: (Long) -> Unit,
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Header(name = "Arturas")
-            when (val resource = exercises.exercise) {
-                is Resource.Empty -> {
-                    EmptyExerciseListBox(onButtonClick = { onAddExerciseButtonClick() })
-                }
-
-                is Resource.Error -> {
-                    Text(
-                        text = "Error: ${resource.message}",
-                        color = Color.Red,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-
-                is Resource.Loading -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CircularProgressIndicator()
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Header(name = "Arturas")
+                when (val resource = exercises.exercise) {
+                    is Resource.Empty -> {
+                        EmptyExerciseListBox(onButtonClick = { onAddExerciseButtonClick() })
                     }
-                }
 
-                is Resource.Success -> {
-                    resource.data?.let { exercise ->
-                        ExerciseList(exercises = exercise) {
-                            onExerciseClick(it)
+                    is Resource.Error -> {
+                        Text(
+                            text = "Error: ${resource.message}",
+                            color = Color.Red,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is Resource.Success -> {
+                        resource.data?.let { exercise ->
+                            ExerciseList(exercises = exercise) {
+                                onExerciseClick(it)
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
 
 @Preview
 @Composable
@@ -164,6 +187,7 @@ fun ExerciseList(exercises: List<Exercise>, onIconClick: (Long) -> Unit) {
         }
     }
 }
+
 
 
 @Composable

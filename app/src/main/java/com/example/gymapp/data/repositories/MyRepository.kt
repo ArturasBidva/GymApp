@@ -21,7 +21,7 @@ interface MyRepository {
     suspend fun updateExercise(id: Long, exercise: Exercise): Boolean
     suspend fun createExercise(exercise: Exercise): Resource<Unit>
     suspend fun getExerciseById(id: Long): Exercise
-    suspend fun deleteExerciseById(id: Long): Boolean
+    suspend fun deleteExerciseById(id: Long): Resource<Unit>
     suspend fun getAllCategories(): List<ExerciseCategory>
     suspend fun getAllWorkouts(): List<Workout>
     suspend fun getWorkoutById(id: Long): Workout
@@ -82,26 +82,17 @@ class MyRepositoryImpl @Inject constructor(
         return api.getExerciseById(id)
     }
 
-    override suspend fun deleteExerciseById(id: Long): Boolean {
-        try {
+    override suspend fun deleteExerciseById(id: Long): Resource<Unit> {
+       return try {
             val response = api.deleteExercise(id)
             if (response.isSuccessful) {
-                Toast.makeText(
-                    appContext,
-                    "Exercise deleted successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
+                Resource.Success(Unit)
             } else {
-                Toast.makeText(appContext, "Failed to delete exercise", Toast.LENGTH_SHORT)
-                    .show()
+                Resource.Error(message = UiText.DynamicString("Not authenticated"))
             }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        }catch (e: Exception) {
+            Resource.Error(message = UiText.DynamicString(e.message.toString()))
         }
-        return false
     }
 
     override suspend fun getAllCategories(): List<ExerciseCategory> {

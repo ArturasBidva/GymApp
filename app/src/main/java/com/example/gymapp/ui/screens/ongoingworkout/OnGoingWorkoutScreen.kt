@@ -71,23 +71,7 @@ fun OnGoingWorkoutScreen(workout: Workout) {
         var isWorkoutCompleted by remember { mutableStateOf(false) }
         var exerciseSetCount by remember { mutableStateOf(currentExercise.completedCount) }
 
-        val onRightClick = {
-            if (isWorkoutCompleted) {
-                exerciseSetCount = 0
-                currentExerciseIndex = 0
-                isWorkoutCompleted = false
-            } else if (exerciseSetCount >= currentExercise.goal) {
-                currentExerciseIndex =
-                    (currentExerciseIndex + 1).coerceIn(
-                        0,
-                        workout.exerciseWorkouts.size - 1
-                    )
-                exerciseSetCount =
-                    currentExercise.completedCount
-            } else {
-                exerciseSetCount++
-            }
-        }
+
 
         Column(
             modifier = Modifier
@@ -181,7 +165,7 @@ fun OnGoingWorkoutScreen(workout: Workout) {
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .size(50.dp)
-                        .clickable { onRightClick() }
+                        .clickable {}
                 )
             }
         }

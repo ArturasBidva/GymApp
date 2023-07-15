@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.data.repositories.MyRepository
 import com.example.gymapp.domain.exercises.Exercise
-import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.exercises.ExerciseEvent
 import com.example.gymapp.domain.exercises.ExerciseService
 import com.example.gymapp.domain.exercises.ExerciseState
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,47 +32,59 @@ class ExerciseViewModel @Inject constructor(
 ) : ViewModel() {
     private val _exercise = MutableLiveData<Exercise>(null)
     val exercise: LiveData<Exercise> = _exercise
-    private val _apiExercises: MutableStateFlow<Resource<List<Exercise>>> =
+    private val _exercises: MutableStateFlow<Resource<List<Exercise>>> =
         MutableStateFlow(Resource.Loading())
-    val apiExercises: StateFlow<Resource<List<Exercise>>> = _apiExercises
-    private val _exerciseCategories = MutableLiveData<List<ExerciseCategory>>(emptyList())
-    val exerciseCategories: LiveData<List<ExerciseCategory>> = _exerciseCategories
-    private val _state = MutableStateFlow(ExerciseState())
+    val exercises: StateFlow<Resource<List<Exercise>>> = _exercises
     private val _eventFlow = MutableSharedFlow<UiText?>()
     val eventFlow: SharedFlow<UiText?> = _eventFlow
-
-    val uiState = combine(_state, apiExercises) { state, exercises ->
+    private val _uiState = MutableStateFlow(ExerciseState())
+    val uiState = combine(_uiState, exercises) { state, exercises ->
         state.copy(exercise = exercises)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ExerciseState())
 
     init {
-        fetchAllExercisesFromApi()
-        //getAllExerciseCategories()
+            getExercises()
     }
 
-    fun onEvent(event: ExerciseEvent) {
+    fun onEvent(event: ExerciseEvent, onFetchComplete: () -> Unit = {}) {
         when (event) {
             is ExerciseEvent.DeleteExercise -> {
                 viewModelScope.launch {
-                    deleteExerciseById(event.exercise.id, {})
-                    exerciseService.deleteExercise(event.exercise)
+                    val result = exerciseService.deleteExerciseById(exerciseId = event.exercise.id)
+                    _eventFlow.emit(
+                        when (result) {
+                            is Resource.Success -> {
+                                Log.d("DebugTag", "Emitting success message")
+                                UiText.DynamicString("Exercise deleted successfully")
+                            }
+
+                            is Resource.Error -> {
+                                result.message
+                            }
+
+                            is Resource.Empty -> {
+                                UiText.DynamicString("Empty")
+                            }
+
+                            is Resource.Loading -> {
+                                UiText.DynamicString("Loading")
+                            }
+                        }
+                    )
+                    if (result is Resource.Success) {
+                   getExercises {
+                       onFetchComplete()
+                   }
+                    }
                 }
             }
 
             is ExerciseEvent.SetDescription -> {
-                _state.update {
-                    it.copy(
-                        description = event.description
-                    )
-                }
+                _uiState.update { it.copy(description = event.description) }
             }
 
             is ExerciseEvent.SetImgUrl -> {
-                _state.update {
-                    it.copy(
-                        imgUrl = event.imgUrl
-                    )
-                }
+                _uiState.update { it.copy(imgUrl = event.imgUrl) }
             }
 
             is ExerciseEvent.SaveExercise -> {
@@ -81,7 +93,9 @@ class ExerciseViewModel @Inject constructor(
                 val description = uiState.value.description
                 val category = uiState.value.category
                 if (title.isBlank() || imgUrl.isBlank() || description.isBlank()) {
-                    viewModelScope.launch { _eventFlow.emit(UiText.DynamicString("Exercise can't be empty")) }
+                    viewModelScope.launch {
+                        _eventFlow.emit(UiText.DynamicString("Exercise can't be empty"))
+                    }
                     return
                 }
                 val exercise = Exercise(
@@ -94,6 +108,7 @@ class ExerciseViewModel @Inject constructor(
                 )
                 viewModelScope.launch {
                     val result = repository.createExercise(exercise)
+                    getExercises()
                     _eventFlow.emit(
                         when (result) {
                             is Resource.Success -> {
@@ -114,7 +129,7 @@ class ExerciseViewModel @Inject constructor(
                         }
                     )
                 }
-                _state.update {
+                _uiState.update {
                     it.copy(
                         title = "",
                         description = "",
@@ -125,7 +140,7 @@ class ExerciseViewModel @Inject constructor(
             }
 
             is ExerciseEvent.SetCategory -> {
-                _state.update {
+                _uiState.update {
                     it.copy(
                         category = event.category
                     )
@@ -133,7 +148,7 @@ class ExerciseViewModel @Inject constructor(
             }
 
             is ExerciseEvent.SetTitle -> {
-                _state.update {
+                _uiState.update {
                     it.copy(
                         title = event.title
                     )
@@ -142,22 +157,15 @@ class ExerciseViewModel @Inject constructor(
         }
     }
 
-    private fun fetchAllExercisesFromApi() {
+    private fun getExercises(onFetchComplete: () -> Unit = {}) {
         viewModelScope.launch {
-            exerciseService.getAllExercises()
-                .collect {
-                    _apiExercises.update {
-
-                        Log.e("Amogus123", it.toString())
-                        it
-                    }
+            exerciseService.getExercises()
+                .onStart {
+                    _exercises.update { Resource.Loading() }}
+                .collect { items ->
+                    _exercises.update { items }
+                    onFetchComplete()
                 }
-        }
-    }
-
-    private fun getAllExerciseCategories() {
-        viewModelScope.launch {
-            _exerciseCategories.postValue(repository.getAllCategories())
         }
     }
 
@@ -165,7 +173,7 @@ class ExerciseViewModel @Inject constructor(
         viewModelScope.launch {
             val isSuccessful = repository.updateExercise(id, exercise)
             if (isSuccessful) {
-                fetchAllExercisesFromApi()
+                getExercises()
             }
         }
     }
@@ -177,16 +185,4 @@ class ExerciseViewModel @Inject constructor(
             _exercise.value = exercise
         }
     }
-
-
-    private fun deleteExerciseById(id: Long, onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            val isSuccessful = repository.deleteExerciseById(id)
-            if (isSuccessful) {
-                fetchAllExercisesFromApi()
-            }
-            onSuccess()
-        }
-    }
-
 }

@@ -16,6 +16,7 @@ class ExerciseRepository @Inject constructor(
     suspend fun insertExercise(exercises: ExerciseEntity) {
         exerciseDao.insertExercise(exercises)
     }
+    fun getAllExerciseCategories() = exerciseDao.getAllExerciseCategories()
 
     suspend fun getExercisesFromApi() = apiService.getAllExercises()
 

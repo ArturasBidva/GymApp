@@ -1,6 +1,5 @@
 package com.example.gymapp.ui.screens.exercisedetails
 
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,16 +35,17 @@ import com.example.gymapp.ui.montserrati
 import com.example.gymapp.ui.screens.exercise.ExerciseViewModel
 import com.example.gymapp.ui.screens.exercise.Header
 import com.example.gymapp.ui.screens.profile.CustomButton
+import com.example.gymapp.ui.screens.profile.OneClickButton
 
 @Composable
 fun ExerciseDetailsScreen(
     exerciseViewModel: ExerciseViewModel,
     onUpdateExerciseClick: (Exercise) -> Unit,
-    onDeleteExerciseClick: (ExerciseEvent) -> Unit
+    onDeleteExerciseClick: (ExerciseEvent) -> Unit,
 ) {
-
     val exerciseState by exerciseViewModel.exercise.observeAsState(null)
     val exercise = exerciseState
+
     if (exercise != null) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -106,17 +106,16 @@ fun ExerciseDetailsScreen(
                             .height(42.dp)
                     )
                     Spacer(modifier = Modifier.padding(top = 17.dp))
-                    val onBackPressedDispatcher =
-                        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-                    CustomButton(
+                    OneClickButton(
                         text = "Delete exercise",
                         onClick = {
-                            onDeleteExerciseClick(ExerciseEvent.DeleteExercise(exercise))
-                            onBackPressedDispatcher?.onBackPressed()
+                            onDeleteExerciseClick(
+                                ExerciseEvent.DeleteExercise(exercise)
+                            )
                         },
                         modifier = Modifier
                             .width(195.dp)
-                            .height(42.dp)
+                            .height(42.dp),
                     )
                 }
             }
