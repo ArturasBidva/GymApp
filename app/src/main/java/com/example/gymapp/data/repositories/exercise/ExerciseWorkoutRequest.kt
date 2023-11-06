@@ -1,4 +1,8 @@
 package com.example.gymapp.data.repositories.exercise
 
-class ExerciseWorkoutRequest {
-}
+import com.example.gymapp.domain.workouts.ExerciseWorkout
+
+data class ExerciseWorkoutRequest(
+    val workoutId: Long,
+    val exerciseWorkout: ExerciseWorkout
+)

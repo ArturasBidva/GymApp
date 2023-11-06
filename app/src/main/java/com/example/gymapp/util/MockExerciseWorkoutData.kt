@@ -1,11 +1,11 @@
 package com.example.gymapp.util
 
 import com.example.gymapp.domain.exercises.Exercise
-import com.example.gymapp.domain.workouts.ExerciseWorkouts
+import com.example.gymapp.domain.workouts.ExerciseWorkout
 
 object MockExerciseWorkoutData {
     val mockExerciseWorkouts = listOf(
-        ExerciseWorkouts(
+        ExerciseWorkout(
             id = 0,
             completedCount = 0,
             weight = 400,
@@ -19,7 +19,7 @@ object MockExerciseWorkoutData {
                 category = listOf()
             )
         ),
-        ExerciseWorkouts(
+        ExerciseWorkout(
             1,
             completedCount = 0,
             weight = 400,

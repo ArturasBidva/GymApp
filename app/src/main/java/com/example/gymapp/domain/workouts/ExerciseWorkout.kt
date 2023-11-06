@@ -5,8 +5,8 @@ import com.example.gymapp.domain.exercises.Exercise
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ExerciseWorkouts(
-    val id: Long = 0,
+data class ExerciseWorkout(
+    val id: Long?,
     val completedCount: Int = 0,
     val weight: Int,
     val goal: Int,

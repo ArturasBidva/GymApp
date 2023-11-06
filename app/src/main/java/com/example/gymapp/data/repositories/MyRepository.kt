@@ -1,18 +1,14 @@
 package com.example.gymapp.data.repositories
 
-import android.app.Application
-import android.widget.Toast
-import com.example.gymapp.R
+import android.util.Log
 import com.example.gymapp.data.api.ApiService
+import com.example.gymapp.data.repositories.exercise.ExerciseWorkoutRequest
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
-import com.example.gymapp.domain.workouts.AddExerciseToWorkout
-import com.example.gymapp.domain.workouts.ExerciseWorkouts
+import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -22,25 +18,23 @@ interface MyRepository {
     suspend fun createExercise(exercise: Exercise): Resource<Unit>
     suspend fun getExerciseById(id: Long): Exercise
     suspend fun deleteExerciseById(id: Long): Resource<Unit>
-    suspend fun getAllCategories(): List<ExerciseCategory>
-    suspend fun getAllWorkouts(): List<Workout>
+    suspend fun deleteWorkoutById(id: Long): Resource<Unit>
+    suspend fun getAllCategories(): Response<List<ExerciseCategory>>
+    suspend fun getAllWorkouts(): Resource<List<Workout>>
     suspend fun getWorkoutById(id: Long): Workout
-    suspend fun createWorkout(workout: Workout): Boolean
-    suspend fun createExerciseWorkout(exerciseWorkouts: ExerciseWorkouts): ExerciseWorkouts
-    suspend fun getAllExerciseWorkout(): List<ExerciseWorkouts>
-    suspend fun addExerciseToWorkout(addExerciseToWorkout: AddExerciseToWorkout): Boolean
-    suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts
-    suspend fun updateExerciseWorkoutById(id: Long, exerciseWorkouts: ExerciseWorkouts): Boolean
+    suspend fun createWorkout(workout: Workout): Resource<Workout>
+    suspend fun createExerciseWorkout(exerciseWorkout: ExerciseWorkout): Resource<ExerciseWorkout>
+    suspend fun getAllExerciseWorkout(): List<ExerciseWorkout>
+    suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkout
+    suspend fun updateExerciseWorkoutById(id: Long, exerciseWorkout: ExerciseWorkout): Boolean
+    suspend fun addExerciseWorkoutToWorkout(workout: Workout, exerciseWorkout: ExerciseWorkout): Resource<Unit>
+    suspend fun deleteExerciseWorkoutFromWorkoutById(workoutId: Long, exerciseId: Long): Resource<Unit>
 }
+
 
 class MyRepositoryImpl @Inject constructor(
     private val api: ApiService,
-    private val appContext: Application
 ) : MyRepository {
-    init {
-        val appName = appContext.getString(R.string.app_name)
-        println("Hello from $appName")
-    }
 
     override suspend fun getAllExercises(): Response<List<Exercise>> {
         return api.getAllExercises()
@@ -50,18 +44,13 @@ class MyRepositoryImpl @Inject constructor(
         try {
             val response = api.updateExercise(id, exercise)
             if (response.isSuccessful) {
-                Toast.makeText(
-                    appContext,
-                    "Exercise updated successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Log.e("WorkoutRepository", "updateExercise Success")
                 return true
             } else {
-                Toast.makeText(appContext, "Failed to update exercise", Toast.LENGTH_SHORT)
-                    .show()
+                Log.e("WorkoutRepository", "updateExercise failed")
             }
         } catch (e: Exception) {
-            Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("WorkoutRepository", "updateExercise failed exception: ${e.message}")
         }
         return false
     }
@@ -78,111 +67,169 @@ class MyRepositoryImpl @Inject constructor(
             Resource.Error(message = UiText.DynamicString(e.message.toString()))
         }
     }
+
     override suspend fun getExerciseById(id: Long): Exercise {
         return api.getExerciseById(id)
     }
 
     override suspend fun deleteExerciseById(id: Long): Resource<Unit> {
-       return try {
-            val response = api.deleteExercise(id)
+        return try {
+            val response = api.deleteExerciseById(id)
             if (response.isSuccessful) {
                 Resource.Success(Unit)
             } else {
                 Resource.Error(message = UiText.DynamicString("Not authenticated"))
             }
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Resource.Error(message = UiText.DynamicString(e.message.toString()))
         }
     }
 
-    override suspend fun getAllCategories(): List<ExerciseCategory> {
-        return api.getExerciseCategories();
+    override suspend fun deleteWorkoutById(id: Long): Resource<Unit> {
+        return try {
+            val response = api.deleteWorkout(id)
+            if (response.isSuccessful) {
+                Resource.Success(Unit)
+            } else {
+                Resource.Error(message = UiText.DynamicString("Not authenticated"))
+            }
+        } catch (e: Exception) {
+            Resource.Error(message = UiText.DynamicString(e.message.toString()))
+        }
     }
 
-    override suspend fun getAllWorkouts(): List<Workout> {
-        return api.getAllWorkouts();
+    override suspend fun getAllCategories(): Response<List<ExerciseCategory>> {
+        return api.getExerciseCategories()
+    }
+
+    override suspend fun getAllWorkouts(): Resource<List<Workout>> {
+        return try {
+            val response = api.getAllWorkouts()
+            if (response.isSuccessful) {
+                val workouts = response.body()
+                if (workouts != null) {
+                    Resource.Success(workouts)
+                } else {
+                    Resource.Error(message = UiText.DynamicString("Response body is null"))
+                }
+            } else {
+                Resource.Error(message = UiText.DynamicString("Not authenticated"))
+            }
+        } catch (e: Exception) {
+            Resource.Error(message = UiText.DynamicString(e.message.toString()))
+        }
     }
 
     override suspend fun getWorkoutById(id: Long): Workout {
         return api.getWorkoutById(id)
     }
 
-    override suspend fun createWorkout(workout: Workout): Boolean {
+    override suspend fun createWorkout(workout: Workout): Resource<Workout> {
         try {
             val response = api.createWorkout(workout)
             if (response.isSuccessful) {
-                Toast.makeText(
-                    appContext,
-                    "Workout saved successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
+                Log.e("WorkoutRepository", "createWorkout Success")
+                return Resource.Success(workout)
             } else {
-                Toast.makeText(appContext, "Failed to create workout", Toast.LENGTH_SHORT)
-                    .show()
+                Log.e("WorkoutRepository", "createWorkout Failed")
             }
         } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            Log.e(
+                "WorkoutRepository",
+                "createWorkout failed with exception: ${e.message}"
+            )
         }
-        return false
+        return Resource.Error(UiText.DynamicString("Failed to create workout"))
     }
 
-    override suspend fun createExerciseWorkout(exerciseWorkouts: ExerciseWorkouts): ExerciseWorkouts {
-        return api.createExerciseWorkout(exerciseWorkouts)
+    override suspend fun createExerciseWorkout(exerciseWorkout: ExerciseWorkout): Resource<ExerciseWorkout> {
+        val response = api.createExerciseWorkout(exerciseWorkout)
+        return if (response.isSuccessful) {
+            Resource.Success(response.body())
+        } else {
+            Resource.Error(UiText.DynamicString("Something went wrong"))
+        }
     }
 
-    override suspend fun getAllExerciseWorkout(): List<ExerciseWorkouts> {
+    override suspend fun getAllExerciseWorkout(): List<ExerciseWorkout> {
         return api.getAllExerciseWorkout()
     }
 
-    override suspend fun addExerciseToWorkout(addExerciseToWorkout: AddExerciseToWorkout): Boolean {
-        try {
-            val response = api.addExerciseToWorkout(addExerciseToWorkout)
-            if (response.isSuccessful) {
-                Toast.makeText(
-                    appContext,
-                    "Exercise added to workout successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return true
-            } else {
-                Toast.makeText(appContext, "Failed to add exercise", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return false
-    }
-
-    override suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkouts {
+    override suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkout {
         return api.getExerciseWorkoutById(id)
     }
 
-    override suspend fun updateExerciseWorkoutById(id: Long, exerciseWorkouts: ExerciseWorkouts): Boolean {
+    override suspend fun updateExerciseWorkoutById(
+        id: Long,
+        exerciseWorkout: ExerciseWorkout
+    ): Boolean {
         try {
-            val response = api.updateExerciseWorkoutById(id,exerciseWorkouts)
+            val response = api.updateExerciseWorkoutById(id, exerciseWorkout)
             if (response.isSuccessful) {
-                Toast.makeText(
-                    appContext,
-                    "Exercise updated successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Log.e("WorkoutRepository", "updateExerciseWorkoutById Success")
                 return true
             } else {
-                Toast.makeText(appContext, "Failed to update exercise", Toast.LENGTH_SHORT)
-                    .show()
+                Log.e("WorkoutRepository", "updateExerciseWorkoutById Failed")
             }
         } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(appContext, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            Log.e(
+                "WorkoutRepository",
+                "updateExerciseWorkoutById Failed exception: ${e.message}"
+            )
         }
         return false
     }
+
+    override suspend fun addExerciseWorkoutToWorkout(
+        workout: Workout,
+        exerciseWorkout: ExerciseWorkout
+    ): Resource<Unit> {
+        try {
+            val request =
+                ExerciseWorkoutRequest(workoutId = workout.id!!, exerciseWorkout = exerciseWorkout)
+            val response = api.addExerciseWorkoutToWorkout(request)
+            if (response.isSuccessful) {
+                Log.e("WorkoutRepository", "addExerciseWorkoutToWorkout Success")
+                return Resource.Success(Unit)
+            } else {
+                Resource.Error(UiText.DynamicString("Error"), response.message())
+                Log.e("WorkoutRepository", "addExerciseWorkoutToWorkout Failed")
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "WorkoutRepository",
+                "addExerciseWorkoutToWorkout failed exception: {${e.message}}"
+            )
+        }
+        return Resource.Empty()
     }
 
+    override suspend fun deleteExerciseWorkoutFromWorkoutById(
+        workoutId: Long,
+        exerciseId: Long
+    ): Resource<Unit> {
+        try {
+            val response = api.deleteExerciseWorkoutFromWorkoutById(
+                workoutId = workoutId,
+                exerciseId = exerciseId
+            )
+            if (response.isSuccessful) {
+                Log.e("WorkoutRepository", "deleteExerciseWorkoutFromWorkout Success")
+                return Resource.Success(Unit)
+            } else {
+                Resource.Error(UiText.DynamicString("Error"), response.message())
+                Log.e(
+                    "WorkoutRepository",
+                    "deleteExerciseWorkoutFromWorkout Failed" + response.message()
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(
+                "WorkoutRepository",
+                "removeExerciseWorkoutFromWorkout failed exception: {${e.message}}"
+            )
+        }
+        return Resource.Empty()
+    }
+
+}

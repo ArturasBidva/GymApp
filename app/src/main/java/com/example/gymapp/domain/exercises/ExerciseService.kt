@@ -4,12 +4,11 @@ import com.example.gymapp.data.db.entities.ExerciseAndExerciseCategoryCrossRef
 import com.example.gymapp.data.db.entities.ExerciseCategoryEntity
 import com.example.gymapp.data.db.entities.ExerciseEntity
 import com.example.gymapp.data.db.entities.ExerciseWithExerciseCategoryPair
-import com.example.gymapp.data.repositories.ExerciseRepository
 import com.example.gymapp.data.repositories.MyRepository
+import com.example.gymapp.data.repositories.exercise.ExerciseRepository
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -17,14 +16,22 @@ class ExerciseService @Inject constructor(
     private val exerciseRepository: ExerciseRepository,
     private val repository: MyRepository
 ) {
-    suspend fun deleteExercise(exercise: Exercise) {
-        exerciseRepository.deleteExercise(exercise.toExerciseEntity())
-    }
-    suspend fun deleteExerciseById(exerciseId : Long) : Resource<Unit> {
-       val response =  repository.deleteExerciseById(exerciseId)
-        return if(response is Resource.Success){
-            Resource.Success(Unit)
-        }else Resource.Error(UiText.DynamicString("Error deleting exercise"))
+
+    suspend fun deleteExercise(exercise: Exercise): Resource<Unit> {
+        return when (
+            val response = repository.deleteExerciseById(exercise.id)
+        ) {
+            is Resource.Success -> {
+                syncDataWithAPI()
+                Resource.Success(Unit)
+            }
+
+            is Resource.Error -> {
+                Resource.Error(UiText.DynamicString("Error deleting exercise"))
+            }
+
+            else -> response
+        }
     }
 
     private suspend fun insertExerciseAndExerciseCategoriesCrossRef(
@@ -35,35 +42,30 @@ class ExerciseService @Inject constructor(
         )
     }
 
-    suspend fun getAllExerciseCategories(): Flow<Resource<List<ExerciseCategory>>>{
-        return if(updateExercisesFromAPI()){
-            exerciseRepository.getAllExerciseCategories().map {exerciseCategories -> exerciseCategories.map { it.toCategory() }  }
-                .map { if (it.isEmpty()) Resource.Empty() else Resource.Success(it) }
-        } else {
-            flow { emit(Resource.Error(UiText.DynamicString("Error fetching exercise categories"))) }
-        }
+    fun getAllExerciseCategories(): Flow<List<ExerciseCategory>> {
+        return exerciseRepository.getAllExerciseCategories()
+            .map { exerciseCategories -> exerciseCategories.map { it.toCategory() } }
     }
 
-    suspend fun getExercises(): Flow<Resource<List<Exercise>>> {
-        return if (updateExercisesFromAPI()) {
-            exerciseRepository.getAllExercises()
-                .map { exercisesWithCategories -> exercisesWithCategories.map { it.toExercise() } }
-                .map { if (it.isEmpty()) Resource.Empty() else Resource.Success(it) }
-        } else {
-            flow { emit(Resource.Error(UiText.DynamicString("Error fetching exercises"))) }
-        }
+    fun getExercises(): Flow<List<Exercise>> {
+        return exerciseRepository.getAllExercises()
+            .map { exercisesWithCategories ->
+                exercisesWithCategories.map {
+                    it.toExercise()
+                }
+            }
     }
 
-
-
-    private suspend fun updateExercisesFromAPI(): Boolean {
+    suspend fun syncDataWithAPI(): Boolean {
         val exercisesResponse = exerciseRepository.getExercisesFromApi()
-        if (exercisesResponse.isSuccessful) {
+        val categoryResponse = exerciseRepository.getCategoriesFromApi()
+        if (exercisesResponse.isSuccessful && categoryResponse.isSuccessful) {
             val exercises = exercisesResponse.body()!!
+            val categories = categoryResponse.body()!!
             exerciseRepository.deleteExercises()
             exerciseRepository.deleteCategories()
             exerciseRepository.insertExercises(exercises.map { it.toExerciseEntity() })
-            val categoryEntities = exercises.map { it.category }.flatten().map { it.toEntity() }
+            val categoryEntities = categories.map { it }.map { it.toEntity() }
             exerciseRepository.insertExerciseCategories(categoryEntities)
             val refs = exercises.flatMap { exercise ->
                 exercise.category.map { category ->
@@ -100,14 +102,14 @@ class ExerciseService @Inject constructor(
 
     private fun ExerciseCategoryEntity.toCategory() = ExerciseCategory(
         id = this.exerciseCategoryId,
-        category = this.category,
+        name = this.category,
         isSelected = isSelected
     )
 
 
     private fun ExerciseCategory.toEntity() = ExerciseCategoryEntity(
         exerciseCategoryId = this.id,
-        category = this.category,
+        category = this.name,
         isSelected = isSelected
     )
 }

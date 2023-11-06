@@ -1,4 +1,4 @@
-package com.example.gymapp.data.repositories
+package com.example.gymapp.data.repositories.exercise
 
 import com.example.gymapp.data.api.ApiService
 import com.example.gymapp.data.db.entities.ExerciseAndExerciseCategoryCrossRef
@@ -13,17 +13,10 @@ class ExerciseRepository @Inject constructor(
 
     fun getAllExercises() = exerciseDao.getAllExercises()
 
-    suspend fun insertExercise(exercises: ExerciseEntity) {
-        exerciseDao.insertExercise(exercises)
-    }
     fun getAllExerciseCategories() = exerciseDao.getAllExerciseCategories()
 
     suspend fun getExercisesFromApi() = apiService.getAllExercises()
     suspend fun getCategoriesFromApi() = apiService.getExerciseCategories()
-
-    suspend fun deleteExercises(exercises: List<ExerciseEntity>) {
-        exerciseDao.deleteExercises(exercises)
-    }
 
     suspend fun deleteExercises() {
         exerciseDao.deleteAllExercises()
@@ -33,16 +26,8 @@ class ExerciseRepository @Inject constructor(
         exerciseDao.deleteAllCategories()
     }
 
-    suspend fun deleteExercise(exercises: ExerciseEntity) {
-        exerciseDao.deleteExercise(exercises)
-    }
-
     suspend fun insertExercises(exercises: List<ExerciseEntity>) {
         exerciseDao.insertExercises(exercises)
-    }
-
-    suspend fun insertExerciseCategory(exerciseCategoryEntity: ExerciseCategoryEntity) {
-        exerciseDao.insertExerciseCategory(exerciseCategoryEntity)
     }
 
     suspend fun insertExerciseCategories(exerciseCategoryEntity: List<ExerciseCategoryEntity>) {

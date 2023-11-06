@@ -3,7 +3,8 @@ package com.example.gymapp.di
 import android.content.Context
 import androidx.room.Room
 import com.example.gymapp.data.db.GymDatabase
-import com.example.gymapp.data.repositories.ExerciseDao
+import com.example.gymapp.data.repositories.exercise.ExerciseDao
+import com.example.gymapp.data.repositories.workout.WorkoutDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +31,11 @@ object RoomModule {
     @Provides
     fun provideExerciseDao(database: GymDatabase): ExerciseDao {
         return database.exerciseDao()
+    }
+    @Singleton
+    @Provides
+    fun provideWorkoutDao(database: GymDatabase): WorkoutDao {
+        return database.workoutDao()
     }
 
 }

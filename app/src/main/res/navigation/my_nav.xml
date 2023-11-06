@@ -2,130 +2,75 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/my_nav"
-    app:startDestination="@id/exerciseFragment">
+    app:startDestination="@id/mainScreenFragment">
 
+    <fragment
+        android:id="@+id/workoutFragment"
+        android:name="com.example.gymapp.ui.screens.workout.WorkoutFragment"
+        android:label="Workout">
+    <action
+        android:id="@+id/action_workoutFragment_to_WorkoutCreateWorkoutFragment"
+        app:destination="@id/createWorkoutFragment"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out"
+        />
+    </fragment>
     <fragment
         android:id="@+id/exerciseFragment"
         android:name="com.example.gymapp.ui.screens.exercise.ExerciseFragment"
-        android:label="Exercise">
-        <action
-            android:id="@+id/action_exerciseFragment_to_createExerciseFragment"
-            app:destination="@id/createExerciseFragment"/>
-        <action
-            android:id="@+id/action_exerciseFragment_to_exerciseDetailsFragment"
-            app:destination="@id/exerciseDetailsFragment">
-            <argument
-                android:name="exerciseId"
-                app:argType="long" />
-        </action>
-    </fragment>
-
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.gymapp.ui.screens.profile.ProfileFragment"
-        android:label="Profile" />
-    <fragment
-        android:id="@+id/startWorkoutFragment"
-        android:name="com.example.gymapp.ui.fragments.StartWorkoutFragment"
-        android:label="StartWorkout">
-        <action
-            android:id="@+id/action_startWorkoutFragment_To_onGoingWorkoutFragment"
-            app:destination="@id/onGoingWorkoutFragment">
-            <argument
-                android:name="workoutId"
-                app:argType="long" />
-        </action>
+        android:label="ExerciseFragment">
     </fragment>
     <fragment
-        android:id="@+id/onGoingWorkoutFragment"
-        android:name="com.example.gymapp.ui.screens.ongoingworkout.OnGoingWorkoutFragment"
-        android:label="OnGoingWorkout">
-        <argument
-            android:name="workoutId"
-            app:argType="long" />
+        android:id="@+id/workoutSchedule"
+        android:name="com.example.gymapp.ui.screens.workoutschedule.WorkoutScheduleFragment"
+        android:label="WorkoutScheduleFragment">
     </fragment>
-
     <fragment
-        android:id="@+id/CreateWorkoutFragment"
+        android:id="@+id/createWorkoutFragment"
         android:name="com.example.gymapp.ui.screens.createworkout.CreateWorkoutFragment"
-        android:label="CreateWorkout" />
+        android:label="CreateWorkout">
+    <action
+        android:id="@+id/action_createWorkoutFragment_to_WorkoutFragment"
+        app:destination="@id/workoutFragment"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out"
+        />
+        <action
+            android:id="@+id/action_createWorkoutFragment_to_ExerciseFragment"
+            app:destination="@id/exerciseFragment" />
+</fragment>
     <fragment
-        android:id="@+id/AddExerciseToWorkoutFragment"
-        android:name="com.example.gymapp.ui.fragments.AddExerciseToWorkoutFragment"
-        android:label="AddExerciseToWorkout" />
-
-    <fragment
-        android:id="@+id/WorkoutDetailsFragment"
-        android:name="com.example.gymapp.ui.fragments.WorkoutDetailsFragment"
-        android:label="WorkoutDetail">
-        <argument
-            android:name="workoutId"
-            app:argType="long" />
+        android:id="@+id/mainScreenFragment"
+        android:name="com.example.gymapp.ui.screens.mainscreen.MainScreenFragment"
+        android:label="MainScreen">
+        <action
+            android:id="@+id/action_mainScreenFragment_to_WorkoutsFragment"
+            app:destination="@id/workoutFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_ExerciseScreen"
+            app:destination="@id/exerciseFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_WorkoutSchedule"
+            app:destination="@id/workoutSchedule"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            />
     </fragment>
-
-    <fragment
-        android:id="@+id/WorkoutsDetailsFragment"
-        android:name="com.example.gymapp.ui.fragments.WorkoutsDetailsFragment"
-        android:label="WorkoutDetails">
-        <action
-            android:id="@+id/action_WorkoutsDetailsFragment_to_WorkoutDetailFragment"
-            app:destination="@id/WorkoutDetailsFragment">
-            <argument
-                android:name="workoutId"
-                app:argType="long" />
-        </action>
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/exerciseEditFragment"
-        android:name="com.example.gymapp.ui.screens.exerciseedit.ExerciseEditFragment"
-        android:label="ExerciseEdit">
-        <argument
-            android:name="exercise"
-            app:argType="com.example.gymapp.domain.exercises.Exercise" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/exerciseDetailsFragment"
-        android:name="com.example.gymapp.ui.screens.exercisedetails.ExerciseDetailsFragment"
-        android:label="ExerciseDetails">
-        <argument
-            android:name="exerciseId"
-            app:argType="long" />
-        <action
-            android:id="@+id/action_exerciseDetailsFragment_to_exerciseEditFragment"
-            app:destination="@id/exerciseEditFragment">
-            <argument
-                android:name="exercise"
-                app:argType="com.example.gymapp.domain.exercises.Exercise" />
-        </action>
-    </fragment>
-
-    <fragment
-        android:id="@+id/menuFragment"
-        android:name="com.example.gymapp.ui.screens.menu.MenuFragment"
-        android:label="Menu">
-        <action
-            android:id="@+id/action_menuFragment_to_createExerciseFragment"
-            app:destination="@id/createExerciseFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_WorkoutsDetailsFragment"
-            app:destination="@id/WorkoutsDetailsFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_CreateWorkoutFragment"
-            app:destination="@id/CreateWorkoutFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_AddExerciseToWorkoutFragment"
-            app:destination="@id/AddExerciseToWorkoutFragment" />
-        <action
-            android:id="@+id/action_menuFragment_to_StartWorkoutFragment"
-            app:destination="@id/startWorkoutFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/createExerciseFragment"
-        android:name="com.example.gymapp.ui.screens.createexercise.CreateExerciseFragment"
-        android:label="Create Exercise" />
 
 </navigation>

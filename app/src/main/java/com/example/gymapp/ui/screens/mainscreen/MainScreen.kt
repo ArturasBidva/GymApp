@@ -3,6 +3,7 @@ package com.example.gymapp.ui.screens.mainscreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,25 +12,33 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.gymapp.R
-import com.example.gymapp.ui.anotherCustomSandColor
 import com.example.gymapp.ui.customOrange
 import com.example.gymapp.ui.customRedColor
 import com.example.gymapp.ui.customSandColor
@@ -37,27 +46,52 @@ import com.example.gymapp.ui.customTextColor
 import com.example.gymapp.ui.defaultTextColor
 import com.example.gymapp.ui.fontColorForAvatarText
 import com.example.gymapp.ui.montserrati
-import com.example.gymapp.ui.thisWeekBoxColor
+import com.example.gymapp.ui.quicksandBold
+import com.example.gymapp.ui.reusable.LoadingCircle
 import com.example.gymapp.ui.underLineColor
 
 @Composable
-fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
-    MaterialTheme() {
+fun MainScreen(
+    mainScreenViewModel: MainViewModel = hiltViewModel(),
+    navigateToWorkout: () -> Unit,
+    navigateToExercise: () -> Unit,
+    navigateToWorkoutSchedule: () -> Unit,
+) {
+    val uiState by mainScreenViewModel.uiState.collectAsState(MainScreenUiState())
+    if (uiState.isLoading) {
+        LoadingCircle()
+    } else {
+        Content(
+            onWorkoutNavigateClick = navigateToWorkout,
+            onExerciseNavigateClick = navigateToExercise,
+            onWorkoutScheduleClick = navigateToWorkoutSchedule
+        )
+    }
+}
+
+@Composable
+private fun Content(
+    onWorkoutNavigateClick: () -> Unit,
+    onExerciseNavigateClick: () -> Unit,
+    onWorkoutScheduleClick: () -> Unit
+) {
+    MaterialTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp + 56.dp)
             ) {
-                Header(name = "Arturas")
+                TestHeader(text = "Home")
                 Spacer(modifier = Modifier.padding(vertical = 23.dp))
+                Text(
+                    text = "Welcome back,",
+                    fontFamily = montserrati,
+                    fontSize = 24.sp,
+                    color = defaultTextColor,
+                    modifier = Modifier.padding(horizontal = 43.dp)
+                )
                 Column(modifier = Modifier.padding(horizontal = 43.dp)) {
-                    Text(
-                        text = "Welcome back,",
-                        fontFamily = montserrati,
-                        fontSize = 24.sp,
-                        color = defaultTextColor
-                    )
                     Spacer(modifier = Modifier.padding(10.dp))
                     Box(
                         Modifier
@@ -65,10 +99,9 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                                 elevation = 10.dp,
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .width(274.dp)
                             .height(90.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(thisWeekBoxColor),
+                            .background(Color(0xFFF2F3FF)),
                         contentAlignment = Alignment.Center,
                     ) {
                         Box(
@@ -82,15 +115,19 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.padding(23.dp))
-                    Row(Modifier.fillMaxWidth()) {
+                    Spacer(modifier = Modifier.padding(12.dp))
+                    Row(
+                        Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Box(
                             Modifier
                                 .shadow(
                                     elevation = 10.dp,
                                     shape = RoundedCornerShape(10.dp)
                                 )
-                                .width(132.dp)
+                                .weight(1f)
                                 .height(90.dp)
                                 .clickable { onWorkoutNavigateClick() }
                                 .clip(RoundedCornerShape(10.dp))
@@ -108,14 +145,14 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(Modifier.width(10.dp))
                         Box(
-                            Modifier
+                            modifier = Modifier
                                 .shadow(
                                     elevation = 10.dp,
                                     shape = RoundedCornerShape(10.dp)
                                 )
-                                .width(132.dp)
+                                .weight(1f)
                                 .height(90.dp)
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(customSandColor),
@@ -125,7 +162,7 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                                 val avatar = painterResource(R.drawable.vector)
                                 Image(painter = avatar, contentDescription = "Hearth")
                                 Text(
-                                    text = "Your workouts",
+                                    text = "Workout history",
                                     fontFamily = montserrati,
                                     fontSize = 12.sp,
                                     color = Color.White
@@ -133,17 +170,78 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.padding(vertical = 26.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Row(
+                        Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .shadow(
+                                    elevation = 10.dp,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .height(90.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFB5ADE9)),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                val avatar = Icons.Outlined.Clear
+                                Image(
+                                    imageVector = avatar,
+                                    contentDescription = "Hearth",
+                                    Modifier.size(43.dp),
+                                    colorFilter = ColorFilter.tint(Color(0xFF6D4040))
+                                )
+                                Text(
+                                    text = "To be done",
+                                    fontFamily = montserrati,
+                                    fontSize = 12.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .shadow(
+                                    elevation = 10.dp,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .height(90.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFDB9797))
+                                .clickable { onExerciseNavigateClick() },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                val avatar = painterResource(R.drawable.exercisegym)
+                                Image(painter = avatar, contentDescription = "Hearth")
+                                Text(
+                                    text = "Exercises",
+                                    fontFamily = montserrati,
+                                    fontSize = 12.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
                     Box(
                         Modifier
                             .shadow(
                                 elevation = 10.dp,
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .width(274.dp)
                             .height(90.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(thisWeekBoxColor),
+                            .background(Color(0xFF91E183)),
                         contentAlignment = Alignment.Center,
                     ) {
                         Box(
@@ -157,11 +255,11 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                                 Spacer(modifier = Modifier.width(14.dp))
                                 Box(
                                     Modifier
-                                        .width(156.dp)
                                         .height(46.dp)
+                                        .clickable { onWorkoutScheduleClick() }
                                 ) {
                                     Text(
-                                        text = "This week you done 2 Workouts!", fontSize = 16.sp,
+                                        text = "Make your workout schedule", fontSize = 16.sp,
                                         fontFamily = montserrati,
                                         color = Color.White
                                     )
@@ -171,13 +269,16 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.padding(vertical = 50.dp))
+                    Spacer(modifier = Modifier.padding(vertical = 12.dp))
                     Box(
                         Modifier
-                            .width(274.dp)
-                            .height(49.dp)
+                            .shadow(
+                                elevation = 10.dp,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .height(70.dp)
                             .clip(RoundedCornerShape(10.dp))
-                            .background(anotherCustomSandColor),
+                            .background(Color(0xFFFF986B)),
                     ) {
                         Row(
                             Modifier
@@ -187,25 +288,22 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
                         ) {
                             val avatar = painterResource(R.drawable.barbell)
                             Icon(painter = avatar, contentDescription = "Barbell")
-                            Spacer(modifier = Modifier.width(11.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
                             Box(
-                                Modifier
-                                    .width(136.dp)
-                                    .height(45.dp),
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Column() {
                                     Text(
-                                        text = "Ready for workout?", fontSize = 12.sp,
+                                        text = "Ready for workout?", fontSize = 14.sp,
                                         fontFamily = montserrati,
                                         color = customTextColor
                                     )
                                     Text(
                                         text = "Click here to choose and start your daily workout!",
-                                        fontSize = 7.sp,
+                                        fontSize = 10.sp,
                                         fontFamily = montserrati,
                                         color = customTextColor,
-                                        lineHeight = 8.sp
+                                        lineHeight = 12.sp
                                     )
 
                                 }
@@ -217,11 +315,6 @@ fun MainScreenComposable(onWorkoutNavigateClick: () -> Unit) {
         }
 
     }
-}
-
-@Composable
-fun MainScreenCompWithViewModel(navigateToWorkout: () -> Unit) {
-    MainScreenComposable(onWorkoutNavigateClick = navigateToWorkout)
 }
 
 @Composable
@@ -259,63 +352,81 @@ fun Header(name: String) {
 
 @Preview
 @Composable
-fun MainScreenCompPrev() {
-    MainScreenComposable({})
+fun MainScreenPrev() {
+    Content(onWorkoutNavigateClick = { /*TODO*/ }, {
+    }, {})
 }
 
 @Preview(group = "Amogus")
 @Composable
 fun TestHeaderPreview() {
-    TestHeader()
+    TestHeader(text = "Home")
 }
 
 @Composable
-fun TestHeader() {
-    val avatar = painterResource(R.drawable.avatar__1_)
+fun TestHeader(text: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(customOrange)
+            .height(50.dp)
+            .background(customOrange),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .padding(top = 16.dp)
+                .fillMaxWidth()
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.arrow_left_1_svgrepo_com_1),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+                if (text != "Home") {
+                    Image(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        Modifier.size(24.dp),
+                        colorFilter = ColorFilter.tint(Color.White)
+                    )
+                }
                 Text(
-                    text = "Workouts",
-                    fontFamily = montserrati,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Box(
-                    modifier = Modifier
-                        .height(40.dp)
-                        .background(Color.White)
-                        .width(1.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "Arturas",
-                    fontFamily = montserrati,
-                    fontSize = 12.sp,
+                    text = text,
+                    fontFamily = quicksandBold,
+                    fontSize = 20.sp,
                     textAlign = TextAlign.Center,
-                    color = fontColorForAvatarText
+                    color = Color.White,
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false))
                 )
-                Spacer(modifier = Modifier.padding(horizontal = 7.dp))
-                Image(painter = avatar, contentDescription = "Avatar icon")
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                modifier = Modifier
+                    .padding(start = 5.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Arturas",
+                        fontFamily = montserrati,
+                        fontSize = 16.sp,
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            platformStyle = PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(10.dp)) // Adjust spacer width as needed
+                    Image(
+                        painter = painterResource(R.drawable.avatar__1_),
+                        contentDescription = "Avatar icon",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
         }
     }
 }

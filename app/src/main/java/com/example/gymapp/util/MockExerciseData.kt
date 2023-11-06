@@ -12,7 +12,7 @@ object MockExerciseData {
             weight = 0,
             imgUrl = "hahaha",
             description = "Cia kazkoks aprasymas apie pratima",
-            category = listOf(ExerciseCategory(category = "Bicepsas"))
+            category = listOf(ExerciseCategory(name = "Bicepsas"))
         ),
         Exercise(
             id = 1,
@@ -20,7 +20,7 @@ object MockExerciseData {
             weight = 200,
             imgUrl = "http",
             description = "Cia kazkoks aprasymas apie pratima",
-            category = listOf(ExerciseCategory(category = "Tricepsas"))
+            category = listOf(ExerciseCategory(name = "Tricepsas"))
         ),
         Exercise(
             id = 2,
@@ -28,7 +28,7 @@ object MockExerciseData {
             weight = 200,
             imgUrl = "http",
             description = "Cia kazkoks aprasymas apie pratima",
-            category = listOf(ExerciseCategory(category = "Nugara"))
+            category = listOf(ExerciseCategory(name = "Nugara"))
         )
     )
     val mockExerciseState = ExerciseState(

@@ -1,10 +1,10 @@
+package com.example.gymapp.data.db.entities
+
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.example.gymapp.data.db.entities.ExerciseEntity
-import com.example.gymapp.data.db.entities.WorkoutEntity
 
-data class WorkoutWithExercises(
+data class WorkoutWithExercisesPair(
     @Embedded val workout: WorkoutEntity,
     @Relation(
         parentColumn = "workoutId",
