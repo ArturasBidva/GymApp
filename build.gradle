@@ -1,17 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext {
-        hilt_version = '2.45'
-        ext.kotlin_version = '1.9.0'
-    }
 
     repositories {
         google()
+        mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3")
-        classpath 'com.android.tools.build:gradle:8.1.2'
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.5")
+        classpath "com.android.tools.build:gradle:8.1.2"
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20'
     }
 }
 
@@ -19,6 +19,11 @@ plugins {
     id 'com.android.application' version '8.1.2' apply false
     id 'com.android.library' version '8.1.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.21' apply false
-    id("com.google.dagger.hilt.android") version "2.44" apply false
-    id("org.jetbrains.kotlin.plugin.parcelize") version "1.8.21" apply false
+    id'com.google.dagger.hilt.android' version '2.48' apply false
+    id'org.jetbrains.kotlin.plugin.parcelize' version "1.8.21" apply false
+    id("com.google.devtools.ksp") version "1.9.20-1.0.14" apply false
+}
+
+ext {
+    defaultTargetSdkVersion = 34
 }

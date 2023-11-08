@@ -2,7 +2,6 @@ package com.example.gymapp.data.api
 
 import com.example.gymapp.data.repositories.MyRepository
 import com.example.gymapp.data.repositories.MyRepositoryImpl
-import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -22,7 +21,6 @@ object ApiClient {
     @Provides
     @Singleton
     fun provideMyApi(okHttpClient: OkHttpClient): ApiService {
-        val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)
