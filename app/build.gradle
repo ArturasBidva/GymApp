@@ -4,7 +4,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
     id 'com.google.devtools.ksp'
-    id 'androidx.navigation.safeargs'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -30,11 +30,11 @@ android {
         }
     }
     namespace 'com.example.gymapp'
-    compileSdkVersion defaultTargetSdkVersion
+    compileSdk defaultTargetSdkVersion
 
     defaultConfig {
         applicationId "com.example.gymapp"
-        minSdk 24
+        minSdk 26
         targetSdkVersion defaultTargetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -55,8 +55,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
     kotlinOptions {
-        jvmTarget = '18'
+        jvmTarget = '17'
     }
 
     composeOptions {
@@ -65,7 +70,7 @@ android {
 }
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

@@ -19,6 +19,8 @@ class WorkoutRepository @Inject constructor(
         workoutDao.insertExerciseWorkouts(exerciseWorkout)
     }
 
+
+
     fun getAllWorkouts() = workoutDao.getAllWorkouts()
 
     suspend fun getWorkoutsFromApi() = apiService.getAllWorkouts()

@@ -21,23 +21,49 @@ object ApiClient {
     @Provides
     @Singleton
     fun provideMyApi(okHttpClient: OkHttpClient): ApiService {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .build()
-            .create(ApiService::class.java)
+
+        try{
+            return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .build()
+                .create(ApiService::class.java)
+        }
+        catch(e: Exception){
+            // caught and handles it
+        }
+
+
+        return TODO("Provide the return value")
     }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
+
+
+        try{
+
+
+
+
+            return OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build()
+        }
+        catch(e: Exception){
+            // caught and handles it
+        }
+
+
+        return TODO("Provide the return value")
+
+
+
     }
 
     @Provides
