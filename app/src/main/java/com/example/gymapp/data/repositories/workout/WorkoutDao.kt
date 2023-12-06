@@ -24,8 +24,9 @@ interface WorkoutDao {
     @Transaction
     suspend fun upsertWorkouts(workouts: List<WorkoutEntity>) {
         for (workout in workouts) {
-            val existingWorkout = getWorkoutById(workout.workoutId)
-            if (existingWorkout?.date != null) {
+            val existingWorkout = getWorkoutById(workout.id)
+            val hasNonNullDates = existingWorkout?.schedules?.any { it.date != null } ?: false
+            if (hasNonNullDates) {
                 //do nothing
             } else {
                 insertWorkout(workout)
@@ -34,7 +35,7 @@ interface WorkoutDao {
     }
 
 
-    @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
+    @Query("SELECT * FROM workouts WHERE id = :workoutId")
     suspend fun getWorkoutById(workoutId: Long): WorkoutEntity?
 
 
@@ -46,7 +47,7 @@ interface WorkoutDao {
     fun getAllWorkouts(): Flow<List<WorkoutWithExerciseWorkoutPair>>
 
     @Transaction
-    @Query("DELETE FROM workouts WHERE date == null")
+    @Query("DELETE FROM workouts WHERE schedules == null")
     suspend fun deleteAllWorkouts()
 
 

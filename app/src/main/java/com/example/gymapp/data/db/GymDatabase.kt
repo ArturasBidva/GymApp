@@ -1,5 +1,6 @@
 package com.example.gymapp.data.db
 
+import com.example.gymapp.data.repositories.Converters
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -10,7 +11,6 @@ import com.example.gymapp.data.db.entities.ExerciseWorkoutEntity
 import com.example.gymapp.data.db.entities.WorkoutAndExerciseWorkoutCrossRef
 import com.example.gymapp.data.db.entities.WorkoutEntity
 import com.example.gymapp.data.db.entities.WorkoutExerciseCrossRef
-import com.example.gymapp.data.repositories.Converters
 import com.example.gymapp.data.repositories.exercise.ExerciseDao
 import com.example.gymapp.data.repositories.workout.WorkoutDao
 

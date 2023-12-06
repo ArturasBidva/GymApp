@@ -2,6 +2,7 @@ package com.example.gymapp.data.repositories
 
 import android.util.Log
 import com.example.gymapp.data.api.ApiService
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.data.repositories.exercise.ExerciseWorkoutRequest
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
@@ -27,7 +28,7 @@ interface MyRepository {
     suspend fun getAllExerciseWorkout(): List<ExerciseWorkout>
     suspend fun getExerciseWorkoutById(id: Long): ExerciseWorkout
     suspend fun updateExerciseWorkoutById(id: Long, exerciseWorkout: ExerciseWorkout): Boolean
-    suspend fun addExerciseWorkoutToWorkout(workout: Workout, exerciseWorkout: ExerciseWorkout): Resource<Unit>
+    suspend fun addExerciseWorkoutToWorkout(workout: WorkoutLocal, exerciseWorkout: ExerciseWorkout): Resource<Unit>
     suspend fun deleteExerciseWorkoutFromWorkoutById(workoutId: Long, exerciseId: Long): Resource<Unit>
 }
 
@@ -181,12 +182,12 @@ class MyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addExerciseWorkoutToWorkout(
-        workout: Workout,
+        workout: WorkoutLocal,
         exerciseWorkout: ExerciseWorkout
     ): Resource<Unit> {
         try {
             val request =
-                ExerciseWorkoutRequest(workoutId = workout.id!!, exerciseWorkout = exerciseWorkout)
+                ExerciseWorkoutRequest(workoutId = workout.id, exerciseWorkout = exerciseWorkout)
             val response = api.addExerciseWorkoutToWorkout(request)
             if (response.isSuccessful) {
                 Log.e("WorkoutRepository", "addExerciseWorkoutToWorkout Success")

@@ -241,7 +241,7 @@ fun CreateWorkoutBox(
                     null,
                     title = workoutTitle,
                     description = workoutDescription,
-                    exerciseWorkouts = emptyList()
+                    exerciseWorkouts = emptyList(),
                 )
                 CustomButton(
                     onClick = {

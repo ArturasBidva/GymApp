@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.gymapp.R
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.customGrayTwo
@@ -38,9 +39,10 @@ import com.example.gymapp.ui.montserrati
 import com.example.gymapp.ui.quicksandBold
 import com.example.gymapp.ui.quicksandMedium
 import com.example.gymapp.util.MockWorkoutData
+import com.example.gymapp.util.MockWorkoutLocalData
 
 @Composable
-fun WorkoutDetailsScreen(onDismiss: () -> Unit,workout: Workout) {
+fun WorkoutDetailsScreen(onDismiss: () -> Unit,workout: WorkoutLocal) {
     Dialog(
         onDismissRequest = {onDismiss()},
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -134,7 +136,7 @@ fun WorkoutDetailsScreen(onDismiss: () -> Unit,workout: Workout) {
 @Preview
 @Composable
 fun DialogPreview() {
-    WorkoutDetailsScreen({}, MockWorkoutData.mockWorkouts.first())
+    WorkoutDetailsScreen({}, MockWorkoutLocalData.mockWorkoutsLocal.first())
 }
 
 @Composable

@@ -2,6 +2,7 @@ package com.example.gymapp.ui.screens.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.domain.workouts.WorkoutService
@@ -56,7 +57,7 @@ class WorkoutViewModel @Inject constructor(
                     }
 
                     is WorkoutUiEvent.DeleteWorkout -> {
-                        val result = deleteWorkoutById(workoutId = uiState.uiEvent.workout.id!!)
+                        val result = deleteWorkoutById(workoutId = uiState.uiEvent.workoutId)
                         _uiState.update {
                             it.copy(
                                 uiText = when (result) {
@@ -143,6 +144,7 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+
     private fun getAllWorkouts(onFetchComplete: () -> Unit = {}) {
         viewModelScope.launch {
             workoutService.getWorkouts()
@@ -206,7 +208,7 @@ class WorkoutViewModel @Inject constructor(
 
     private fun addExerciseToWorkout(
         exerciseWorkout: ExerciseWorkout,
-        workout: Workout
+        workout: WorkoutLocal
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }

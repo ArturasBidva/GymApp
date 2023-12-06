@@ -1,6 +1,7 @@
 package com.example.gymapp.ui.screens.workoutschedule.components
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import com.example.gymapp.R
+import com.example.gymapp.data.db.entities.WorkoutEntity
+import com.example.gymapp.data.local.Schedule
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.quicksandBold
 import com.example.gymapp.ui.quicksandMedium
@@ -63,15 +68,17 @@ fun AddWorkoutToSchedule(
     onTimePickerDismiss: () -> Unit,
     onTimeConfirm: (LocalTime) -> Unit,
     onOpenTimePickerClick: (TimeSelectionDialogType) -> Unit,
-    selectedWorkout: (Workout) -> Unit,
+    selectedWorkout: (WorkoutLocal) -> Unit,
     selectWorkoutDate: (LocalDate) -> Unit,
     workoutScheduleDialogVisibility: (Boolean) -> Unit,
     workoutScheduleDateDialogVisibility: (Boolean) -> Unit,
-    createWorkoutSchedule: (Workout) -> Unit
+    createWorkoutSchedule: (WorkoutLocal) -> Unit,
+    selectColor: (Color) -> Unit
 ) {
     var workoutNote by remember {
         mutableStateOf("")
     }
+    Log.d("amogusas", workoutScheduleUiState.selectedColor.toString())
     workoutScheduleUiState.timeSelectionDialogType?.let {
         TimePickerDialog(
             onDismiss = onTimePickerDismiss,
@@ -83,7 +90,8 @@ fun AddWorkoutToSchedule(
         WorkoutDatePickerDialog(
             onTimeValidation = onTimeValidation,
             selectedDate = { selectWorkoutDate(it) },
-            dialogVisibility = { workoutScheduleDateDialogVisibility(it) })
+            dialogVisibility = { workoutScheduleDateDialogVisibility(it) },
+            selectedDateCallback = {it})
     }
     Dialog(
         onDismissRequest = { workoutScheduleDialogVisibility(false) },
@@ -115,6 +123,8 @@ fun AddWorkoutToSchedule(
                     onItemSelected = { selectedWorkout(it) },
                     workoutScheduleState = workoutScheduleUiState
                 )
+                Spacer(Modifier.height(15.dp))
+                ColorPicker(selectColor)
                 Spacer(modifier = Modifier.height(15.dp))
                 CustomTextField(
                     value = workoutNote,
@@ -225,15 +235,18 @@ fun AddWorkoutToSchedule(
                         .padding(horizontal = 19.dp)
                         .clickable {
                             if (workoutScheduleUiState.selectedWorkout != null) {
-                                val workout = Workout(
+                                val schedule = Schedule(
+                                    date = workoutScheduleUiState.selectedDay,
+                                    startTime = workoutScheduleUiState.startWorkoutTime,
+                                    endTime = workoutScheduleUiState.endWorkoutTime,
+                                    color = workoutScheduleUiState.selectedColor!!.toArgb()
+                                )
+                                val workout = WorkoutLocal(
                                     id = workoutScheduleUiState.selectedWorkout.id,
                                     title = workoutScheduleUiState.selectedWorkout.title,
                                     description = workoutScheduleUiState.selectedWorkout.description,
-                                    date = workoutScheduleUiState.selectedDay,
-                                    startTime = workoutScheduleUiState.startWorkoutTime,
-                                    endTime = workoutScheduleUiState.endWorkoutTime
+                                    schedules = listOf(schedule)
                                 )
-
                                 createWorkoutSchedule(workout)
                             }
                         }
@@ -256,8 +269,8 @@ fun AddWorkoutToSchedule(
 
 @Composable
 private fun SelectWorkoutDropDown(
-    items: List<Workout>,
-    onItemSelected: (Workout) -> Unit,
+    items: List<WorkoutLocal>,
+    onItemSelected: (WorkoutLocal) -> Unit,
     workoutScheduleState: WorkoutScheduleUiState
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -334,6 +347,8 @@ fun AddWorkoutToSchedulePreview() {
         workoutScheduleDialogVisibility = {},
         selectWorkoutDate = {},
         workoutScheduleDateDialogVisibility = {},
-        createWorkoutSchedule = {}
+        createWorkoutSchedule = {},
+        selectColor = {}
     )
 }
+

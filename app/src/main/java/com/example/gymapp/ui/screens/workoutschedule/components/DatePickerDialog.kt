@@ -19,12 +19,20 @@ import java.time.ZoneId
 fun WorkoutDatePickerDialog(
     onTimeValidation: (Long) -> Boolean,
     selectedDate : (LocalDate) -> Unit,
-    dialogVisibility: (Boolean) -> Unit
+    dialogVisibility: (Boolean) -> Unit,
+    selectedDateCallback: (LocalDate) -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
     val confirmEnabled = derivedStateOf { datePickerState.selectedDateMillis != null }
     DatePickerDialog(
         onDismissRequest = {
+            val selectedDate = datePickerState.selectedDateMillis?.let {
+                Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+            }
+            if (selectedDate != null) {
+                selectedDate(selectedDate)
+                selectedDateCallback(selectedDate)
+            }
             dialogVisibility(false)
         },
         confirmButton = {
@@ -36,6 +44,7 @@ fun WorkoutDatePickerDialog(
                     }
                     if (selectedDate != null) {
                         selectedDate(selectedDate)
+                        selectedDateCallback(selectedDate)
                     }
 
                 },

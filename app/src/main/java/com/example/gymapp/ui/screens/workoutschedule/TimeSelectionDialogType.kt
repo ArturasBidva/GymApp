@@ -1,7 +1,7 @@
 package com.example.gymapp.ui.screens.workoutschedule
 
 sealed class TimeSelectionDialogType {
-    object StartTime: TimeSelectionDialogType()
-    object EndTime: TimeSelectionDialogType()
+    data object StartTime: TimeSelectionDialogType()
+    data object EndTime: TimeSelectionDialogType()
 
 }

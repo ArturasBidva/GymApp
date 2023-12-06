@@ -1,8 +1,10 @@
 package com.example.gymapp.ui.screens.workoutschedule
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.data.local.Schedule
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.WorkoutService
 import com.example.gymapp.util.TimeValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,21 +31,33 @@ class WorkoutScheduleViewModel @Inject constructor(
         _uiState.update { it.copy(selectedDay = day) }
     }
 
-    fun addWorkoutToSchedule(workout: Workout) {
+    fun addWorkoutToSchedule(workout: WorkoutLocal) {
         viewModelScope.launch {
-            workoutService.addWorkoutToSchedule(workout = workout)
+            workoutService.addWorkoutToSchedule(workoutLocal = workout)
         }
     }
 
     fun setWorkoutScheduleDialogVisibility(visible: Boolean) {
-        _uiState.update { it.copy(isDialogVisible = visible) }
+        _uiState.update {
+            it.copy(isDialogVisible = visible)
+        }
     }
 
     fun setWorkoutScheduleDateDialogVisibility(visible: Boolean) {
         _uiState.update { it.copy(isCalendarDialogVisible = visible) }
     }
 
-    fun selectWorkout(workout: Workout?) {
+    fun selectColor(color: Color) {
+        _uiState.update { it.copy(selectedColor = color) }
+    }
+
+    fun deleteWorkoutSchedule(workout: WorkoutLocal,selectedDay : LocalDate) {
+        viewModelScope.launch {
+            workoutService.removeWorkoutFromSchedule(workoutLocal = workout, dayOfWorkout = selectedDay)
+        }
+    }
+
+    fun selectWorkout(workout: WorkoutLocal?) {
         _uiState.update { it.copy(selectedWorkout = workout) }
     }
 

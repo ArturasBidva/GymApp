@@ -1,4 +1,4 @@
-package com.example.gymapp.ui.screens.workoutschedule
+package com.example.gymapp.ui.screens.workoutschedule.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymapp.R
+import com.example.gymapp.util.displayText
 import java.time.YearMonth
 
 @Composable
@@ -46,7 +47,7 @@ fun SimpleCalendarTitle(
             modifier = Modifier
                 .weight(1f)
                 .testTag("MonthTitle"),
-            text = currentMonth.month.toString(),
+            text = currentMonth.displayText(),
             fontSize = 22.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium,

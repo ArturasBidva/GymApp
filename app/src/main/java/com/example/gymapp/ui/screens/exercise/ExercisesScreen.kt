@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.gymapp.R
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.workouts.ExerciseWorkout
@@ -67,6 +68,7 @@ import com.example.gymapp.ui.screens.workout.WorkoutViewModel
 import com.example.gymapp.util.MockExerciseCategoryData
 import com.example.gymapp.util.MockExerciseData
 import com.example.gymapp.util.MockWorkoutData
+import com.example.gymapp.util.MockWorkoutLocalData
 
 @Composable
 fun ExercisesScreen(
@@ -205,7 +207,7 @@ private fun Content(
                                 onRemoveClick = {
                                     onWorkoutUiEvent(
                                         WorkoutUiEvent.DeleteExerciseWorkoutFromWorkout(
-                                            workoutId = workoutUiState.selectedWorkout.id!!,
+                                            workoutId = workoutUiState.selectedWorkout.id,
                                             exerciseId = exercise.id
                                         )
                                     )
@@ -246,9 +248,9 @@ private fun WorkoutSelectionSection(
     onExpandClick: () -> Unit,
     onCollapse: () -> Unit,
     expanded: Boolean,
-    selectedWorkout: Workout,
-    unselectedWorkouts: List<Workout>,
-    onSelectWorkout: (Workout) -> Unit,
+    selectedWorkout: WorkoutLocal,
+    unselectedWorkouts: List<WorkoutLocal>,
+    onSelectWorkout: (WorkoutLocal) -> Unit,
     workoutUiState: WorkoutUiState
 ) {
     Column(modifier = Modifier.padding(horizontal = 30.dp)) {
@@ -300,7 +302,7 @@ fun ExercisesScreenPrev() {
         onWorkoutUiEvent = {},
         workoutUiState = WorkoutUiState(
             workout = MockWorkoutData.mockWorkouts[1],
-            workouts = MockWorkoutData.mockWorkouts
+            workouts = MockWorkoutLocalData.mockWorkoutsLocal
         ),
         onSelection = {},
         onGoBackClick = {},
@@ -383,7 +385,7 @@ fun ExerciseCategoryBarPrev() {
 @Composable
 fun ExerciseCard(
     exercise: Exercise,
-    workout: Workout,
+    workout: WorkoutLocal,
     onClickSeeMore: () -> Unit,
     onAddClick: () -> Unit,
     onRemoveClick: () -> Unit

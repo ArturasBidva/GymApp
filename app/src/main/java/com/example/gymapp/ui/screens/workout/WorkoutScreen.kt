@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymapp.R
+import com.example.gymapp.data.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.customOrange
 import com.example.gymapp.ui.montserrati
@@ -43,6 +44,7 @@ import com.example.gymapp.ui.quicksandMedium
 import com.example.gymapp.ui.reusable.LoadingCircle
 import com.example.gymapp.ui.screens.mainscreen.TestHeader
 import com.example.gymapp.util.MockWorkoutData
+import com.example.gymapp.util.MockWorkoutLocalData
 
 @Composable
 fun WorkoutScreen(
@@ -98,7 +100,7 @@ private fun Content(
                         WorkoutCard(
                             workout = workout,
                             onDeleteClick = {
-                                onWorkoutUiEvent(WorkoutUiEvent.DeleteWorkout(workout))
+                                onWorkoutUiEvent(WorkoutUiEvent.DeleteWorkout(workout.id))
                             },
                             onClickSeeMore = {
                                 onWorkoutUiEvent(WorkoutUiEvent.SelectWorkout(workout))
@@ -157,7 +159,7 @@ fun CreateButton(onCreateClick: () -> Unit, text: String) {
 
 @Composable
 fun WorkoutCard(
-    workout: Workout,
+    workout: WorkoutLocal,
     onClickSeeMore: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
@@ -284,7 +286,7 @@ fun SeeMoreButtonPrev() {
 @Preview(group = "amogus")
 @Composable
 fun WorkoutCardTestPreview() {
-    WorkoutCard(workout = MockWorkoutData.mockWorkouts.first(), {}, {})
+    WorkoutCard(workout = MockWorkoutLocalData.mockWorkoutsLocal.first(), {}, {})
 }
 
 @Preview
