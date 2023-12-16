@@ -1,6 +1,7 @@
 package com.example.gymapp.ui.screens.workoutschedule
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.data.local.Schedule
@@ -26,13 +27,25 @@ class WorkoutScheduleViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(WorkoutScheduleUiState())
     val uiState: StateFlow<WorkoutScheduleUiState> = _uiState
 
-
     fun selectWorkoutDate(day: LocalDate?) {
         _uiState.update { it.copy(selectedDay = day) }
     }
 
-    fun addWorkoutToSchedule(workout: WorkoutLocal) {
+    fun addWorkoutToSchedule() {
         viewModelScope.launch {
+            val workoutScheduleUiState = uiState.value
+            val schedule = Schedule(
+                date = workoutScheduleUiState.selectedDay,
+                startTime = workoutScheduleUiState.startWorkoutTime,
+                endTime = workoutScheduleUiState.endWorkoutTime,
+                color = workoutScheduleUiState.selectedColor!!.toArgb()
+            )
+            val workout = WorkoutLocal(
+                id = workoutScheduleUiState.selectedWorkout!!.id,
+                title = workoutScheduleUiState.selectedWorkout.title,
+                description = workoutScheduleUiState.selectedWorkout.description,
+                schedules = listOf(schedule)
+            )
             workoutService.addWorkoutToSchedule(workoutLocal = workout)
         }
     }
@@ -40,6 +53,12 @@ class WorkoutScheduleViewModel @Inject constructor(
     fun setWorkoutScheduleDialogVisibility(visible: Boolean) {
         _uiState.update {
             it.copy(isDialogVisible = visible)
+        }
+    }
+
+    fun setWorkoutForEdit(workout: WorkoutLocal?) {
+        _uiState.update {
+            it.copy(selectedEditableWorkout = workout)
         }
     }
 
@@ -51,9 +70,12 @@ class WorkoutScheduleViewModel @Inject constructor(
         _uiState.update { it.copy(selectedColor = color) }
     }
 
-    fun deleteWorkoutSchedule(workout: WorkoutLocal,selectedDay : LocalDate) {
+    fun deleteWorkoutSchedule(workout: WorkoutLocal, selectedDay: LocalDate) {
         viewModelScope.launch {
-            workoutService.removeWorkoutFromSchedule(workoutLocal = workout, dayOfWorkout = selectedDay)
+            workoutService.removeWorkoutFromSchedule(
+                workoutLocal = workout,
+                dayOfWorkout = selectedDay
+            )
         }
     }
 
@@ -107,6 +129,33 @@ class WorkoutScheduleViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 endWorkoutTime = null,
+                                timeSelectionDialogType = null
+                            )
+                        }
+                    }
+                }
+
+                TimeSelectionDialogType.EndTimeUpdate -> {
+
+                }
+
+                TimeSelectionDialogType.StartTimeUpdate -> {
+                    if (TimeValidator.validateStartTime(
+                            startTime = time,
+                            endTime = uiState.value.endWorkoutTime
+                        )
+                    ) {
+                        _uiState.update {
+                            it.copy(
+                                selectedTimeStart = time,
+                                timeSelectionDialogType = null
+                            )
+                        }
+                    }
+                    else {
+                        _uiState.update {
+                            it.copy(
+                                startWorkoutTime = null,
                                 timeSelectionDialogType = null
                             )
                         }

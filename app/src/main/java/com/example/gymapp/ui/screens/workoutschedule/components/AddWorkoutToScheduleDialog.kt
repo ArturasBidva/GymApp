@@ -72,7 +72,7 @@ fun AddWorkoutToSchedule(
     selectWorkoutDate: (LocalDate) -> Unit,
     workoutScheduleDialogVisibility: (Boolean) -> Unit,
     workoutScheduleDateDialogVisibility: (Boolean) -> Unit,
-    createWorkoutSchedule: (WorkoutLocal) -> Unit,
+    createWorkoutSchedule: () -> Unit,
     selectColor: (Color) -> Unit
 ) {
     var workoutNote by remember {
@@ -91,7 +91,7 @@ fun AddWorkoutToSchedule(
             onTimeValidation = onTimeValidation,
             selectedDate = { selectWorkoutDate(it) },
             dialogVisibility = { workoutScheduleDateDialogVisibility(it) },
-            selectedDateCallback = {it})
+            selectedDateCallback = {})
     }
     Dialog(
         onDismissRequest = { workoutScheduleDialogVisibility(false) },
@@ -234,20 +234,9 @@ fun AddWorkoutToSchedule(
                         .fillMaxWidth()
                         .padding(horizontal = 19.dp)
                         .clickable {
-                            if (workoutScheduleUiState.selectedWorkout != null) {
-                                val schedule = Schedule(
-                                    date = workoutScheduleUiState.selectedDay,
-                                    startTime = workoutScheduleUiState.startWorkoutTime,
-                                    endTime = workoutScheduleUiState.endWorkoutTime,
-                                    color = workoutScheduleUiState.selectedColor!!.toArgb()
-                                )
-                                val workout = WorkoutLocal(
-                                    id = workoutScheduleUiState.selectedWorkout.id,
-                                    title = workoutScheduleUiState.selectedWorkout.title,
-                                    description = workoutScheduleUiState.selectedWorkout.description,
-                                    schedules = listOf(schedule)
-                                )
-                                createWorkoutSchedule(workout)
+                            workoutScheduleUiState.selectedWorkout?.let {
+                                workoutScheduleDialogVisibility(false)
+                                createWorkoutSchedule()
                             }
                         }
                         .clip(RoundedCornerShape(7.dp))
@@ -268,7 +257,7 @@ fun AddWorkoutToSchedule(
 }
 
 @Composable
-private fun SelectWorkoutDropDown(
+fun SelectWorkoutDropDown(
     items: List<WorkoutLocal>,
     onItemSelected: (WorkoutLocal) -> Unit,
     workoutScheduleState: WorkoutScheduleUiState

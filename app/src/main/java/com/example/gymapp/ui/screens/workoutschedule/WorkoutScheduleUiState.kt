@@ -10,6 +10,7 @@ import java.time.LocalTime
 data class WorkoutScheduleUiState(
     var selectedDay: LocalDate? = null,
     val selectedWorkout: WorkoutLocal? = null,
+    val selectedEditableWorkout: WorkoutLocal? = null,
     val isDialogVisible: Boolean = false,
     val isCalendarDialogVisible: Boolean = false,
     val startWorkoutTime: LocalTime? = null,
@@ -17,6 +18,7 @@ data class WorkoutScheduleUiState(
     val timeSelectionDialogType: TimeSelectionDialogType? = null,
     val selectedColor: Color? = null,
     val daySchedule : Schedule? = null,
+    var selectedTimeStart: LocalTime? = null
 ) {
     fun getTimeSelectionTime(): LocalTime? {
         return when (timeSelectionDialogType) {
@@ -26,6 +28,9 @@ data class WorkoutScheduleUiState(
 
             is TimeSelectionDialogType.EndTime -> {
                 endWorkoutTime
+            }
+            is TimeSelectionDialogType.StartTimeUpdate -> {
+                selectedTimeStart
             }
 
             else -> null

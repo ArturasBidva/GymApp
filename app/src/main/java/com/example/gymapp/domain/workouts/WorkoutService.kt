@@ -62,21 +62,30 @@ class WorkoutService @Inject constructor(
 
         if (existingEntity != null) {
             val existingSchedules = existingEntity.schedules
-
             val newSchedules = workoutLocal.schedules ?: emptyList()
 
             val matchingSchedules = newSchedules.filter { newSchedule ->
                 existingSchedules.any { it.date == newSchedule.date }
             }
 
-            if (matchingSchedules.isEmpty()) {
+            if (matchingSchedules.isNotEmpty()) {
+                // If matching date is found, update the color
+                val matchedSchedule = matchingSchedules.firstOrNull()
+                val matchedScheduleIndex = existingSchedules.indexOfFirst { it.date == matchedSchedule?.date }
+
+                if (matchedSchedule != null && matchedScheduleIndex != -1) {
+                    existingSchedules[matchedScheduleIndex].color = matchedSchedule.color
+                    existingEntity.schedules = existingSchedules
+                    updateWorkout(existingEntity)
+                }
+            } else {
+                // No matching date found, update schedules
                 val updatedSchedules = existingSchedules + newSchedules
                 existingEntity.schedules = updatedSchedules
                 updateWorkout(existingEntity)
-            } else {
-                // Do nothing as matching schedules are found
             }
         } else {
+            // If the workout doesn't exist, add it to the schedule
             val newWorkoutEntity = workoutLocal.toWorkoutEntity()
             workoutRepository.addWorkoutToSchedule(workout = newWorkoutEntity)
         }

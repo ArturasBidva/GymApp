@@ -16,5 +16,5 @@ data class Schedule(
     val date: LocalDate?,
     val startTime: LocalTime?,
     val endTime: LocalTime?,
-    val color: Int?
+    var color: Int?
 )
