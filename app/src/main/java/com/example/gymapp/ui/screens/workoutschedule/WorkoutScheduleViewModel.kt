@@ -1,12 +1,10 @@
 package com.example.gymapp.ui.screens.workoutschedule
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymapp.data.local.Schedule
-import com.example.gymapp.data.local.WorkoutLocal
-import com.example.gymapp.domain.workouts.WorkoutService
+import com.example.gymapp.data.db.models.local.Schedule
+import com.example.gymapp.data.db.models.local.WorkoutLocal
+import com.example.gymapp.data.repositories.local.schedule.ScheduleService
 import com.example.gymapp.util.TimeValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,65 +19,65 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutScheduleViewModel @Inject constructor(
-    private val workoutService: WorkoutService
+    private val scheduleService: ScheduleService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutScheduleUiState())
     val uiState: StateFlow<WorkoutScheduleUiState> = _uiState
 
-    fun selectWorkoutDate(day: LocalDate?) {
-        _uiState.update { it.copy(selectedDay = day) }
+    init {
+        getAllSchedules()
     }
 
-    fun addWorkoutToSchedule() {
+    private fun getAllSchedules() {
+       viewModelScope.launch {
+           val schedules = scheduleService.getAllSchedules()
+           _uiState.update { it.copy(schedules = schedules) }
+       }
+    }
+
+    fun createSchedule() {
         viewModelScope.launch {
             val workoutScheduleUiState = uiState.value
             val schedule = Schedule(
-                date = workoutScheduleUiState.selectedDay,
-                startTime = workoutScheduleUiState.startWorkoutTime,
-                endTime = workoutScheduleUiState.endWorkoutTime,
-                color = workoutScheduleUiState.selectedColor!!.toArgb()
+                workout = workoutScheduleUiState.selectedWorkout,
+                startTime = workoutScheduleUiState.schedule.startTime,
+                endTime = workoutScheduleUiState.schedule.endTime,
+                date = workoutScheduleUiState.selectedCalendarDate!!,
+                color = workoutScheduleUiState.schedule.color
             )
-            val workout = WorkoutLocal(
-                id = workoutScheduleUiState.selectedWorkout!!.id,
-                title = workoutScheduleUiState.selectedWorkout.title,
-                description = workoutScheduleUiState.selectedWorkout.description,
-                schedules = listOf(schedule)
-            )
-            workoutService.addWorkoutToSchedule(workoutLocal = workout)
+            scheduleService.insertSchedule(schedule = schedule)
         }
     }
+
 
     fun setWorkoutScheduleDialogVisibility(visible: Boolean) {
         _uiState.update {
-            it.copy(isDialogVisible = visible)
+            val scheduleWithDate =
+                uiState.value.schedule.copy(date = uiState.value.selectedCalendarDate!!)
+            it.copy(isDialogVisible = visible, isEditMode = false, schedule = scheduleWithDate)
         }
     }
 
-    fun setWorkoutForEdit(workout: WorkoutLocal?) {
-        _uiState.update {
-            it.copy(selectedEditableWorkout = workout)
-        }
-    }
+
 
     fun setWorkoutScheduleDateDialogVisibility(visible: Boolean) {
-        _uiState.update { it.copy(isCalendarDialogVisible = visible) }
-    }
-
-    fun selectColor(color: Color) {
-        _uiState.update { it.copy(selectedColor = color) }
-    }
-
-    fun deleteWorkoutSchedule(workout: WorkoutLocal, selectedDay: LocalDate) {
-        viewModelScope.launch {
-            workoutService.removeWorkoutFromSchedule(
-                workoutLocal = workout,
-                dayOfWorkout = selectedDay
-            )
+        _uiState.update {
+            it.copy(isCalendarDialogVisible = visible)
         }
     }
 
-    fun selectWorkout(workout: WorkoutLocal?) {
+    fun deleteSchedule(scheduleId: Long) {
+        viewModelScope.launch {
+            scheduleService.deleteScheduleById(scheduleId = scheduleId)
+        }
+    }
+
+    fun updateSchedule(schedule: Schedule) {
+        _uiState.update { it.copy(schedule = schedule) }
+    }
+
+    fun onWorkoutSelect(workout: WorkoutLocal) {
         _uiState.update { it.copy(selectedWorkout = workout) }
     }
 
@@ -88,25 +86,44 @@ class WorkoutScheduleViewModel @Inject constructor(
         return Date(time).after(Date(previousDayMillis))
     }
 
+
+    fun onCalendarDateSelection(date: LocalDate?) {
+        _uiState.update { it.copy(selectedCalendarDate = date) }
+    }
+
+    fun onEditScheduleSelect(schedule: Schedule) {
+        _uiState.update {
+            it.copy(
+                schedule = schedule,
+                selectedWorkout = schedule.workout,
+                isDialogVisible = true,
+                isEditMode = true
+            )
+        }
+    }
+
     fun onTimeConfirmation(time: LocalTime) {
+        val schedule = uiState.value.schedule
+
         uiState.value.timeSelectionDialogType?.let { type ->
             when (type) {
                 is TimeSelectionDialogType.StartTime -> {
                     if (TimeValidator.validateStartTime(
                             startTime = time,
-                            endTime = uiState.value.endWorkoutTime
+                            endTime = uiState.value.schedule.endTime
                         )
                     ) {
                         _uiState.update {
+                            val scheduleWithStartTime = schedule.copy(startTime = time)
                             it.copy(
-                                startWorkoutTime = time,
+                                schedule = scheduleWithStartTime,
                                 timeSelectionDialogType = null
                             )
                         }
                     } else {
                         _uiState.update {
                             it.copy(
-                                startWorkoutTime = null,
+                                schedule = schedule.copy(startTime = null),
                                 timeSelectionDialogType = null
                             )
                         }
@@ -114,48 +131,23 @@ class WorkoutScheduleViewModel @Inject constructor(
                 }
 
                 is TimeSelectionDialogType.EndTime -> {
+                    val scheduleWithEndTime = schedule.copy(endTime = time)
                     if (TimeValidator.validateEndTime(
-                            startTime = uiState.value.startWorkoutTime,
+                            startTime = uiState.value.schedule.startTime,
                             endTime = time
                         )
                     ) {
                         _uiState.update {
+
                             it.copy(
-                                endWorkoutTime = time,
+                                schedule = scheduleWithEndTime,
                                 timeSelectionDialogType = null
                             )
                         }
                     } else {
                         _uiState.update {
                             it.copy(
-                                endWorkoutTime = null,
-                                timeSelectionDialogType = null
-                            )
-                        }
-                    }
-                }
-
-                TimeSelectionDialogType.EndTimeUpdate -> {
-
-                }
-
-                TimeSelectionDialogType.StartTimeUpdate -> {
-                    if (TimeValidator.validateStartTime(
-                            startTime = time,
-                            endTime = uiState.value.endWorkoutTime
-                        )
-                    ) {
-                        _uiState.update {
-                            it.copy(
-                                selectedTimeStart = time,
-                                timeSelectionDialogType = null
-                            )
-                        }
-                    }
-                    else {
-                        _uiState.update {
-                            it.copy(
-                                startWorkoutTime = null,
+                                schedule = schedule.copy(endTime = null),
                                 timeSelectionDialogType = null
                             )
                         }

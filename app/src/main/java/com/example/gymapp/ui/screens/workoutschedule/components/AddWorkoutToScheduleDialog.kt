@@ -1,7 +1,6 @@
 package com.example.gymapp.ui.screens.workoutschedule.components
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,10 +44,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import com.example.gymapp.R
-import com.example.gymapp.data.db.entities.WorkoutEntity
-import com.example.gymapp.data.local.Schedule
-import com.example.gymapp.data.local.WorkoutLocal
-import com.example.gymapp.domain.workouts.Workout
+import com.example.gymapp.data.db.models.local.Schedule
+import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.ui.quicksandBold
 import com.example.gymapp.ui.quicksandMedium
 import com.example.gymapp.ui.screens.createworkout.CustomTextField
@@ -56,7 +53,6 @@ import com.example.gymapp.ui.screens.workout.WorkoutUiState
 import com.example.gymapp.ui.screens.workoutschedule.TimeSelectionDialogType
 import com.example.gymapp.ui.screens.workoutschedule.WorkoutScheduleUiState
 import com.example.gymapp.util.toFormattedString
-import java.time.LocalDate
 import java.time.LocalTime
 
 @SuppressLint("UnrememberedMutableState")
@@ -68,17 +64,18 @@ fun AddWorkoutToSchedule(
     onTimePickerDismiss: () -> Unit,
     onTimeConfirm: (LocalTime) -> Unit,
     onOpenTimePickerClick: (TimeSelectionDialogType) -> Unit,
-    selectedWorkout: (WorkoutLocal) -> Unit,
-    selectWorkoutDate: (LocalDate) -> Unit,
+    onWorkoutSelect: (WorkoutLocal) -> Unit,
     workoutScheduleDialogVisibility: (Boolean) -> Unit,
     workoutScheduleDateDialogVisibility: (Boolean) -> Unit,
     createWorkoutSchedule: () -> Unit,
-    selectColor: (Color) -> Unit
+    updateSchedule: (Schedule) -> Unit
 ) {
     var workoutNote by remember {
         mutableStateOf("")
     }
-    Log.d("amogusas", workoutScheduleUiState.selectedColor.toString())
+    val workout =
+        workoutScheduleUiState.schedule.copy(workout = workoutScheduleUiState.selectedWorkout)
+    updateSchedule(workout)
     workoutScheduleUiState.timeSelectionDialogType?.let {
         TimePickerDialog(
             onDismiss = onTimePickerDismiss,
@@ -89,9 +86,13 @@ fun AddWorkoutToSchedule(
     if (workoutScheduleUiState.isCalendarDialogVisible) {
         WorkoutDatePickerDialog(
             onTimeValidation = onTimeValidation,
-            selectedDate = { selectWorkoutDate(it) },
+            onDateSelect = {
+                val scheduleWithDate = workoutScheduleUiState.schedule.copy(date = it)
+                updateSchedule(scheduleWithDate)
+            },
             dialogVisibility = { workoutScheduleDateDialogVisibility(it) },
-            selectedDateCallback = {})
+            selectedDateCallback = {}
+        )
     }
     Dialog(
         onDismissRequest = { workoutScheduleDialogVisibility(false) },
@@ -112,7 +113,7 @@ fun AddWorkoutToSchedule(
             ) {
                 Spacer(Modifier.height(32.dp))
                 Text(
-                    "Add New Event",
+                    if (workoutScheduleUiState.isEditMode) "Update Event" else "Add New Event",
                     fontFamily = quicksandMedium,
                     fontSize = 20.sp,
                     color = Color(0xFF222B45)
@@ -120,11 +121,17 @@ fun AddWorkoutToSchedule(
                 Spacer(modifier = Modifier.height(21.dp))
                 SelectWorkoutDropDown(
                     items = workoutUiState.workouts,
-                    onItemSelected = { selectedWorkout(it) },
+                    onItemSelected = { onWorkoutSelect(it) },
                     workoutScheduleState = workoutScheduleUiState
                 )
                 Spacer(Modifier.height(15.dp))
-                ColorPicker(selectColor)
+                ColorPicker(
+                    onColorSelect = {
+                        val scheduleWithColor =
+                            workoutScheduleUiState.schedule.copy(color = it.toArgb())
+                        updateSchedule(scheduleWithColor)
+                    }
+                )
                 Spacer(modifier = Modifier.height(15.dp))
                 CustomTextField(
                     value = workoutNote,
@@ -142,7 +149,7 @@ fun AddWorkoutToSchedule(
                 )
                 Spacer(Modifier.height(15.dp))
                 CustomTextField(
-                    value = workoutScheduleUiState.selectedDay.toFormattedString(),
+                    value = workoutScheduleUiState.schedule.date.toFormattedString(),
                     isDisabled = true,
                     hintText = "Date",
                     onValueChange = {},
@@ -167,7 +174,7 @@ fun AddWorkoutToSchedule(
                 ) {
                     Box(Modifier.weight(1f)) {
                         CustomTextField(
-                            value = workoutScheduleUiState.startWorkoutTime.toFormattedString(),
+                            value = workoutScheduleUiState.schedule.startTime.toFormattedString(),
                             isDisabled = true,
                             hintText = "Start time",
                             onValueChange = {},
@@ -186,7 +193,7 @@ fun AddWorkoutToSchedule(
                     }
                     Box(Modifier.weight(1f)) {
                         CustomTextField(
-                            value = workoutScheduleUiState.endWorkoutTime.toFormattedString(),
+                            value = workoutScheduleUiState.schedule.endTime.toFormattedString(),
                             isDisabled = true,
                             hintText = "End time",
                             onValueChange = {},
@@ -234,17 +241,22 @@ fun AddWorkoutToSchedule(
                         .fillMaxWidth()
                         .padding(horizontal = 19.dp)
                         .clickable {
-                            workoutScheduleUiState.selectedWorkout?.let {
+                            workoutScheduleUiState.selectedWorkout.let {
                                 workoutScheduleDialogVisibility(false)
+
                                 createWorkoutSchedule()
                             }
                         }
                         .clip(RoundedCornerShape(7.dp))
-                        .background(Color(0xFFFF9B70)),
+                        .background(
+                            if (workoutScheduleUiState.isEditMode) Color(0xFF9FE7F5) else Color(
+                                0xFFFF9B70
+                            )
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Create Event",
+                        text = if (workoutScheduleUiState.isEditMode) "Update event" else "Create Event",
                         fontFamily = quicksandBold,
                         fontSize = 16.sp,
                         color = Color.White
@@ -275,48 +287,64 @@ fun SelectWorkoutDropDown(
                 shape = RoundedCornerShape(10.dp)
             )
             .clip(RoundedCornerShape(10.dp))
-            .clickable { expanded = true }
+            .clickable(onClick = { expanded = true }, enabled = !workoutScheduleState.isEditMode)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxSize()
         ) {
-            BasicTextField(
-                value = selectedWorkout?.title ?: "Select workout...",
-                onValueChange = { newTitle ->
-                    selectedWorkout?.let {
-                        val updatedTitle = it.copy(title = newTitle)
-                        onItemSelected(updatedTitle)
-                    }
-                },
-                enabled = false,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)
-            )
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null,
-                modifier = Modifier.scale(0.5f)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.background(Color.White)
-        ) {
-            items.forEach { item ->
-                DropdownMenuItem(
-                    text = { Text(text = item.title) },
-                    onClick = {
-                        selectedWorkout = item
-                        onItemSelected(item)
-                        expanded = false
-                    }
+            if (workoutScheduleState.isEditMode) {
+                CustomTextField(
+                    value = workoutScheduleState.schedules.filter { it.workout.id == workout.id }.joinToString { workout.title},
+                    onValueChange = {},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .height(50.dp)
+                        .border(
+                            border = BorderStroke(1.dp, Color(0xFFEDF1F7)),
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    isDisabled = true
                 )
+            } else {
+                BasicTextField(
+                    value = selectedWorkout.title.takeIf { it.isNotBlank() } ?: "Select workout...",
+                    onValueChange = { newTitle ->
+                        selectedWorkout.let {
+                            val updatedTitle = it.copy(title = newTitle)
+                            onItemSelected(updatedTitle)
+                        }
+                    },
+                    enabled = false,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 10.dp)
+                )
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                    modifier = Modifier.scale(0.5f)
+                )
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(Color.White)
+                ) {
+                    items.forEach { item ->
+                        DropdownMenuItem(
+                            text = { Text(text = item.title) },
+                            onClick = {
+                                selectedWorkout = item
+                                onItemSelected(item)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -332,12 +360,11 @@ fun AddWorkoutToSchedulePreview() {
         onTimePickerDismiss = { /*TODO*/ },
         onTimeConfirm = {},
         onOpenTimePickerClick = {},
-        selectedWorkout = {},
+        onWorkoutSelect = {},
         workoutScheduleDialogVisibility = {},
-        selectWorkoutDate = {},
         workoutScheduleDateDialogVisibility = {},
         createWorkoutSchedule = {},
-        selectColor = {}
+        updateSchedule = {}
     )
 }
 

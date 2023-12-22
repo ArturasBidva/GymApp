@@ -3,7 +3,7 @@ package com.example.gymapp.ui.screens.mainscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.domain.exercises.ExerciseService
-import com.example.gymapp.domain.workouts.WorkoutService
+import com.example.gymapp.domain.workouts.DomainWorkoutService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val exerciseService: ExerciseService,
-    private val workoutService: WorkoutService
+    private val domainWorkoutService: DomainWorkoutService
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<MainScreenUiState> =
@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             exerciseService.syncDataWithAPI()
-            workoutService.syncWorkoutDataWithAPI()
+            domainWorkoutService.syncWorkoutDataWithAPI()
             _uiState.update { it.copy(isLoading = false) }
         }
     }

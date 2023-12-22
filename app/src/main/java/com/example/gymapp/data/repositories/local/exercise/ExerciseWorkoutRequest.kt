@@ -1,4 +1,4 @@
-package com.example.gymapp.data.repositories.exercise
+package com.example.gymapp.data.repositories.local.exercise
 
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 

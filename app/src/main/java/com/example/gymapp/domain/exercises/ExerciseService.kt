@@ -5,7 +5,7 @@ import com.example.gymapp.data.db.entities.ExerciseCategoryEntity
 import com.example.gymapp.data.db.entities.ExerciseEntity
 import com.example.gymapp.data.db.entities.ExerciseWithExerciseCategoryPair
 import com.example.gymapp.data.repositories.MyRepository
-import com.example.gymapp.data.repositories.exercise.ExerciseRepository
+import com.example.gymapp.data.repositories.local.exercise.ExerciseRepository
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
 import kotlinx.coroutines.flow.Flow

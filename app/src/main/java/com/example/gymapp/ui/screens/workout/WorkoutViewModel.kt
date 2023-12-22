@@ -2,10 +2,10 @@ package com.example.gymapp.ui.screens.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gymapp.data.local.WorkoutLocal
+import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
-import com.example.gymapp.domain.workouts.WorkoutService
+import com.example.gymapp.domain.workouts.DomainWorkoutService
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
-    private val workoutService: WorkoutService
+    private val domainWorkoutService: DomainWorkoutService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutUiState())
@@ -134,7 +134,7 @@ class WorkoutViewModel @Inject constructor(
     private fun deleteExerciseWorkoutFromWorkout(workoutId: Long, exerciseId: Long) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            val response = workoutService.deleteExerciseWorkoutFromWorkoutById(
+            val response = domainWorkoutService.deleteExerciseWorkoutFromWorkoutById(
                 workoutId = workoutId,
                 exerciseId = exerciseId
             )
@@ -147,7 +147,7 @@ class WorkoutViewModel @Inject constructor(
 
     private fun getAllWorkouts(onFetchComplete: () -> Unit = {}) {
         viewModelScope.launch {
-            workoutService.getWorkouts()
+            domainWorkoutService.getWorkouts()
                 .onStart {
                     _uiState.update { it.copy(isLoading = true) }
                 }
@@ -175,7 +175,7 @@ class WorkoutViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             try {
-                val result = workoutService.createWorkout(workout = workout)
+                val result = domainWorkoutService.createWorkout(workout = workout)
                 if (result is Resource.Success) {
                     _uiState.update { it.copy(isLoading = false, workout = result.data) }
                     onUiEvent(WorkoutUiEvent.SaveWorkoutSuccess)
@@ -193,7 +193,7 @@ class WorkoutViewModel @Inject constructor(
     private suspend fun deleteWorkoutById(workoutId: Long): Resource<Unit> {
         _uiState.update { it.copy(isLoading = true) }
         return try {
-            workoutService.deleteWorkoutById(workoutId = workoutId)
+            domainWorkoutService.deleteWorkoutById(workoutId = workoutId)
             Resource.Success(null)
         } catch (e: Exception) {
             Resource.Error(UiText.DynamicString(e.message.toString()))
@@ -212,7 +212,7 @@ class WorkoutViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            workoutService.addExerciseWorkoutToWorkout(workout, exerciseWorkout)
+            domainWorkoutService.addExerciseWorkoutToWorkout(workout, exerciseWorkout)
         }
     }
 }

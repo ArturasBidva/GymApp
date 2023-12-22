@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.gymapp.R
-import com.example.gymapp.data.local.WorkoutLocal
+import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.customGrayTwo

@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.gymapp.R
-import com.example.gymapp.data.local.WorkoutLocal
+import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.workouts.ExerciseWorkout

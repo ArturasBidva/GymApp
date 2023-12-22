@@ -76,7 +76,6 @@ private fun Content(
             TextButton(onClick = onDismiss) { Text(text = "Dismiss") }
             TextButton(
                 onClick = {
-
                     onTimeConfirm(
                         LocalTime.of(timePickerState.hour, timePickerState.minute)
                     )

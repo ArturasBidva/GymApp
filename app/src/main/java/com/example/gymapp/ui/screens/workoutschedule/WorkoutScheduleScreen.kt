@@ -1,7 +1,6 @@
 package com.example.gymapp.ui.screens.workoutschedule
 
 import androidx.compose.foundation.background
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,33 +15,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.gymapp.data.local.WorkoutLocal
+import com.example.gymapp.data.db.models.local.Schedule
 import com.example.gymapp.ui.screens.mainscreen.TestHeader
-import com.example.gymapp.ui.screens.workout.WorkoutUiState
 import com.example.gymapp.ui.screens.workout.WorkoutViewModel
 import com.example.gymapp.ui.screens.workoutschedule.components.AddWorkoutToSchedule
-import com.example.gymapp.ui.screens.workoutschedule.components.EditWorkoutScheduleDialog
 import com.example.gymapp.ui.screens.workoutschedule.components.SimpleCalendarTitle
 import com.example.gymapp.ui.screens.workoutschedule.components.WorkoutScheduleEvents
-import com.example.gymapp.util.MockWorkoutData
 import com.example.gymapp.util.rememberFirstMostVisibleMonth
 import com.kizitonwose.calendar.compose.rememberCalendarState
-import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.YearMonth
 
 
@@ -55,71 +47,57 @@ fun WorkoutScheduleScreen(
     val workoutUiState by workoutViewModel.uiState.collectAsState()
     Content(
         workoutScheduleUiState = uiState,
-        workoutState = workoutUiState,
-        deleteWorkoutSchedule = viewModel::deleteWorkoutSchedule,
-        setWorkoutForEdit = viewModel::setWorkoutForEdit
+        deleteSchedule = viewModel::deleteSchedule,
+        onDaySelection = viewModel::onCalendarDateSelection,
+        onEditScheduleSelect = viewModel::onEditScheduleSelect
     )
     if (uiState.isDialogVisible) {
         AddWorkoutToSchedule(
             workoutUiState = workoutUiState,
             workoutScheduleUiState = uiState,
-            onTimeValidation = viewModel::validateSelectedTime,
-            onTimeConfirm = viewModel::onTimeConfirmation,
-            onTimePickerDismiss = viewModel::onTimePickerDismiss,
-            onOpenTimePickerClick = viewModel::onOpenTimePickerClick,
-            selectedWorkout = viewModel::selectWorkout,
+            onWorkoutSelect = viewModel::onWorkoutSelect,
             workoutScheduleDialogVisibility = viewModel::setWorkoutScheduleDialogVisibility,
-            selectWorkoutDate = viewModel::selectWorkoutDate,
-            workoutScheduleDateDialogVisibility = viewModel::setWorkoutScheduleDialogVisibility,
-            createWorkoutSchedule = viewModel::addWorkoutToSchedule,
-            selectColor = viewModel::selectColor
+            workoutScheduleDateDialogVisibility = viewModel::setWorkoutScheduleDateDialogVisibility,
+            createWorkoutSchedule = viewModel::createSchedule,
+            updateSchedule = viewModel::updateSchedule,
+            onTimeConfirm = viewModel::onTimeConfirmation,
+            onTimeValidation = viewModel::validateSelectedTime,
+            onTimePickerDismiss = viewModel::onTimePickerDismiss,
+            onOpenTimePickerClick = viewModel::onOpenTimePickerClick
         )
     }
-
-    uiState.selectedEditableWorkout?.let { workoutLocal ->
-        uiState.selectedDay?.let {
-            EditWorkoutScheduleDialog(
-                workoutScheduleUiState = uiState,
-                onTimeValidation = viewModel::validateSelectedTime,
-                onTimeConfirm = viewModel::onTimeConfirmation,
-                onTimePickerDismiss = viewModel::onTimePickerDismiss,
-                onOpenTimePickerClick = viewModel::onOpenTimePickerClick,
-                onDismiss = { viewModel.setWorkoutForEdit(null) },
-                selectWorkoutDate = viewModel::selectWorkoutDate,
-                workoutScheduleDateDialogVisibility = viewModel::setWorkoutScheduleDialogVisibility,
-                createWorkoutSchedule = viewModel::addWorkoutToSchedule,
-                selectColor = viewModel::selectColor,
-                workout = workoutLocal,
-                selectedDay = it
-
-            )
-        }
+    if (uiState.isEditMode) {
+        AddWorkoutToSchedule(
+            workoutUiState = workoutUiState,
+            workoutScheduleUiState = uiState,
+            onWorkoutSelect = viewModel::onWorkoutSelect,
+            workoutScheduleDialogVisibility = viewModel::setWorkoutScheduleDialogVisibility,
+            workoutScheduleDateDialogVisibility = viewModel::setWorkoutScheduleDateDialogVisibility,
+            createWorkoutSchedule = viewModel::createSchedule,
+            updateSchedule = viewModel::updateSchedule,
+            onTimeConfirm = viewModel::onTimeConfirmation,
+            onTimeValidation = viewModel::validateSelectedTime,
+            onTimePickerDismiss = viewModel::onTimePickerDismiss,
+            onOpenTimePickerClick = viewModel::onOpenTimePickerClick
+        )
     }
 }
 
 @Composable
 private fun Content(
     workoutScheduleUiState: WorkoutScheduleUiState,
-    workoutState: WorkoutUiState,
-    deleteWorkoutSchedule: (WorkoutLocal, LocalDate) -> Unit,
-    setWorkoutForEdit: (WorkoutLocal?) -> Unit
+    deleteSchedule: (Long) -> Unit,
+    onEditScheduleSelect: (Schedule) -> Unit,
+    onDaySelection: (LocalDate?) -> Unit
 ) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(500) }
     val endMonth = remember { currentMonth.plusMonths(500) }
     val daysOfWeek = remember { daysOfWeek() }
-    var selection by remember { mutableStateOf<CalendarDay?>(null) }
-    val workoutDays = workoutState.workouts
-        .flatMap { workout ->
-            workout.schedules?.map { it.date?.toEpochDay() to workout } ?: emptyList()
-        }
-        .groupBy({ it.first }, { it.second })
 
-    val workoutSelectedDays = if (selection?.date?.toEpochDay() == null) {
-        emptyList()
-    } else {
-        workoutDays[selection?.date?.toEpochDay()].orEmpty()
-    }
+    val scheduleSelectedDays = workoutScheduleUiState.schedules
+        .map { it.date.toEpochDay() }
+
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             TestHeader(text = "Workout schedule")
@@ -140,7 +118,7 @@ private fun Content(
                     rememberFirstMostVisibleMonth(calendarState, viewportPercent = 90f)
                 LaunchedEffect(visibleMonth) {
                     // Clear selection if we scroll to a new month.
-                    selection = null
+                    onDaySelection(null)
                 }
                 SimpleCalendarTitle(
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
@@ -160,23 +138,26 @@ private fun Content(
                     workoutScheduleUiState = workoutScheduleUiState,
                     calendarState = calendarState,
                     onDaySelection = {
-                        workoutScheduleUiState.selectedDay = it.date
-                        selection = it
+                        onDaySelection(it.date)
                     },
                     daysOfWeek = daysOfWeek,
-                    workoutDays = workoutDays
+                    schedules = workoutScheduleUiState.schedules
                 )
                 Divider(modifier = Modifier.height(40.dp))
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(items = workoutSelectedDays) { workout ->
-                        WorkoutScheduleEvents(
-                            workout = workout,
-                            selectedDay = workoutScheduleUiState.selectedDay,
-                            deleteWorkoutSchedule = deleteWorkoutSchedule,
-                            setWorkoutForEdit = setWorkoutForEdit
-                        )
+                    items(items = scheduleSelectedDays) { schedule ->
+                        val schedulesForDay = workoutScheduleUiState.schedules.filter {
+                            it.date.toEpochDay() == schedule
+                        }
+                        schedulesForDay.firstOrNull()?.let {
+                            WorkoutScheduleEvents(
+                                schedule = it,
+                                deleteSchedule = deleteSchedule,
+                                setScheduleForEdit = onEditScheduleSelect
+                            )
+                        }
                     }
                 }
             }
@@ -187,14 +168,10 @@ private fun Content(
 @Preview
 @Composable
 fun WorkoutSchedulePreview() {
-    val deleteWorkoutSchedule: (WorkoutLocal, LocalDate) -> Unit =
-        { workoutLocal: WorkoutLocal, localDate: LocalDate ->
-            println("Deleting workout schedule for workout: ${workoutLocal.title} on date: $localDate")
-        }
     Content(
         workoutScheduleUiState = WorkoutScheduleUiState(),
-        workoutState = WorkoutUiState(workout = MockWorkoutData.mockWorkouts[1]),
-        deleteWorkoutSchedule = deleteWorkoutSchedule,
-        setWorkoutForEdit = { }
+        deleteSchedule = {},
+        onDaySelection = {},
+        onEditScheduleSelect = {}
     )
 }

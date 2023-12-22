@@ -1,4 +1,4 @@
-package com.example.gymapp.data.repositories.exercise
+package com.example.gymapp.data.repositories.local.exercise
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -1,5 +1,7 @@
 package com.example.gymapp.ui.screens.workoutschedule
 
+import MockSchedulesData
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,8 +35,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gymapp.data.local.WorkoutLocal
-import com.example.gymapp.util.MockWorkoutLocalData
+import androidx.core.graphics.toColor
+import com.example.gymapp.R
+import com.example.gymapp.data.db.models.local.Schedule
 import com.example.gymapp.util.displayText
 import com.kizitonwose.calendar.compose.CalendarState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -50,22 +54,23 @@ fun WorkoutScheduleCalendar(
     workoutScheduleUiState: WorkoutScheduleUiState,
     calendarState: CalendarState,
     daysOfWeek: List<DayOfWeek>,
-    workoutDays: Map<Long?, List<WorkoutLocal>>,
+    schedules: List<Schedule>,
     onDaySelection: (CalendarDay) -> Unit
 ) {
+    Log.d("amogusas",schedules.toString())
     HorizontalCalendar(
         modifier = Modifier.wrapContentWidth(),
         state = calendarState,
         dayContent = { day ->
             val colors = if (day.position == DayPosition.MonthDate) {
                 val dayEpoch = day.date.toEpochDay()
-                val workoutsForDay = workoutDays[dayEpoch].orEmpty()
-                val dayColors = workoutsForDay.flatMap { workout ->
-                    workout.schedules?.filter { schedule ->
-                        schedule.date?.let { LocalDate.ofEpochDay(it.toEpochDay()) } == day.date
-                    }?.mapNotNull { schedule ->
-                        schedule.color?.let { Color(it) }
-                    } ?: emptyList()
+                val schedulesForDay = schedules.filter { it.date.toEpochDay() == dayEpoch}
+                val dayColors = schedulesForDay.mapNotNull { schedule ->
+                    if (schedule.date.let { LocalDate.ofEpochDay(it.toEpochDay()) } == day.date) {
+                        schedule.color.let { (Color(it)) }
+                    } else {
+                        null
+                    }
                 }
                 dayColors
             } else {
@@ -73,7 +78,7 @@ fun WorkoutScheduleCalendar(
             }
             Day(
                 day = day,
-                isSelected = workoutScheduleUiState.selectedDay == day.date,
+                isSelected = workoutScheduleUiState.selectedCalendarDate == day.date,
                 colors = colors,
                 onClick = onDaySelection
             )
@@ -185,11 +190,9 @@ fun DayPrev() {
     val endMonth = remember { currentMonth.plusMonths(500) }
     val daysOfWeek = remember { daysOfWeek() }
     var selection by remember { mutableStateOf<CalendarDay?>(null) }
-    val workoutDays = MockWorkoutLocalData.mockWorkoutsLocal
-        .flatMap { workout ->
-            workout.schedules.orEmpty().map { it.date?.toEpochDay() to workout }
-        }
-        .groupBy({ it.first }, { it.second })
+    val workoutDays = MockSchedulesData.mockSchedules
+        .groupBy({ it.date?.toEpochDay() }, { it })
+
     val state = rememberCalendarState(
         startMonth = startMonth,
         endMonth = endMonth,
@@ -204,9 +207,10 @@ fun DayPrev() {
             val colors = if (day.position == DayPosition.MonthDate) {
                 workoutDays[day.date.toEpochDay()].orEmpty()
                     .map {
-                        colorResource(it.schedules?.firstOrNull()?.color!!)
+                        Color(it.color ?: Color.Blue.toArgb())
                     }
             } else {
+                // If not a month date, return an empty list for colors
                 emptyList()
             }
             Day(

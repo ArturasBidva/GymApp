@@ -2,8 +2,8 @@ package com.example.gymapp.data.repositories
 
 import android.util.Log
 import com.example.gymapp.data.api.ApiService
-import com.example.gymapp.data.local.WorkoutLocal
-import com.example.gymapp.data.repositories.exercise.ExerciseWorkoutRequest
+import com.example.gymapp.data.db.models.local.WorkoutLocal
+import com.example.gymapp.data.repositories.local.exercise.ExerciseWorkoutRequest
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.workouts.ExerciseWorkout

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseService
-import com.example.gymapp.domain.workouts.WorkoutService
+import com.example.gymapp.domain.workouts.DomainWorkoutService
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
     private val exerciseService: ExerciseService,
-    private val workoutService: WorkoutService
+    private val domainWorkoutService: DomainWorkoutService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ExerciseUiState())

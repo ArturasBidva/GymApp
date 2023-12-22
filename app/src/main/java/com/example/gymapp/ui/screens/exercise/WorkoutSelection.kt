@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymapp.R
-import com.example.gymapp.data.local.WorkoutLocal
+import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.customGrayTwo
 import com.example.gymapp.ui.customOrange

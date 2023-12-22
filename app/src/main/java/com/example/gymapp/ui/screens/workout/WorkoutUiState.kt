@@ -1,6 +1,6 @@
 package com.example.gymapp.ui.screens.workout
 
-import com.example.gymapp.data.local.WorkoutLocal
+import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.util.UiText

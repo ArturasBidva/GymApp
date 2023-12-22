@@ -1,4 +1,4 @@
-package com.example.gymapp.data.repositories.workout
+package com.example.gymapp.data.repositories.local.workout
 
 import androidx.room.Dao
 import androidx.room.Query
@@ -20,23 +20,9 @@ interface WorkoutDao {
     @Upsert
     suspend fun insertWorkouts(workouts: List<WorkoutEntity>)
 
-
     @Transaction
-    suspend fun upsertWorkouts(workouts: List<WorkoutEntity>) {
-        for (workout in workouts) {
-            val existingWorkout = getWorkoutById(workout.id)
-            val hasNonNullDates = existingWorkout?.schedules?.any { it.date != null } ?: false
-            if (hasNonNullDates) {
-                //do nothing
-            } else {
-                insertWorkout(workout)
-            }
-        }
-    }
-
-
     @Query("SELECT * FROM workouts WHERE id = :workoutId")
-    suspend fun getWorkoutById(workoutId: Long): WorkoutEntity?
+   suspend fun getWorkoutById(workoutId: Long): WorkoutEntity?
 
 
     @Upsert
@@ -45,10 +31,6 @@ interface WorkoutDao {
     @Transaction
     @Query("SELECT * FROM  workouts")
     fun getAllWorkouts(): Flow<List<WorkoutWithExerciseWorkoutPair>>
-
-    @Transaction
-    @Query("DELETE FROM workouts WHERE schedules == null")
-    suspend fun deleteAllWorkouts()
 
 
     @Transaction

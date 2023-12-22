@@ -18,7 +18,7 @@ import java.time.ZoneId
 @Composable
 fun WorkoutDatePickerDialog(
     onTimeValidation: (Long) -> Boolean,
-    selectedDate : (LocalDate) -> Unit,
+    onDateSelect : (LocalDate) -> Unit,
     dialogVisibility: (Boolean) -> Unit,
     selectedDateCallback: (LocalDate) -> Unit
 ) {
@@ -30,7 +30,7 @@ fun WorkoutDatePickerDialog(
                 Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
             }
             if (selectedDate != null) {
-                selectedDate(selectedDate)
+                onDateSelect(selectedDate)
                 selectedDateCallback(selectedDate)
             }
             dialogVisibility(false)
@@ -43,7 +43,7 @@ fun WorkoutDatePickerDialog(
                         Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
                     }
                     if (selectedDate != null) {
-                        selectedDate(selectedDate)
+                        onDateSelect(selectedDate)
                         selectedDateCallback(selectedDate)
                     }
 

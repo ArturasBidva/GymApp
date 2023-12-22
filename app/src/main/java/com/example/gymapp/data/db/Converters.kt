@@ -1,7 +1,7 @@
-package com.example.gymapp.data.repositories
+package com.example.gymapp.data.db
 
 import androidx.room.TypeConverter
-import com.example.gymapp.data.local.Schedule
+import com.example.gymapp.data.db.entities.ScheduleEntity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -43,6 +43,7 @@ class Converters {
             private val formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy")
         }
     }
+
     internal class LocalTimeSerializer : JsonSerializer<LocalTime?> {
         override fun serialize(
             localTime: LocalTime?,
@@ -56,6 +57,7 @@ class Converters {
             private val formatter = DateTimeFormatter.ofPattern("HH:mm")
         }
     }
+
     internal class LocalTimeDeserializer : JsonDeserializer<LocalTime> {
         @Throws(JsonParseException::class)
         override fun deserialize(
@@ -79,15 +81,55 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromScheduleList(scheduleList: List<Schedule>?): String? {
+    fun fromScheduleList(scheduleList: List<ScheduleEntity>?): String? {
         return gson.toJson(scheduleList)
     }
 
     @TypeConverter
-    fun toScheduleList(scheduleListString: String?): List<Schedule>? {
-        val listType: Type = object : TypeToken<List<Schedule>?>() {}.type
+    fun toScheduleList(scheduleListString: String?): List<ScheduleEntity>? {
+        val listType: Type = object : TypeToken<List<ScheduleEntity>?>() {}.type
         return gson.fromJson(scheduleListString, listType)
     }
 
+    @TypeConverter
+    fun fromSchedule(schedule: ScheduleEntity?): String? {
+        return gson.toJson(schedule)
     }
+
+    @TypeConverter
+    fun toSchedule(scheduleString: String?): ScheduleEntity? {
+        return gson.fromJson(scheduleString, ScheduleEntity::class.java)
+    }
+
+    @TypeConverter
+    fun toDate(dateString: String?): LocalDate? {
+        return if (dateString == null) {
+            null
+        } else {
+            LocalDate.parse(dateString)
+        }
+    }
+
+    @TypeConverter
+    fun toTime(timeString: String?): LocalTime? {
+        return if (timeString == null) {
+            null
+        } else {
+            LocalTime.parse(timeString)
+        }
+    }
+
+    @TypeConverter
+    fun toTimeString(time: LocalTime?): String? {
+        return time?.toString()
+    }
+
+
+    @TypeConverter
+    fun toDateString(date: LocalDate?): String? {
+        return date?.toString()
+    }
+}
+
+
 

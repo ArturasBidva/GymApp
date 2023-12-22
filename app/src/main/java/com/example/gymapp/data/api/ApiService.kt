@@ -1,6 +1,6 @@
 package com.example.gymapp.data.api
 
-import com.example.gymapp.data.repositories.exercise.ExerciseWorkoutRequest
+import com.example.gymapp.data.repositories.local.exercise.ExerciseWorkoutRequest
 import com.example.gymapp.domain.account.User
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory

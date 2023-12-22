@@ -45,7 +45,7 @@ fun ColorBubble(
 }
 
 @Composable
-fun ColorPicker(selectColor: (Color) -> Unit) {
+fun ColorPicker(onColorSelect: (Color) -> Unit) {
     val colors = listOf(Color.Red, Color.Green, Color.Blue, Color.Yellow)
     val selectedColor = remember { mutableStateOf<Color?>(null) }
 
@@ -84,7 +84,7 @@ fun ColorPicker(selectColor: (Color) -> Unit) {
                         isSelected = color == selectedColor.value,
                         onColorSelected = {
                             selectedColor.value = color
-                            selectColor(color)
+                            onColorSelect(color)
                         }
                     )
                 }
