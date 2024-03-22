@@ -1,5 +1,6 @@
 package com.example.gymapp.ui.screens.workoutschedule.components
 
+import MockSchedulesData
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -23,11 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gymapp.R
 import com.example.gymapp.data.db.models.local.Schedule
-import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.ui.quicksandBold
 import com.example.gymapp.ui.quicksandMedium
 import com.example.gymapp.util.toFormattedString
@@ -38,11 +40,11 @@ import java.time.LocalDate
 @Composable
 fun WorkoutScheduleEvents(
     schedule: Schedule,
-    deleteSchedule: (Long) -> Unit,
+    deleteSchedule: (LocalDate, Long) -> Unit,
     setScheduleForEdit: (Schedule) -> Unit,
 ) {
     val delete = SwipeAction(
-        onSwipe = { deleteSchedule(schedule.workout.id) },
+        onSwipe = { deleteSchedule(schedule.date, schedule.workout.id) },
         icon = {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -74,18 +76,19 @@ fun WorkoutScheduleEvents(
         schedule.let { schedule ->
             Box(
                 modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(Color(0xFFF8F8F8))
                     .padding(horizontal = 20.dp, vertical = 16.dp)
             ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column() {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
                             modifier = Modifier
                                 .size(10.dp)
                                 .clip(CircleShape)
-                                .background(Color((schedule.color) as Int))
+                                .background(Color((schedule.color)))
                         )
                         Spacer(modifier = Modifier.width(5.dp))
                         Text(
@@ -105,23 +108,19 @@ fun WorkoutScheduleEvents(
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
-                    schedule.workout?.let {
-                        Text(
-                            text = it.title,
-                            fontSize = 16.sp,
-                            fontFamily = quicksandBold,
-                            color = Color(0xFF222B45)
-                        )
-                    }
+                    Text(
+                        text = schedule.workout.title,
+                        fontSize = 16.sp,
+                        fontFamily = quicksandBold,
+                        color = Color(0xFF222B45)
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
-                    schedule.workout?.let {
-                        Text(
-                            text = it.description,
-                            fontSize = 12.sp,
-                            fontFamily = quicksandMedium,
-                            color = Color(0xFF8F9BB3)
-                        )
-                    }
+                    Text(
+                        text = schedule.workout.description,
+                        fontSize = 12.sp,
+                        fontFamily = quicksandMedium,
+                        color = Color(0xFF8F9BB3)
+                    )
                 }
             }
         }
@@ -129,13 +128,15 @@ fun WorkoutScheduleEvents(
 }
 
 
-//@Preview
-//@Composable
-//fun CalendarEventBoxPreview() {
-//    WorkoutScheduleEvents(
-//        workout = MockWorkoutLocalData.mockWorkoutsLocal[0],
-//        selectedDay = null,
-//        deleteSchedule = {},
-//        setWorkoutForEdit = {}
-//    )
-//}
+@Preview
+@Composable
+fun CalendarEventBoxPreview() {
+    WorkoutScheduleEvents(
+        schedule = MockSchedulesData.mockSchedules[0],
+        deleteSchedule = { date, workoutId ->
+            // This is a placeholder implementation for the preview
+            println("Deleting schedule for date: $date, workoutId: $workoutId")
+        },
+        setScheduleForEdit = {}
+    )
+}

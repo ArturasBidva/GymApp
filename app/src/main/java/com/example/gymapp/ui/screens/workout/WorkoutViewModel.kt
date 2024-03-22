@@ -3,12 +3,15 @@ package com.example.gymapp.ui.screens.workout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.data.db.models.local.WorkoutLocal
+import com.example.gymapp.data.repositories.local.workout.DataWorkoutService
 import com.example.gymapp.domain.workouts.ExerciseWorkout
 import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.domain.workouts.DomainWorkoutService
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
-    private val domainWorkoutService: DomainWorkoutService
+    private val domainWorkoutService: DomainWorkoutService,
+    private val dataWorkoutService: DataWorkoutService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutUiState())
@@ -131,6 +135,7 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+
     private fun deleteExerciseWorkoutFromWorkout(workoutId: Long, exerciseId: Long) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
@@ -146,25 +151,25 @@ class WorkoutViewModel @Inject constructor(
 
 
     private fun getAllWorkouts(onFetchComplete: () -> Unit = {}) {
-        viewModelScope.launch {
-            domainWorkoutService.getWorkouts()
-                .onStart {
-                    _uiState.update { it.copy(isLoading = true) }
-                }
-                .onEach { WorkoutUiState(isLoading = true) }
-                .catch {
-                    _uiState.update { it.copy(isLoading = false) }
-                }
-                .collect { items ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            workouts = items,
-                            selectedWorkout = if (items.isNotEmpty()) items.first() else null
-                        )
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                _uiState.update { it.copy(isLoading = true) }
+
+                dataWorkoutService.getAllWorkouts()
+                    .collect { items ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                workouts = items,
+                                selectedWorkout = items.firstOrNull()
+                            )
+                        }
+                        onFetchComplete()
                     }
-                    onFetchComplete()
-                }
+            } catch (e: Exception) {
+
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 

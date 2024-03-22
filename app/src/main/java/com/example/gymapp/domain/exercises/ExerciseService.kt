@@ -3,7 +3,7 @@ package com.example.gymapp.domain.exercises
 import com.example.gymapp.data.db.entities.ExerciseAndExerciseCategoryCrossRef
 import com.example.gymapp.data.db.entities.ExerciseCategoryEntity
 import com.example.gymapp.data.db.entities.ExerciseEntity
-import com.example.gymapp.data.db.entities.ExerciseWithExerciseCategoryPair
+import com.example.gymapp.data.db.entities.ExerciseWithCategoryPair
 import com.example.gymapp.data.repositories.MyRepository
 import com.example.gymapp.data.repositories.local.exercise.ExerciseRepository
 import com.example.gymapp.util.Resource
@@ -42,19 +42,6 @@ class ExerciseService @Inject constructor(
         )
     }
 
-    fun getAllExerciseCategories(): Flow<List<ExerciseCategory>> {
-        return exerciseRepository.getAllExerciseCategories()
-            .map { exerciseCategories -> exerciseCategories.map { it.toCategory() } }
-    }
-
-    fun getExercises(): Flow<List<Exercise>> {
-        return exerciseRepository.getAllExercises()
-            .map { exercisesWithCategories ->
-                exercisesWithCategories.map {
-                    it.toExercise()
-                }
-            }
-    }
 
     suspend fun syncDataWithAPI(): Boolean {
         val exercisesResponse = exerciseRepository.getExercisesFromApi()
@@ -68,7 +55,7 @@ class ExerciseService @Inject constructor(
             val categoryEntities = categories.map { it }.map { it.toEntity() }
             exerciseRepository.insertExerciseCategories(categoryEntities)
             val refs = exercises.flatMap { exercise ->
-                exercise.category.map { category ->
+                exercise.categories.map { category ->
                     ExerciseAndExerciseCategoryCrossRef(
                         exerciseId = exercise.id,
                         exerciseCategoryId = category.id
@@ -82,34 +69,16 @@ class ExerciseService @Inject constructor(
         }
     }
 
-    private fun ExerciseWithExerciseCategoryPair.toExercise() = Exercise(
-        id = this.exerciseEntity.exerciseId,
-        title = this.exerciseEntity.title,
-        weight = this.exerciseEntity.weight,
-        imgUrl = this.exerciseEntity.imgUrl,
-        description = this.exerciseEntity.description,
-        category = this.exerciseCategory.map { it.toCategory() }
-    )
-
     private fun Exercise.toExerciseEntity() = ExerciseEntity(
         exerciseId = this.id,
         title = this.title,
-        weight = this.weight,
         imgUrl = this.imgUrl,
         description = this.description
     )
 
-
-    private fun ExerciseCategoryEntity.toCategory() = ExerciseCategory(
-        id = this.exerciseCategoryId,
-        name = this.category,
-        isSelected = isSelected
-    )
-
-
     private fun ExerciseCategory.toEntity() = ExerciseCategoryEntity(
         exerciseCategoryId = this.id,
-        category = this.name,
+        category = this.category,
         isSelected = isSelected
     )
 }

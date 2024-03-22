@@ -9,6 +9,9 @@ import com.example.gymapp.util.TimeValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -30,10 +33,16 @@ class WorkoutScheduleViewModel @Inject constructor(
     }
 
     private fun getAllSchedules() {
-       viewModelScope.launch {
-           val schedules = scheduleService.getAllSchedules()
-           _uiState.update { it.copy(schedules = schedules) }
-       }
+        viewModelScope.launch {
+            scheduleService.getAllSchedules()
+                .onStart { _uiState.update { it.copy(isLoading = true) } }
+                .catch { _uiState.update { it.copy(isLoading = false) } }
+                .collect { schedules ->
+                    _uiState.update {
+                        it.copy(schedules = schedules, isLoading = false)
+                    }
+                }
+        }
     }
 
     fun createSchedule() {
@@ -54,11 +63,10 @@ class WorkoutScheduleViewModel @Inject constructor(
     fun setWorkoutScheduleDialogVisibility(visible: Boolean) {
         _uiState.update {
             val scheduleWithDate =
-                uiState.value.schedule.copy(date = uiState.value.selectedCalendarDate!!)
+                uiState.value.schedule.copy(date = uiState.value.selectedCalendarDate ?: LocalDate.now())
             it.copy(isDialogVisible = visible, isEditMode = false, schedule = scheduleWithDate)
         }
     }
-
 
 
     fun setWorkoutScheduleDateDialogVisibility(visible: Boolean) {
@@ -67,9 +75,9 @@ class WorkoutScheduleViewModel @Inject constructor(
         }
     }
 
-    fun deleteSchedule(scheduleId: Long) {
+    fun deleteSchedule(date: LocalDate, workoutId: Long) {
         viewModelScope.launch {
-            scheduleService.deleteScheduleById(scheduleId = scheduleId)
+            scheduleService.deleteScheduleById(date = date, workoutId = workoutId)
         }
     }
 

@@ -43,6 +43,7 @@ import com.example.gymapp.ui.montserrati
 import com.example.gymapp.ui.quicksandBold
 import com.example.gymapp.ui.reusable.LoadingCircle
 import com.example.gymapp.ui.screens.mainscreen.Header
+import com.example.gymapp.ui.screens.mainscreen.TestHeader
 import com.example.gymapp.ui.screens.workout.WorkoutUiEvent
 import com.example.gymapp.ui.screens.workout.WorkoutUiState
 import com.example.gymapp.ui.screens.workout.WorkoutViewModel
@@ -101,43 +102,13 @@ private fun Content(
                     .fillMaxSize()
                     .padding(bottom = 16.dp + 56.dp)
             ) {
-
-                Header(name = "Arturcikas")
+                TestHeader(text = "Create Workout")
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .background(customOrange)
-                            .clip(RoundedCornerShape(10.dp))
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Spacer(modifier = Modifier.width(25.dp))
-                            val avatar = painterResource(R.drawable.arrow)
-                            Image(painter = avatar,
-                                contentDescription = "Back arrow",
-                                modifier = Modifier.clickable { onBackClick() })
-                            Box(
-                                modifier = Modifier.width(300.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "Create workout",
-                                    color = Color.White,
-                                    fontFamily = montserrati,
-                                    fontSize = 24.sp
-                                )
-                            }
-                        }
-                    }
                     CreateWorkoutBox(onUiEvent = onUiEvent,
                         onBackClick = onBackClick,
                         uiState = uiState,
@@ -193,7 +164,7 @@ fun CreateWorkoutBox(
             Box(
                 modifier = Modifier
                     .width(190.dp)
-                    .height(40.dp)
+                    .height(60.dp)
                     .shadow(10.dp, RoundedCornerShape(10.dp))
                     .background(Color.White)
             ) {
@@ -209,13 +180,14 @@ fun CreateWorkoutBox(
                             shape = RoundedCornerShape(5.dp)
                         )
                         .padding(6.dp)
+
                 )
             }
             Spacer(modifier = Modifier.height(18.dp))
             Box(
                 modifier = Modifier
                     .width(190.dp)
-                    .height(40.dp)
+                    .height(60.dp)
                     .shadow(10.dp, RoundedCornerShape(5.dp))
                     .background(Color.White)
             ) {
@@ -256,12 +228,6 @@ fun CreateWorkoutBox(
 
         }
     }
-}
-
-@Preview
-@Composable
-fun CreateWorkoutBoxPrev() {
-    CreateWorkoutBox({}, {}, uiState = WorkoutUiState(), {})
 }
 
 @Preview
@@ -315,65 +281,4 @@ fun CustomButtonTwo(onClick: () -> Unit, color: Color, text: String, width: Int,
 @Composable()
 fun CustomButtonPrev() {
     CustomButton(onClick = { /*TODO*/ }, color = Color.Gray, text = "Save")
-}
-
-@Composable
-fun WindowTemplate() {
-    MaterialTheme() {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 16.dp + 56.dp)
-            ) {
-                Header(name = "Arturcikas")
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .background(customOrange)
-                        .clip(RoundedCornerShape(10.dp))
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Spacer(modifier = Modifier.width(25.dp))
-                        val avatar = painterResource(R.drawable.arrow)
-                        Image(painter = avatar,
-                            contentDescription = "Back arrow",
-                            modifier = Modifier.clickable { })
-                        Box(
-                            modifier = Modifier.width(300.dp), contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Create workout",
-                                color = Color.White,
-                                fontFamily = montserrati,
-                                fontSize = 24.sp
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun Testas() {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.layered_waves_haikei),
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds
-        )
-    }
-}
-
-@Preview
-@Composable
-fun TestasPrev() {
-    Testas()
 }

@@ -86,7 +86,7 @@ fun WorkoutScheduleScreen(
 @Composable
 private fun Content(
     workoutScheduleUiState: WorkoutScheduleUiState,
-    deleteSchedule: (Long) -> Unit,
+    deleteSchedule: (LocalDate, Long) -> Unit,
     onEditScheduleSelect: (Schedule) -> Unit,
     onDaySelection: (LocalDate?) -> Unit
 ) {
@@ -94,9 +94,6 @@ private fun Content(
     val startMonth = remember { currentMonth.minusMonths(500) }
     val endMonth = remember { currentMonth.plusMonths(500) }
     val daysOfWeek = remember { daysOfWeek() }
-
-    val scheduleSelectedDays = workoutScheduleUiState.schedules
-        .map { it.date.toEpochDay() }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -143,21 +140,22 @@ private fun Content(
                     daysOfWeek = daysOfWeek,
                     schedules = workoutScheduleUiState.schedules
                 )
-                Divider(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+                val selectedDateSchedules = workoutScheduleUiState.selectedCalendarDate?.let { selectedDate ->
+                    workoutScheduleUiState.schedules.filter {
+                        it.date == selectedDate
+                    }
+                } ?: workoutScheduleUiState.schedules
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(items = scheduleSelectedDays) { schedule ->
-                        val schedulesForDay = workoutScheduleUiState.schedules.filter {
-                            it.date.toEpochDay() == schedule
-                        }
-                        schedulesForDay.firstOrNull()?.let {
-                            WorkoutScheduleEvents(
-                                schedule = it,
-                                deleteSchedule = deleteSchedule,
-                                setScheduleForEdit = onEditScheduleSelect
-                            )
-                        }
+
+                    items(items = selectedDateSchedules) { schedule ->
+                        WorkoutScheduleEvents(
+                            schedule = schedule,
+                            deleteSchedule = deleteSchedule,
+                            setScheduleForEdit = onEditScheduleSelect
+                        )
                     }
                 }
             }
@@ -168,9 +166,14 @@ private fun Content(
 @Preview
 @Composable
 fun WorkoutSchedulePreview() {
+    val mockSchedules = MockSchedulesData.mockSchedules
+    val workoutScheduleUiState = WorkoutScheduleUiState(schedules = mockSchedules)
+
     Content(
-        workoutScheduleUiState = WorkoutScheduleUiState(),
-        deleteSchedule = {},
+        workoutScheduleUiState = workoutScheduleUiState,
+        deleteSchedule = { date, workoutId ->
+            println("Deleting schedule for date: $date, workoutId: $workoutId")
+        },
         onDaySelection = {},
         onEditScheduleSelect = {}
     )

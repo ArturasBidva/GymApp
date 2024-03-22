@@ -20,7 +20,7 @@ class MainScreenFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 MainScreen(
@@ -37,9 +37,11 @@ class MainScreenFragment : Fragment() {
                         val action =
                             MainScreenFragmentDirections.actionMainScreenFragmentToWorkoutSchedule()
                         findNavController().navigate(action)
+
                     }
                 )
             }
         }
     }
+
 }

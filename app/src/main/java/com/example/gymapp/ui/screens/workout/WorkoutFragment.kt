@@ -28,6 +28,11 @@ class WorkoutFragment : Fragment() {
                             WorkoutFragmentDirections.actionWorkoutFragmentToWorkoutCreateWorkoutFragment()
                         findNavController().navigate(action)
                     },
+                    onClickSeeMore = {
+                        val action =
+                            WorkoutFragmentDirections.actionWorkoutFragmentToWorkoutDetailsFragment()
+                        findNavController().navigate(action)
+                    }
                 )
             }
         }

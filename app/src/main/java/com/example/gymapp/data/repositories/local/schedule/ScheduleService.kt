@@ -4,7 +4,9 @@ import com.example.gymapp.data.db.entities.ScheduleEntity
 import com.example.gymapp.data.db.models.local.Schedule
 import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.data.repositories.local.workout.DataWorkoutService
-import com.example.gymapp.domain.workouts.DomainWorkoutService
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.singleOrNull
+import java.time.LocalDate
 import javax.inject.Inject
 
 class ScheduleService @Inject constructor(
@@ -17,12 +19,17 @@ class ScheduleService @Inject constructor(
     }
 
 
-    suspend fun deleteScheduleById(scheduleId: Long) {
-        scheduleRepository.deleteScheduleById(scheduleId)
+    suspend fun deleteScheduleById(date: LocalDate, workoutId: Long) {
+        scheduleRepository.deleteScheduleById(date = date, workoutId = workoutId)
     }
 
-    suspend fun getAllSchedules() = scheduleRepository.getAllSchedules().map { it.toSchedule() }
+    suspend fun getAllSchedules() =
+        scheduleRepository.getAllSchedules().map { schedule -> schedule.map { it.toSchedule() } }
 
+    private suspend fun getWorkoutById(workoutId: Long): WorkoutLocal? {
+        return dataWorkoutService.getAllWorkouts()
+            .map { workouts -> workouts.firstOrNull { it.id == workoutId } }.singleOrNull()
+    }
 
     private fun Schedule.toScheduleEntity(): ScheduleEntity {
         return ScheduleEntity(
@@ -36,7 +43,7 @@ class ScheduleService @Inject constructor(
 
     private suspend fun ScheduleEntity.toSchedule(): Schedule {
         return Schedule(
-            workout = dataWorkoutService.getWorkoutById(this.id) ?: WorkoutLocal(),
+            workout = getWorkoutById(this.workoutId) ?: WorkoutLocal(),
             date = this.date,
             startTime = this.startTime,
             endTime = this.endTime,

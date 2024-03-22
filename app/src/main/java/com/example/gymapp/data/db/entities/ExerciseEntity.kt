@@ -10,5 +10,5 @@ data class ExerciseEntity(
     val title: String,
     val weight: Int = 0,
     val imgUrl: String,
-    val description: String,
+    val description: String
 )

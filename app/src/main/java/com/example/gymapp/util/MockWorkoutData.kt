@@ -10,9 +10,9 @@ import java.time.LocalTime
 
 object MockWorkoutData {
     val mockWorkouts = listOf(
-        Workout(id = 0, title = "Legs day", description =  "This is random description", exerciseWorkouts = MockExerciseWorkoutData.mockExerciseWorkouts),
-        Workout(id = 3, title = "Back day", description =  "This is random description"),
-        Workout(id = 4, title = "Arms day", description =  "This is random description")
+        WorkoutLocal(id = 0, title = "Legs day", description =  "This is random description", exerciseWorkouts = MockExerciseWorkoutData.mockExerciseWorkouts),
+        WorkoutLocal(id = 3, title = "Back day", description =  "This is random description"),
+        WorkoutLocal(id = 4, title = "Arms day", description =  "This is random description")
     )
 }
 object MockWorkoutLocalData {
