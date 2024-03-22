@@ -95,11 +95,23 @@ private fun Content(
     val endMonth = remember { currentMonth.plusMonths(500) }
     val daysOfWeek = remember { daysOfWeek() }
 
+<<<<<<< Updated upstream
     val scheduleSelectedDays = workoutScheduleUiState.schedules
         .map { it.date.toEpochDay() }
 
+=======
+<<<<<<< HEAD
+=======
+    val scheduleSelectedDays = workoutScheduleUiState.schedules
+        .map { it.date.toEpochDay() }
+
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+>>>>>>> Stashed changes
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
+            val scheduleSelectedDays = workoutScheduleUiState.schedules
+                .filter { it.date == workoutScheduleUiState.selectedCalendarDate }
+
             TestHeader(text = "Workout schedule")
             Spacer(modifier = Modifier.height(10.dp))
             Column(
@@ -143,10 +155,18 @@ private fun Content(
                     daysOfWeek = daysOfWeek,
                     schedules = workoutScheduleUiState.schedules
                 )
-                Divider(modifier = Modifier.height(40.dp))
+                    Divider(modifier = Modifier.height(10.dp))
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ) {
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+                    items(items = scheduleSelectedDays) {schedule ->
+                            WorkoutScheduleEvents(
+                                schedule = schedule,
+=======
+>>>>>>> Stashed changes
                     items(items = scheduleSelectedDays) { schedule ->
                         val schedulesForDay = workoutScheduleUiState.schedules.filter {
                             it.date.toEpochDay() == schedule
@@ -154,6 +174,10 @@ private fun Content(
                         schedulesForDay.firstOrNull()?.let {
                             WorkoutScheduleEvents(
                                 schedule = it,
+<<<<<<< Updated upstream
+=======
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+>>>>>>> Stashed changes
                                 deleteSchedule = deleteSchedule,
                                 setScheduleForEdit = onEditScheduleSelect
                             )
@@ -163,7 +187,7 @@ private fun Content(
             }
         }
     }
-}
+
 
 @Preview
 @Composable

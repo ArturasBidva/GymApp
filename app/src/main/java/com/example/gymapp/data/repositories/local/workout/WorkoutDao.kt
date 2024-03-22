@@ -37,6 +37,14 @@ interface WorkoutDao {
     @Query("DELETE FROM exerciseWorkout")
     suspend fun deleteExerciseWorkouts()
 
+    // Retrieve workouts not associated with given schedule IDs
+    @Query("SELECT * FROM workouts WHERE id NOT IN (:scheduleIds)")
+    suspend fun getWorkoutsNotInSchedules(scheduleIds: List<Long>): List<WorkoutEntity>
+
+    // Delete workouts by their IDs
+    @Query("DELETE FROM workouts WHERE id IN (:workoutIds)")
+    suspend fun deleteWorkoutsById(workoutIds: List<Long>)
+
     @Update
     suspend fun updateWorkout(workout: WorkoutEntity)
 

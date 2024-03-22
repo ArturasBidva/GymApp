@@ -14,6 +14,13 @@ data class WorkoutScheduleUiState(
     val timeSelectionDialogType: TimeSelectionDialogType? = null,
     val selectedCalendarDate: LocalDate? = null,
     val isEditMode: Boolean = false,
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+    val isLoading: Boolean = false
+=======
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+>>>>>>> Stashed changes
 ) {
     fun getTimeSelectionTime(): LocalTime? {
         return when (timeSelectionDialogType) {

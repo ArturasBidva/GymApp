@@ -1,5 +1,6 @@
 package com.example.gymapp.ui.screens.workoutschedule.components
 
+import MockSchedulesData
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,15 @@ fun WorkoutScheduleEvents(
     setScheduleForEdit: (Schedule) -> Unit,
 ) {
     val delete = SwipeAction(
+<<<<<<< Updated upstream
         onSwipe = { deleteSchedule(schedule.workout.id) },
+=======
+<<<<<<< HEAD
+        onSwipe = { deleteSchedule(schedule.id) },
+=======
+        onSwipe = { deleteSchedule(schedule.workout.id) },
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+>>>>>>> Stashed changes
         icon = {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -85,6 +94,7 @@ fun WorkoutScheduleEvents(
                             modifier = Modifier
                                 .size(10.dp)
                                 .clip(CircleShape)
+<<<<<<< Updated upstream
                                 .background(Color((schedule.color) as Int))
                         )
                         Spacer(modifier = Modifier.width(5.dp))
@@ -117,11 +127,76 @@ fun WorkoutScheduleEvents(
                     schedule.workout?.let {
                         Text(
                             text = it.description,
+=======
+<<<<<<< HEAD
+                                .background(Color((schedule.color)))
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "${schedule.startTime.toFormattedString()} - ${schedule.endTime.toFormattedString()}",
+=======
+                                .background(Color((schedule.color) as Int))
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "${schedule.startTime.toFormattedString()} - ${schedule.endTime.toFormattedString()}",
+>>>>>>> Stashed changes
                             fontSize = 12.sp,
                             fontFamily = quicksandMedium,
                             color = Color(0xFF8F9BB3)
                         )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Image(
+                            painterResource(id = R.drawable.baseline_more_horiz_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(start = 8.dp)
+                                .align(Alignment.CenterVertically)
+                        )
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    schedule.workout?.let {
+                        Text(
+                            text = it.title,
+                            fontSize = 16.sp,
+                            fontFamily = quicksandBold,
+                            color = Color(0xFF222B45)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    schedule.workout?.let {
+                        Text(
+                            text = it.description,
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+                            fontSize = 12.sp,
+                            fontFamily = quicksandMedium,
+                            color = Color(0xFF8F9BB3)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Image(
+                            painterResource(id = R.drawable.baseline_more_horiz_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(start = 8.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = schedule.workout.title,
+                        fontSize = 16.sp,
+                        fontFamily = quicksandBold,
+                        color = Color(0xFF222B45)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = schedule.workout.description,
+                        fontSize = 12.sp,
+                        fontFamily = quicksandMedium,
+                        color = Color(0xFF8F9BB3)
+                    )
                 }
             }
         }
@@ -129,6 +204,20 @@ fun WorkoutScheduleEvents(
 }
 
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+@Preview
+@Composable
+fun CalendarEventBoxPreview() {
+    WorkoutScheduleEvents(
+        schedule = MockSchedulesData.mockSchedules[0],
+        deleteSchedule = {},
+        setScheduleForEdit = {}
+    )
+}
+=======
+>>>>>>> Stashed changes
 //@Preview
 //@Composable
 //fun CalendarEventBoxPreview() {
@@ -138,4 +227,9 @@ fun WorkoutScheduleEvents(
 //        deleteSchedule = {},
 //        setWorkoutForEdit = {}
 //    )
+<<<<<<< Updated upstream
 //}
+=======
+//}
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+>>>>>>> Stashed changes
