@@ -296,7 +296,15 @@ fun SelectWorkoutDropDown(
         ) {
             if (workoutScheduleState.isEditMode) {
                 CustomTextField(
+<<<<<<< Updated upstream
                     value = workoutScheduleState.schedules.filter { it.workout.id == workout.id }.joinToString { workout.title},
+=======
+<<<<<<< HEAD
+                    value = workout.title,
+=======
+                    value = workoutScheduleState.schedules.filter { it.workout.id == workout.id }.joinToString { workout.title},
+>>>>>>> 62d43d62b70740a5f2988a12d092cab355d1dd9f
+>>>>>>> Stashed changes
                     onValueChange = {},
                     modifier = Modifier
                         .fillMaxWidth()
