@@ -2,9 +2,9 @@ package com.example.gymapp.ui.screens.exercise
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gymapp.data.repositories.local.exercise.DataExerciseService
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseService
-import com.example.gymapp.domain.workouts.DomainWorkoutService
 import com.example.gymapp.util.Resource
 import com.example.gymapp.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
-    private val exerciseService: ExerciseService,
-    private val domainWorkoutService: DomainWorkoutService
+    private val dataExerciseService: DataExerciseService,
+    private val domainExerciseService: ExerciseService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ExerciseUiState())
@@ -55,7 +55,7 @@ class ExerciseViewModel @Inject constructor(
                             it.copy(
                                 uiText = when (result) {
                                     is Resource.Success -> {
-                                        exerciseService.syncDataWithAPI()
+                                        domainExerciseService.syncDataWithAPI()
                                         UiText.DynamicString("Exercise deleted successfully")
 
                                     }
@@ -94,7 +94,7 @@ class ExerciseViewModel @Inject constructor(
 
     private fun getExerciseCategories() {
         viewModelScope.launch {
-            exerciseService.getAllExerciseCategories()
+            dataExerciseService.getExerciseCategories()
                 .onStart {
                     _uiState.update { it.copy(isLoading = true) }
                 }.catch {
@@ -117,7 +117,7 @@ class ExerciseViewModel @Inject constructor(
 
     private fun getExercises() {
         viewModelScope.launch {
-            exerciseService.getExercises()
+            dataExerciseService.getExercisesWithCategories()
                 .onStart {
                     _uiState.update { it.copy(isLoading = true) }
                 }
@@ -144,7 +144,7 @@ class ExerciseViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             onEvent(ExerciseUiEvent.DeleteExerciseSuccess)
-            when (exerciseService.deleteExercise(exercise)) {
+            when (domainExerciseService.deleteExercise(exercise)) {
                 is Resource.Success -> {
                     _uiState.update { it.copy(isLoading = false) }
                 }

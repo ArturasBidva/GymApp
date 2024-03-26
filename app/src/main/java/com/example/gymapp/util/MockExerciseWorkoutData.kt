@@ -13,10 +13,9 @@ object MockExerciseWorkoutData {
             exercise = Exercise(
                 id = 0,
                 title = "Bicepsas",
-                weight = 200,
-                imgUrl = "Kastonas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
                 description = "belekas",
-                category = listOf()
+                categories = listOf()
             )
         ),
         ExerciseWorkout(
@@ -27,10 +26,126 @@ object MockExerciseWorkoutData {
             exercise = Exercise(
                 1,
                 title = "Tricepsas",
-                weight = 400,
-                imgUrl = "Kastonas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
                 description = "belekas",
-                category = listOf()
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Kojos",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Belekas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
+            )
+        ),
+        ExerciseWorkout(
+            1,
+            completedCount = 0,
+            weight = 400,
+            goal = 2,
+            exercise = Exercise(
+                1,
+                title = "Testas",
+                imgUrl = "https://assets.telegraphindia.com/telegraph/2022/Aug/1660686108_new-project-23.jpg",
+                description = "belekas",
+                categories = listOf()
             )
         )
     )

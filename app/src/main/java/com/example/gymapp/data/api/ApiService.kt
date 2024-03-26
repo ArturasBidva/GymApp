@@ -32,9 +32,6 @@ interface ApiService {
     @GET("categories")
     suspend fun getExerciseCategories(): Response<List<ExerciseCategory>>
 
-    @POST("register")
-    suspend fun postUser(@Body User: User): Response<Unit>
-
     @GET("/workouts")
     suspend fun getAllWorkouts(): Response<List<Workout>>
 

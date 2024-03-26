@@ -49,7 +49,6 @@ import com.example.gymapp.data.db.models.local.WorkoutLocal
 import com.example.gymapp.domain.exercises.Exercise
 import com.example.gymapp.domain.exercises.ExerciseCategory
 import com.example.gymapp.domain.workouts.ExerciseWorkout
-import com.example.gymapp.domain.workouts.Workout
 import com.example.gymapp.ui.customOrange
 import com.example.gymapp.ui.montserrati
 import com.example.gymapp.ui.quicksandBold
@@ -188,11 +187,11 @@ private fun Content(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     exerciseUiState.exercises.forEach { exercise ->
-                        val filteredCategory = exercise.category.filter {
-                            it.name in (exerciseUiState.selectedExerciseCategory?.name ?: it.name)
+                        val filteredCategory = exercise.categories.filter {
+                            it.category in (exerciseUiState.selectedExerciseCategory?.category ?: it.category)
                         }
 
-                        if (exercise.category.contains(filteredCategory.firstOrNull())) {
+                        if (exercise.categories.contains(filteredCategory.firstOrNull())) {
                             ExerciseCard(
                                 exercise = exercise,
                                 onAddClick = {
@@ -301,7 +300,7 @@ fun ExercisesScreenPrev() {
         onExerciseUiEvent = {},
         onWorkoutUiEvent = {},
         workoutUiState = WorkoutUiState(
-            workout = MockWorkoutData.mockWorkouts[1],
+            workoutInfo = MockWorkoutData.mockWorkouts[1],
             workouts = MockWorkoutLocalData.mockWorkoutsLocal
         ),
         onSelection = {},
@@ -335,7 +334,7 @@ fun ExercisesCategoryBar(
                         onExerciseUiEvent(ExerciseUiEvent.SelectExerciseCategory(category))
                     }, contentAlignment = Alignment.Center
                 ) {
-                    Text(text = category.name,
+                    Text(text = category.category,
                         fontFamily = quicksandBold,
                         fontSize = 17.sp,
                         color = if (!isSelected) Color(0xFF707070)
@@ -411,7 +410,7 @@ fun ExerciseCard(
                 .padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "Exercise" + "  (${exercise.category.joinToString { it.name }})",
+                text = "Exercise" + "  (${exercise.categories.joinToString { it.category }})",
                 color = customOrange,
                 fontFamily = quicksandBold,
                 fontSize = 12.sp
@@ -470,7 +469,7 @@ fun AddExerciseToWorkoutDialog(
             Column(Modifier.padding(horizontal = 15.dp)) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = exercise.category.joinToString { it.name },
+                    text = exercise.categories.joinToString { it.category },
                     fontFamily = quicksandBold,
                     fontSize = 12.sp,
                     color = customOrange

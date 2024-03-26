@@ -50,7 +50,8 @@ import com.example.gymapp.util.MockWorkoutLocalData
 fun WorkoutScreen(
     workoutViewModel: WorkoutViewModel,
     onBackClick: () -> Unit,
-    onCreateWorkoutClick: () -> Unit
+    onCreateWorkoutClick: () -> Unit,
+    onClickSeeMore: () -> Unit
 ) {
     val workoutUiState by workoutViewModel.uiState.collectAsState()
 
@@ -61,7 +62,8 @@ fun WorkoutScreen(
             workoutUiState = workoutUiState,
             onWorkoutUiEvent = workoutViewModel::onEvent,
             onBackClick = onBackClick,
-            onCreateWorkoutClick = onCreateWorkoutClick
+            onCreateWorkoutClick = onCreateWorkoutClick,
+            onClickSeeMore = onClickSeeMore
         )
     }
 }
@@ -71,17 +73,18 @@ private fun Content(
     workoutUiState: WorkoutUiState,
     onWorkoutUiEvent: (WorkoutUiEvent) -> Unit,
     onBackClick: () -> Unit,
-    onCreateWorkoutClick: () -> Unit
+    onCreateWorkoutClick: () -> Unit,
+    onClickSeeMore: () -> Unit
 ) {
     MaterialTheme {
-        workoutUiState.workoutInfo?.let {
-            WorkoutDetailsScreen(
-                workout = it,
-                onDismiss = {
-                    onWorkoutUiEvent(WorkoutUiEvent.DismissWorkoutDialog)
-                }
-            )
-        }
+//        workoutUiState.workoutInfo?.let {
+//            WorkoutDetailsScreen(
+//                workout = it,
+//              onDismiss = {
+//                  onWorkoutUiEvent(WorkoutUiEvent.DismissWorkoutDialog)
+//              }
+//            )
+//        }
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
@@ -104,6 +107,7 @@ private fun Content(
                             },
                             onClickSeeMore = {
                                 onWorkoutUiEvent(WorkoutUiEvent.SelectWorkout(workout))
+                                onClickSeeMore()
                             }
                         )
                     }
@@ -266,7 +270,7 @@ fun SeeMoreButton(onClick: () -> Unit) {
             fontFamily = quicksandBold,
             fontSize = 12.sp,
             color = Color.White,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center).clickable { onClick() }
         )
     }
 }
@@ -296,7 +300,8 @@ fun WorkoutScreenPrev() {
         workoutUiState = WorkoutUiState(),
         onBackClick = {},
         onWorkoutUiEvent = {},
-        onCreateWorkoutClick = {}
+        onCreateWorkoutClick = {},
+        onClickSeeMore = {}
     )
 }
 

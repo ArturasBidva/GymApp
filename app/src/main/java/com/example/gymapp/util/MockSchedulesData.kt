@@ -12,7 +12,6 @@ object MockSchedulesData {
 
     val mockSchedules: List<Schedule> = listOf(
         Schedule(
-            id = 1,
             workout = mockWorkoutLocal,
             date = LocalDate.now(),
             startTime = LocalTime.of(9, 0),
@@ -20,7 +19,6 @@ object MockSchedulesData {
             color = 0xFFAABBCC.toInt() // Example color
         ),
         Schedule(
-            id = 2,
             workout = mockWorkoutLocal,
             date = LocalDate.now().plusDays(1),
             startTime = LocalTime.of(10, 0),

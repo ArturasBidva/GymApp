@@ -1,6 +1,7 @@
 package com.example.gymapp.data.repositories.local.workout
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -21,8 +22,8 @@ interface WorkoutDao {
     suspend fun insertWorkouts(workouts: List<WorkoutEntity>)
 
     @Transaction
-    @Query("SELECT * FROM workouts WHERE id = :workoutId")
-   suspend fun getWorkoutById(workoutId: Long): WorkoutEntity?
+    @Query("SELECT * FROM workouts")
+    fun getWorkoutWithExerciseWorkoutById(): Flow<List<WorkoutWithExerciseWorkoutPair>>
 
 
     @Upsert
@@ -37,19 +38,20 @@ interface WorkoutDao {
     @Query("DELETE FROM exerciseWorkout")
     suspend fun deleteExerciseWorkouts()
 
-    // Retrieve workouts not associated with given schedule IDs
-    @Query("SELECT * FROM workouts WHERE id NOT IN (:scheduleIds)")
-    suspend fun getWorkoutsNotInSchedules(scheduleIds: List<Long>): List<WorkoutEntity>
+    @Transaction
+    @Query("DELETE FROM workouts where id = :workoutId")
+    suspend fun deleteWorkoutById(workoutId: Long)
 
-    // Delete workouts by their IDs
-    @Query("DELETE FROM workouts WHERE id IN (:workoutIds)")
-    suspend fun deleteWorkoutsById(workoutIds: List<Long>)
 
     @Update
     suspend fun updateWorkout(workout: WorkoutEntity)
 
     @Upsert
     suspend fun insertWorkoutAndExerciseWorkoutCrossRef(crossRefs: List<WorkoutAndExerciseWorkoutCrossRef>)
+
+    @Transaction
+    @Query("SELECT * FROM workouts WHERE id = :workoutId")
+    suspend fun getWorkoutById(workoutId: Long): WorkoutEntity
 
 
 }

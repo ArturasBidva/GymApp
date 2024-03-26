@@ -13,5 +13,5 @@ data class WorkoutWithExerciseWorkoutPair(
             parentColumn = "id",
             entityColumn = "exerciseWorkoutId")
     )
-    val exerciseWorkout: List<ExerciseWorkoutEntity>
+    val exerciseWorkouts: List<ExerciseWorkoutEntity>
 )

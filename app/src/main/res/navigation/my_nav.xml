@@ -14,7 +14,14 @@
         app:enterAnim="@anim/fade_in"
         app:exitAnim="@anim/fade_out"
         app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/fade_out"
+        app:popExitAnim="@anim/fade_out"/>
+        <action
+            android:id="@+id/action_workoutFragment_to_WorkoutDetailsFragment"
+            app:destination="@id/workoutDetails"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
         />
     </fragment>
     <fragment
@@ -22,6 +29,13 @@
         android:name="com.example.gymapp.ui.screens.exercise.ExerciseFragment"
         android:label="ExerciseFragment">
     </fragment>
+
+    <fragment
+        android:id="@+id/workoutDetails"
+        android:name="com.example.gymapp.ui.screens.workout.WorkoutDetailsFragment"
+        android:label="WorkoutDetails">
+    </fragment>
+
     <fragment
         android:id="@+id/workoutSchedule"
         android:name="com.example.gymapp.ui.screens.workoutschedule.WorkoutScheduleFragment"
@@ -42,7 +56,8 @@
         <action
             android:id="@+id/action_createWorkoutFragment_to_ExerciseFragment"
             app:destination="@id/exerciseFragment" />
-</fragment>
+    </fragment>
+
     <fragment
         android:id="@+id/mainScreenFragment"
         android:name="com.example.gymapp.ui.screens.mainscreen.MainScreenFragment"
@@ -53,24 +68,21 @@
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            />
+            app:popExitAnim="@anim/fade_out"/>
         <action
             android:id="@+id/action_mainScreenFragment_to_ExerciseScreen"
             app:destination="@id/exerciseFragment"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            />
+            app:popExitAnim="@anim/fade_out"/>
         <action
             android:id="@+id/action_mainScreenFragment_to_WorkoutSchedule"
             app:destination="@id/workoutSchedule"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            />
+            app:popExitAnim="@anim/fade_out"/>
     </fragment>
 
 </navigation>

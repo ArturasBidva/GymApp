@@ -17,17 +17,9 @@ data class WorkoutLocal(
 )
 
 data class Schedule(
-    val id: Long = 0,
     var workout: WorkoutLocal = WorkoutLocal(),
     var date: LocalDate = LocalDate.now(),
     var startTime: LocalTime? = null,
     var endTime: LocalTime? = null,
     var color: Int = Color.Blue.toArgb()
-) {
-
-    fun getSchedulesByDay() {
-        val schedules: List<Schedule> = listOf()
-        schedules.filter { it.date == LocalDate.now() }
-    }
-
-}
+)
